@@ -1,0 +1,48 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  min-width: 1000px;
+  color: #2C2C2C;
+}
+
+@font-face {
+  font-family: 'InriaSerif';
+  src: url('../assets/fonts/InriaSerif-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+.menu-gnb {
+    display: flex;
+    justify-content: space-between;
+}
+
+.menu img {
+    width: 108.98px;
+    height:  56.75px;
+    margin-top: 18.75px;
+    margin-left: 31px;
+}
+
+.menu-group {
+    font-family: 'InriaSerif', serif;
+    display: flex;
+    justify-content: space-between;
+    gap: 41px;
+    margin-top: 41px;
+    margin-right: 89px;
+}
+
+.menu-group div {
+  cursor: pointer;
+  color: #A8A8A8;
+}
+
+.menu-group .active-menu {
+  font-weight: bold;
+  color: #2C2C2C;
+}
