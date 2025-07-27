@@ -1,0 +1,12 @@
+.authButton {
+    width: 333px;
+    height: 46px;
+    border-radius: 9px;
+    background: #2C2C2C;
+    color: #FFF;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: center;
+    line-height: 46px;
+    cursor: pointer;
+}

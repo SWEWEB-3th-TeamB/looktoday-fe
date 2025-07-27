@@ -1,0 +1,26 @@
+.sign-up-complete {
+    flex: 1;
+    width: 333px;
+    transform: translateX(0);
+    margin: 138px auto 142px;
+    text-align: center;
+}
+
+.sign-up-complete-title {
+    color: #2C2C2C;
+    text-align: center;
+    font-family: 'InriaSerif', serif;
+    font-size: 45px;
+    font-weight: 700;
+    margin-bottom: 27px;
+}
+
+.sign-up-complete img {
+    width: 46px;
+    height: 46px;
+    margin-bottom: 29px;
+}
+
+.sign-up-complete-btn {
+    margin-top: 49px;
+}

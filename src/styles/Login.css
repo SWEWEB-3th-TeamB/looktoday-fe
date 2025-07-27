@@ -1,0 +1,54 @@
+.wrap {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.login {
+    flex: 1;
+    width: 333px;
+    transform: translateX(0);
+    margin: 138px auto 142px;
+}
+
+.login-title {
+    color: #2C2C2C;
+    text-align: center;
+    font-family: 'InriaSerif', serif;
+    font-size: 45px;
+    font-weight: 700;
+    margin-bottom: 40px;
+}
+
+.login-form {
+    top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.login-btn {
+    margin-top: 43px;
+}
+
+.login-links {
+    display: flex;
+    gap: 34px;
+    color: #626262;
+    font-size: 14px;
+    margin-top: 22px;
+    margin-left: 59px;
+}
+
+.login-links a {
+    text-decoration-line: none;
+    color: #626262;
+}
+
+.login-links a:hover {
+    color: #2C2C2C;
+}
+
+.login-link {
+    cursor: pointer;
+}

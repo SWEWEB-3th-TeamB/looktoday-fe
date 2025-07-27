@@ -4,7 +4,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   min-width: 1000px;
   color: #2C2C2C;
 }
@@ -16,25 +17,34 @@ html, body {
   font-style: normal;
 }
 
+.menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
 .menu-gnb {
-    display: flex;
-    justify-content: space-between;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
 }
 
 .menu img {
-    width: 108.98px;
-    height:  56.75px;
-    margin-top: 18.75px;
-    margin-left: 31px;
+  width: 108.98px;
+  height: 56.75px;
+  margin-top: 18.75px;
+  margin-left: 31px;
+  cursor: pointer;
 }
 
 .menu-group {
-    font-family: 'InriaSerif', serif;
-    display: flex;
-    justify-content: space-between;
-    gap: 41px;
-    margin-top: 41px;
-    margin-right: 89px;
+  font-family: 'InriaSerif', serif;
+  display: flex;
+  justify-content: space-between;
+  gap: 41px;
+  margin-top: 41px;
+  margin-right: 89px;
 }
 
 .menu-group div {
