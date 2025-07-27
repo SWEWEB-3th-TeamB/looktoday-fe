@@ -1,0 +1,49 @@
+.RegionSelector-form{
+  display: flex;
+  width: 154px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  border: 1px solid #959595;
+  color: #626262;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  background: rgba(255, 255, 255, 0.50);
+  appearance: none;
+  padding: 0; 
+}
+
+.region-selector {
+  display: flex;
+  gap: 25px;
+}
+
+.region-selector-sido{
+   position: relative;
+   display: inline-block;
+}
+
+.region-selector-gugun{
+   position: relative;
+   display: inline-block;
+}
+
+.arrow{
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  width: 17.66px;
+  height: 17.66px;
+  flex-shrink: 0;
+  aspect-ratio: 17.66/17.66;
+  transition: transform 0.2s ease;
+}
+
+.arrow.rotate {
+  transform: translateY(-50%) rotate(180deg);
+}
