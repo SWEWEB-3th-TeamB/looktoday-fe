@@ -1,0 +1,276 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/Inter-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.calendar-btn-wrapper {
+  position: absolute;
+  top: 259px;
+  left: 425px;
+  /* 크기/레이아웃은 기존과 동일 */
+}
+
+.calendar-btn {
+  display: flex;
+  width: 170px;
+  height: 46px;
+  padding: 0;
+  position: relative;
+  align-items: center;
+  gap: 10px;
+  border-radius: 9px;
+  border: 1px solid #959595;
+  background: #FFF;
+  cursor: pointer;
+}
+
+.calendar-btn-date {
+  color: #4E4E4E;
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  margin-left: 15px;              /* 왼쪽에서 15px 시작 */
+  margin-right: 0;             /* 아이콘과의 간격 */
+  flex: 1 1 auto;
+}
+
+.calendar-btn img {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  margin-right: 15px;             /* 오른쪽에서 15px 마감 */
+}
+
+.calendar-modal {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 56px; /* 버튼 아래 10px */
+  width: 228px;
+  height: 319px;
+  border-radius: 10px;
+  border: 1px solid rgba(149, 149, 149, 0.70);
+  background: #FFF;
+  z-index: 10;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.09);
+}
+
+/* '년', '월' 표시 */
+.calendar-ym-selected-box {
+  width: 114px;
+  height: 32px;
+  border-radius: 9px;
+  border: 1px solid rgba(149,149,149,0.70);
+  margin-top: 8px;     /* 창 상단에서 8px */
+  margin-bottom: 8px;  /* 아래 박스와 8px 간격 */
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #4E4E4E;
+  font-weight: 500;
+}
+
+.calendar-ym-selected-box img,
+.calendar-day-yearmonth-box img {
+  width: 11.405px;
+  height: 11.405px;
+  flex-shrink: 0;
+}
+
+.calendar-arrow-wrapper {
+  position: absolute;
+  top: 1px;
+  right: 11px; /* 오른쪽 11px */
+  display: flex;
+  gap: 4px; /* 두 화살표 사이 간격 */
+  align-items: center;
+}
+
+/* 달력 상/하 월이동 화살표의 크기 */
+.calendar-arrow {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* '년' 리스트 */
+.calendar-yearlist {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0;
+}
+
+.calendar-year-item {
+  width: 200px;
+  height: auto; /* 세로 높이 auto로 해야 월 박스 포함 크기 됨 */
+  min-height: 27px;
+  
+  background: #E4E4E4;
+  display: flex;
+  position: relative;
+  color: #4E4E4E;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  cursor: pointer; /* 클릭가능 모양 */
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start; /* ← 좌측 정렬! */
+} 
+
+.calendar-year-item.active {
+  background: #94C8E6;
+  color: #000;
+}
+
+/* active면 검은선으로 바꿈 */
+.calendar-year-item.active .calendar-year-label {
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+/* 연도 숫자를 div로 감싸어 px 간격 지정 */
+.calendar-year-label {
+  display: flex;
+  align-items: center;
+  width: 100%;            /* 부모(200px) 전체! */
+  padding-left: 10px;       /* 연도 숫자와의 간격 */
+  height: 27px;
+  line-height: normal;
+  font-size: 14px;
+  box-sizing: border-box;
+  border-top: 1px solid rgba(149,149,149,0.70);
+  border-bottom: 1px solid rgba(149,149,149,0.70);
+}
+
+/* 월 선택 박스 */
+.calendar-month-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  box-sizing: border-box;
+}
+.calendar-month-item {
+  width: 50px;
+  height: 40px;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFF;
+  color: #4E4E4E;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  border: none;
+  box-sizing: border-box;
+}
+.calendar-month-item.active {
+  border: 1px solid #000;
+  background: #94C8E6;
+  color: #000;
+}
+
+/* 일 선택창 헤더(년,월+화살표) */
+.calendar-day-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-left: 11px;
+}
+.calendar-day-yearmonth-box {
+  width: 114px;
+  height: 32px;
+  border-radius: 9px;
+  border: 1px solid rgba(149,149,149,0.70);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #4E4E4E;
+  font-weight: 500;
+  margin-right: 28px;
+  cursor: pointer;
+  flex-shrink: 0; /* 폭 줄어드는 것 방지 */
+}
+
+/* 요일 표시 */
+.calendar-day-weekdays {
+  display: flex;
+  margin-left: 9px;
+  margin-top: 17px;
+}
+.calendar-day-weekday {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4E4E4E;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+}
+
+/* 일 그리드 */
+.calendar-day-grid {
+  display: flex;
+  flex-wrap: wrap;
+  width: 210px;
+  margin-left: 9px;
+}
+.calendar-day-cell {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #4E4E4E;
+  cursor: pointer;
+}
+.calendar-day-cell.other {
+  color: #959595;
+  pointer-events: none;
+}
+.calendar-day-cell.active {
+  border: 1px solid #000;
+  background: #94C8E6;
+  color: #000;
+}
+
+/* 하단 삭제/오늘 버튼 */
+.calendar-footer {
+  position: absolute;
+  bottom: 10px;
+  width: calc(100% - 52px); /* 26px x 2 padding 고려 */
+  left: 26px;
+  display: flex;
+  justify-content: space-between;
+}
+.calendar-footer-del, .calendar-footer-today {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  height: 30px;
+  color: #EF0000; /* 삭제 */
+}
+.calendar-footer-today {
+  color: #0C82C6;
+}
