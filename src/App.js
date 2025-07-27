@@ -3,15 +3,22 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import TodayWeather from './pages/weather/TodayWeather';
 import Login from './pages/auth/Login';
 import LookToday from './pages/looktoday/LookToday';
+import Main from './pages/main/Main';
+import Login from './pages/auth/Login';
+import SignUp from './pages/auth/SignUp';
+import SignUpComplete from './pages/auth/SignUpComplete';
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Routes>
+          <Route path="/" element={<Main />} />
           <Route path="/login" element={<Login />} />
           <Route path="/looktoday" element={<LookToday />} />
           <Route path="/TodayWeather" element={<TodayWeather />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/sign-up-complete" element={<SignUpComplete />} />
         </Routes>
       </div>
     </Router>
