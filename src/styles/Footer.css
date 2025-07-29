@@ -5,21 +5,70 @@
 }
 
 .footer-content {
+    position: relative; 
     margin: 0 auto;
     display: flex;
     width: 964px;
-    height: 100%;
     padding-top: 34px;
 }
 
-.footer-content img {
+.footer-logo {
+    position: absolute;
+    left: 0;
     width: 181.25px;
     height: 32px;
+    margin-right: 77px;
+}
+
+.footer-table {
+    position: absolute;
+    left: 258px;
+    display: flex;
+    gap: 108px;
+}
+
+.footer-row {
+    color: #2C2C2C;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.footer-row img {
+    width: 24px;
+    height: 24px;
 }
 
 .footer-role {
-    color: #2C2C2C;
     font-family: 'InriaSerif', serif;
     font-size: 20px;
     font-weight: 700;
+    margin-bottom: 13px;
+}
+
+.footer-member {
+    margin-bottom: 10px;
+}
+
+.footer-url {
+    display: flex;
+    text-decoration-line: underline;
+    line-height: 23px;
+    margin-bottom: 13px;
+    gap: 9px;
+}
+
+.footer-rights {
+    position: absolute;
+    right: 0;
+    top: 214px;
+    display: flex;
+    font-family: 'InriaSerif', serif;
+    font-size: 10px;
+    font-weight: 700;
+    gap: 3px;
+}
+
+.footer-rights img {
+    width: 12px;
+    height: 12px;
 }

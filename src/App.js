@@ -4,7 +4,6 @@ import TodayWeather from './pages/weather/TodayWeather';
 import Login from './pages/auth/Login';
 import LookToday from './pages/looktoday/LookToday';
 import Main from './pages/main/Main';
-import Login from './pages/auth/Login';
 import SignUp from './pages/auth/SignUp';
 import SignUpComplete from './pages/auth/SignUpComplete';
 

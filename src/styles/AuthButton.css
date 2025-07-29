@@ -9,4 +9,9 @@
     text-align: center;
     line-height: 46px;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.authButton:hover {
+    background: #3B3B3B;
 }

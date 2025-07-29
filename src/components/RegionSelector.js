@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import '../styles/RegionSelector.css';
-import arrow from '../../src/assets/images/iwwa_arrow-up.png';
+import arrow from '../../src/assets/images/regoin-arrow.png';
 
 const regions = {
-  '서울특별시': [  '강남구', '강동구', '강북구', '강서구', '관악구',
-                 '광진구', '구로구', '금천구', '노원구', '도봉구',
-                 '동대문구', '동작구', '마포구', '서대문구', '서초구',
-                 '성동구', '성북구', '송파구', '양천구', '영등포구',
-                 '용산구', '은평구', '종로구', '중구', '중랑구'],
+  '서울특별시': ['강남구', '강동구', '강북구', '강서구', '관악구',
+    '광진구', '구로구', '금천구', '노원구', '도봉구',
+    '동대문구', '동작구', '마포구', '서대문구', '서초구',
+    '성동구', '성북구', '송파구', '양천구', '영등포구',
+    '용산구', '은평구', '종로구', '중구', '중랑구'],
   '부산광역시': [],
   '대구광역시': [],
   '인천광역시': [],
@@ -32,45 +32,67 @@ const RegionSelector = ({ onRegionChange }) => {
   const [sidoOpen, setSidoOpen] = useState(false);
   const [gugunOpen, setGugunOpen] = useState(false);
 
-  const handleSidoChange = (e) => {
-    const value = e.target.value;
-    console.log("사용자가 선택한 시/도:", value); 
+  const handleSidoSelect = (value) => {
     setSido(value);
     setGugun('');
     onRegionChange(value);
+    setSidoOpen(false);
+    setGugunOpen(false); // 동시에 열리지 않도록
+  };
+
+  const handleGugunSelect = (value) => {
+    setGugun(value);
+    setGugunOpen(false);
+    setSidoOpen(false); // 동시에 열리지 않도록
   };
 
   return (
     <div className="region-selector">
       <div className="region-selector-sido">
-        <select className="RegionSelector-form" 
-          value={sido}
-          onChange={handleSidoChange}
-          onMouseDown={() => setSidoOpen((prev) => !prev)}
-          onBlur={() => setSidoOpen(false)}
+        <div
+          className={`region-selector-form ${sido === '' ? 'placeholder' : ''}`}
+          onClick={() => {
+            setSidoOpen(!sidoOpen);
+            setGugunOpen(false); // 다른 쪽 닫기
+          }}
+          tabIndex="0"
         >
-          <option value="">시/도</option>
-          {Object.keys(regions).map((sido) => (
-            <option key={sido} value={sido}>{sido}</option>
-          ))}
-        </select>
-        <img className={`arrow ${sidoOpen ? 'rotate' : ''}`} src={arrow} alt="arrow" />
+          {sido || '시/도'}
+          <img className={`arrow ${sidoOpen ? 'rotate' : ''}`} src={arrow} alt="arrow" />
+        </div>
+        {sidoOpen && (
+          <ul className="region-selector-dropdown">
+            {Object.keys(regions).map((region) => (
+              <li key={region} onClick={() => handleSidoSelect(region)}>
+                {region}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="region-selector-gugun">
-        <select className="RegionSelector-form" value={gugun}
-          onChange={(e) => setGugun(e.target.value)}
-          disabled={!sido}
-          onMouseDown={() => setGugunOpen((prev) => !prev)}
-          onBlur={() => setGugunOpen(false)}
+        <div
+          className={`region-selector-form ${!sido ? 'disabled' : ''}`}
+          onClick={() => {
+            if (!sido) return;
+            setGugunOpen(!gugunOpen);
+            setSidoOpen(false); // 다른 쪽 닫기
+          }}
+          tabIndex="0"
         >
-          <option value="">군/구</option>
-          {sido &&
-            regions[sido].map((gugun) => (
-              <option key={gugun} value={gugun}>{gugun}</option>
+          {gugun || '군/구'}
+          <img className={`arrow ${gugunOpen ? 'rotate' : ''}`} src={arrow} alt="arrow" />
+        </div>
+        {gugunOpen && sido && (
+          <ul className="region-selector-dropdown">
+            {regions[sido].map((gugun) => (
+              <li key={gugun} onClick={() => handleGugunSelect(gugun)}>
+                {gugun}
+              </li>
             ))}
-        </select>
-        <img className={`arrow ${gugunOpen ? 'rotate' : ''}`} src={arrow} alt="arrow" />
+          </ul>
+        )}
       </div>
     </div>
   );
