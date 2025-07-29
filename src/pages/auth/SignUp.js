@@ -1,14 +1,16 @@
-import React from 'react';
+import { useState } from 'react';
 
 import Menu from '../../components/Menu';
 import Form from '../../components/Form';
-import LocationForm from '../../components/LocationForm';
+import RegionSelector from '../../components/RegionSelector';
 import AuthButton from '../../components/AuthButton';
 import Footer from '../../components/Footer';
 
 import '../../styles/SignUp.css';
 
 const SignUp = () => {
+    const [selectedRegion, setSelectedRegion] = useState('');
+
     return (
         <div className="wrap">
             <Menu />
@@ -31,7 +33,7 @@ const SignUp = () => {
                         <Form type='password' placeholder='비밀번호 (특수문자 포함, 8자 이상)' />
                         <Form type='text' placeholder='닉네임' />
                         <Form type='text' placeholder='생년월일 임시' />
-                        <LocationForm />
+                        <RegionSelector onRegionChange={setSelectedRegion}/>
                     </div>
                     <div className='sign-up-check-btn'>
                         <div className='check-btn'>중복확인</div>

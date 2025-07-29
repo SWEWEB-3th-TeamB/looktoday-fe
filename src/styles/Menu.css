@@ -50,9 +50,25 @@ body {
 .menu-group div {
   cursor: pointer;
   color: #A8A8A8;
+  transition: all 0.3s ease;
+}
+
+.menu-group div:hover {
+  font-weight: bold;
+  color: #2C2C2C;
 }
 
 .menu-group .active-menu {
   font-weight: bold;
   color: #2C2C2C;
+}
+
+@keyframes shimmer {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+.logo-img.hovered {
+  animation: shimmer 1.2s ease-in-out infinite;
 }
