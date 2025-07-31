@@ -18,10 +18,9 @@ body {
 }
 
 .menu {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 100%;
+  min-width: inherit;
 }
 
 .menu-gnb {

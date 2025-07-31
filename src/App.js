@@ -6,6 +6,7 @@ import LookToday from './pages/looktoday/LookToday';
 import Main from './pages/main/Main';
 import SignUp from './pages/auth/SignUp';
 import SignUpComplete from './pages/auth/SignUpComplete';
+import LookBook from './pages/lookbook/LookBook';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/TodayWeather" element={<TodayWeather />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-up-complete" element={<SignUpComplete />} />
+          <Route path="/lookbook" element={<LookBook />} />
         </Routes>
       </div>
     </Router>
