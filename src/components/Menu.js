@@ -19,6 +19,7 @@ const Menu = () => {
         else if (path === '/looktoday') setActiveMenu('LOOKTODAY');
         else if (path === '/lookbook') setActiveMenu('LOOKBOOK');
         else if (path === '/login' || path === '/sign-up' || path === '/sign-up-complete') setActiveMenu('LOGIN');
+        else if (path === '/lookbook') setActiveMenu('LOOKBOOK');
         else setActiveMenu('');
     }, [location.pathname]);
 
@@ -46,7 +47,7 @@ const Menu = () => {
                         LOOKTODAY
                     </div>
                     <div
-                        onClick={() => setActiveMenu('LOOKBOOK')}
+                        onClick={() => { setActiveMenu('LOOKBOOK'); navigate('/lookbook'); }}
                         className={activeMenu === 'LOOKBOOK' ? 'active-menu' : ''}
                     >
                         LOOKBOOK
