@@ -1,0 +1,19 @@
+.lookbook-wrap {
+    min-width: 1202.5px;
+}
+
+.lookbook {
+    flex: 1;
+    width: 1202.5px;
+    transform: translateX(0);
+    margin: 59.25px auto 142px;
+}
+
+.lookbook-title {
+    color: #2C2C2C;
+    text-align: center;
+    font-family: 'InriaSerif', serif;
+    font-size: 45px;
+    font-weight: 700;
+    margin-bottom: 40px;
+}

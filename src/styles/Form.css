@@ -6,7 +6,10 @@
     padding-left: 16px;
     padding-top: 1px;
     font-size: 14px;
-    cursor: pointer;
+}
+
+.form input:hover {
+    border: 1px solid #6B6B6B;
 }
 
 .form input:focus {
@@ -23,52 +26,4 @@
     color: #EF0000;
     font-size: 12px;
     margin-top: 4px;
-}
-
-.location-form-inputs {
-    display: flex;
-    justify-content: space-between;
-}
-
-.location-dropdown {
-    position: relative;
-    width: 154px;
-    height: 46px;
-    border-radius: 9px;
-    border: 1px solid #959595;
-    padding-left: 16px;
-    cursor: pointer;
-    color: #BDBDBD;
-    font-family: Inter;
-    font-size: 14px;
-    line-height: 44px;
-}
-
-.location-dropdown img {
-    width: 17.66px;
-    height: 17.66px;
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.location-dropdown-box {
-    position: absolute;
-    background-color: #ffffff;
-    width: 154px;
-    height: 184px;
-    flex-shrink: 0;
-    border-radius: 9px;
-    border: 1px solid #959595;
-    color: #626262;
-    font-size: 14px;
-    font-weight: 400;
-}
-
-.location-dropdown-option {
-    height: 46px;
-    padding-left: 22px;
-    line-height: 46px;
-    cursor: pointer;
 }
