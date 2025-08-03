@@ -1,0 +1,67 @@
+.sidebar-wrapper {
+  position: absolute;
+  top: 177px;
+  left: 0;
+  width: 246px;
+  height: 1371px;
+  border-radius: 0 26px 0 0;
+  border-top: 1px solid #C3C3C3;
+  border-right: 1px solid #C3C3C3;
+  background: #fff;
+  box-sizing: border-box;
+  z-index: 100;
+}
+
+/* 제목 */
+.sidebar-title {
+  position: absolute;
+  top: 23px;
+  left: 15px;
+  color: #2C2C2C;
+  font-family: "Inria Serif", serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 1px;
+  user-select: none;
+}
+
+/* 선택된 메뉴 박스 (파란 배경박스) */
+.sidebar-menu-box {
+  position: absolute;
+  width: 226px;
+  height: 57px;
+  border-radius: 9px;
+  background: #E2F4FF;
+  flex-shrink: 0;
+  z-index: 10;
+  transition: top 0.2s;
+}
+
+/* 메뉴 아이콘 */
+.sidebar-menu-icon {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  flex-shrink: 0;
+  z-index: 20;
+  cursor: pointer;
+}
+
+/* 메뉴 텍스트 */
+.sidebar-menu-text {
+  position: absolute;
+  color: #2C2C2C;
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  cursor: pointer;
+  z-index: 21;
+  letter-spacing: 0.2px;
+  background: none;
+  user-select: none;
+  transition: color 0.2s;
+}

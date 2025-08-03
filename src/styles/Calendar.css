@@ -10,38 +10,66 @@
   position: absolute;
   top: 259px;
   left: 425px;
-  /* 크기/레이아웃은 기존과 동일 */
 }
 
 .calendar-btn {
-  display: flex;
+  position: relative;
   width: 170px;
   height: 46px;
-  padding: 0;
-  position: relative;
-  align-items: center;
-  gap: 10px;
+  flex-shrink: 0;
   border-radius: 9px;
   border: 1px solid #959595;
   background: #FFF;
+  display: flex;
+  align-items: center;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
-.calendar-btn-date {
+/* '날짜 선택' 상태 */
+.calendar-btn.empty .calendar-btn-date {
+  position: absolute;
+  top: 10px;
+  left: 31px;
   color: #4E4E4E;
   font-family: 'Inter', sans-serif;
-  font-size: 18px;
-  font-weight: 500;
-  margin-left: 15px;              /* 왼쪽에서 15px 시작 */
-  margin-right: 0;             /* 아이콘과의 간격 */
-  flex: 1 1 auto;
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-align: center;
 }
 
-.calendar-btn img {
+/* '날짜 선택' 상태의 아이콘 */
+.calendar-btn.empty img {
+  position: absolute;
+  top: 11px;
+  right: 16px;
   width: 24px;
   height: 24px;
-  flex-shrink: 0;
-  margin-right: 15px;             /* 오른쪽에서 15px 마감 */
+}
+
+/* 날짜가 선택된 상태 */
+.calendar-btn.selected .calendar-btn-date {
+  position: absolute;
+  top: 12.5px;
+  left: 16px;
+  color: #4E4E4E;
+  font-family: 'Inter', sans-serif;
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-align: center;
+}
+
+/* 아이콘 위치도 동일하게 유지 */
+.calendar-btn.selected img {
+  position: absolute;
+  top: 11px;
+  right: 16px;
+  width: 24px;
+  height: 24px;
 }
 
 .calendar-modal {
@@ -64,8 +92,8 @@
   height: 32px;
   border-radius: 9px;
   border: 1px solid rgba(149,149,149,0.70);
-  margin-top: 8px;     /* 창 상단에서 8px */
-  margin-bottom: 8px;  /* 아래 박스와 8px 간격 */
+  margin-top: 8px;
+  margin-bottom: 8px;
   margin-left: auto;
   margin-right: auto;
   display: flex;
@@ -87,13 +115,13 @@
 .calendar-arrow-wrapper {
   position: absolute;
   top: 1px;
-  right: 11px; /* 오른쪽 11px */
+  right: 11px;
   display: flex;
-  gap: 4px; /* 두 화살표 사이 간격 */
+  gap: 4px;
   align-items: center;
 }
 
-/* 달력 상/하 월이동 화살표의 크기 */
+/* 달력 상/하 월 이동 화살표의 크기 */
 .calendar-arrow {
   width: 30px;
   height: 30px;
@@ -137,12 +165,12 @@
   border-bottom: 1px solid #000;
 }
 
-/* 연도 숫자를 div로 감싸어 px 간격 지정 */
+/* 연도 숫자를 div로 감싸 px 간격 지정 */
 .calendar-year-label {
   display: flex;
   align-items: center;
-  width: 100%;            /* 부모(200px) 전체! */
-  padding-left: 10px;       /* 연도 숫자와의 간격 */
+  width: 100%; /* 부모(200px) 전체 */
+  padding-left: 10px; /* 연도 숫자와의 간격 */
   height: 27px;
   line-height: normal;
   font-size: 14px;

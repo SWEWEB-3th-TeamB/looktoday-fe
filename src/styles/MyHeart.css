@@ -1,0 +1,46 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/Inter-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'InriaSerif';
+  src: url('../assets/fonts/InriaSerif-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+.myheart-wrapper {
+  width: 1280px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.myheart-container {
+  position: absolute;
+  top: 177px;
+  left: 652px;
+}
+
+.myheart-title {
+  margin: 0;
+  color: #2C2C2C;
+  font-family: 'Inria Serif', serif;
+  font-size: 45px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.myheart-footer {
+  position: absolute;
+  top: 1548px;
+  left: 0;
+  width: 100%; /* 브라우저 가로 폭 전체 */
+  min-width: 320px;
+  background: #94C8E6;
+  z-index: 50;
+}

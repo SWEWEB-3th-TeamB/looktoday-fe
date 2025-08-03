@@ -29,10 +29,11 @@
   line-height: normal;
 }
 
+/* 온도계 이미지 */
 .temp-wrapper {
   position: absolute;
-  top: 267px;      /* 온도계 이미지 top 위치 */
-  left: 200px;     /* 온도계 이미지 left 위치 */
+  top: 267px;
+  left: 200px;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -47,8 +48,7 @@
 .temp-options {
   display: flex;
   flex-direction: column;
-  margin-left: 0;   /* 온도계 바로 오른쪽, 간격 제거 */
-  /* 온도계 이미지 높이만큼 위치 조절 대신 padding-top 사용 */
+  margin-left: 0; /* 온도계 바로 오른쪽, 간격 제거 */
   padding-top: 35px; /* 온도계 위 끝에서 35px 아래 */
 }
 
@@ -59,12 +59,12 @@
   font-weight: 600;
   line-height: normal;
   text-align: center;
-  margin-bottom: 16.5px; /* 버튼과의 간격 */
+  margin-bottom: 16.5px; /* 온도 버튼과의 간격 */
 }
 
 .temp-button {
   display: inline-flex;
-  width: 72px; /* 버튼 너비 추가 */
+  width: 72px;
   height: 32px;
   padding: 7px;
   justify-content: center;
@@ -88,7 +88,6 @@
   margin-bottom: 0;
 }
 
-/* LookToday.css에 추가 */
 .calendar-button-wrapper {
   position: absolute;
   top: 259px;
@@ -97,8 +96,8 @@
 
 .record-number {
   position: absolute;
-  top: 282px;       /* 메뉴 제외 기준 LookToday 화면 위로부터 282px */
-  right: 200px;     /* 오른쪽에서 200px */
+  top: 282px;
+  right: 200px;
   color: #2C2C2C;
   text-align: center;
   font-family: 'Inter', sans-serif;
@@ -107,17 +106,16 @@
   font-weight: 400;
   line-height: normal;
   pointer-events: none; /* 혹시 클릭 안되게 */
-  user-select: none;    /* 텍스트 선택 방지 */
+  user-select: none; /* 텍스트 선택 방지 */
 }
 
 .looktoday-hr {
   position: absolute;
   top: calc(259px + 46px + 11px); /* 날짜 버튼 top(259px) + 버튼 높이(46px) + 11px 간격 */
-  /* 즉, 259 + 46 + 11 = 316px */
-  left: 425px;   /* 날짜 버튼과 동일한 왼쪽 위치 */
+  left: 425px;
   width: 655px;
-  height: 0;     /* 실제 높이는 stroke-width로 조정 */
-  border: none;  /* 기본 hr 테두리 제거 */
+  height: 0; /* 실제 높이는 stroke-width로 조정 */
+  border: none; /* 기본 hr 테두리 제거 */
   border-top: 2px solid #959595;
   flex-shrink: 0;
   margin: 0;
@@ -127,7 +125,7 @@
 
 .public-toggle-label {
   position: absolute;
-  top: 347px;
+  top: 344px;
   left: 973px;
   color: #2C2C2C;
   text-align: center;
@@ -154,7 +152,7 @@
   align-items: center;
   padding: 3px;
   box-sizing: border-box;
-  background: #94C8E6; /* 기본 공개 배경 */
+  background: #94C8E6;
   box-shadow:
     0 -2px 3px 0 rgba(0, 0, 0, 0.20) inset,
     2px 0 3px 0 rgba(0, 0, 0, 0.20) inset;
@@ -191,7 +189,7 @@
 .humidity-label {
   position: absolute;
   top: 414px;
-  left: 829px;
+  left: 833px;
   color: #2C2C2C;
   text-align: center;
   font-family: 'Inter', sans-serif;
@@ -202,12 +200,11 @@
   user-select: none;
 }
 
-/* 습도 이미지 위치 및 크기 CSS */
 .humidity-image {
   position: absolute;
   width: 94px;
   height: 138px;
-  left: 822px;
+  left: 826px;
   top: 456px;
   object-fit: cover;
   transition: all 0.3s cubic-bezier(.33,1,.68,1);
@@ -235,10 +232,9 @@
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
-/* 각 버튼의 위치 */
-.humidity-btn.humid { top: 466px; left: 938.5px; }
-.humidity-btn.comfortable { top: 515px; left: 729px; }
-.humidity-btn.dry { top: 562px; left: 931.5px; }
+.humidity-btn.humid { top: 465px; left: 942px; }
+.humidity-btn.comfortable { top: 509px; left: 732px; }
+.humidity-btn.dry { top: 553px; left: 942px; }
 
 /* 활성화된 버튼 스타일 */
 .humidity-btn.active {
@@ -283,7 +279,6 @@
   cursor: pointer;
 }
 
-/* plus 버튼: 미리보기 박스 좌측 70px, 위에서 113px */
 .codi-image-upload-btn {
   position: absolute;
   top: 113px;
@@ -303,7 +298,6 @@
   object-fit: contain;
 }
 
-/* plus버튼 밑 설명 */
 .codi-image-upload-desc {
   position: absolute;
   top: calc(113px + 51px + 22.5px); /* plus 버튼 top + 버튼 height + 22.5px */
@@ -331,6 +325,7 @@
 .codi-review-input {
   width: 100%;
   height: 100%;
+  overflow: hidden;
   resize: none;
   border-radius: 15px;
   border: 1px solid #959595;
@@ -359,7 +354,8 @@
 .codi-review-counter {
   position: absolute;
   top: 38px;
-  left: 356px;
+  right: 12px;
+  left: unset;
   color: #959595;
   font-family: 'Inter', sans-serif;
   font-size: 16px;
@@ -375,7 +371,7 @@
   width: 109px;
   height: 50px;
   flex-shrink: 0;
-  border-radius: 10px;
+  border-radius: 5px;
   font-family: 'Inter', sans-serif;
   font-size: 20px;
   font-style: normal;
@@ -432,39 +428,154 @@
   background: #FFF;
   border-radius: 20px;
   box-sizing: border-box;
-  padding: 30px 20px;
   z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
-/* 팝업 제목 */
+/* 팝업 박스 */
+.complete-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 670px;
+  height: 300px;
+  transform: translate(-50%, -50%);
+  background: #FFF;
+  border-radius: 20px;
+  box-sizing: border-box;
+  /* 내부 요소를 수동 위치로 조정할 것이므로 기본 플렉스 해제 */
+  z-index: 1000;
+}
+
+/* 제목 */
 .complete-popup-title {
-  margin-top: 51px; /* 팝업 상단에서 51px */
-
-  font-family: 'Inria Serif', serif;
-  font-weight: 700;
-  font-size: 32px;
-  color: #2C2C2C;
+  /* 공통 스타일: 가운데 정렬, 줄바꿈 허용 */
+  position: absolute;
+  left: 50%;
+  top: 47px;
+  transform: translateX(-50%);
+  width: 100%;
   text-align: center;
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
   line-height: normal;
+  color: #2C2C2C;
 }
 
-/* 닫기 버튼 예시 */
-.complete-popup-close-btn {
-  margin-top: auto;
-  margin-bottom: 20px;
-  padding: 8px 24px;
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  background-color: #2C2C2C;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  user-select: none;
+.complete-popup-title .title-english {
+  font-family: 'Inria Serif', serif;
 }
-.complete-popup-close-btn:hover {
-  background-color: #1a1a1a;
+
+.complete-popup-title .title-korean {
+  font-family: 'Inter', sans-serif;
+}
+
+/* 본문 텍스트 */
+.complete-popup-desc {
+  position: absolute;
+  top: 111px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #2C2C2C;
+  line-height: 40px;
+  margin: 0;
+  white-space: pre-line; /* 엔터 줄바꿈 지원 */
+}
+
+/* 확인 버튼 */
+.complete-popup-close-btn {
+  position: absolute;
+  left: 50%;
+  top: 215px;
+  transform: translateX(-50%);
+  width: 155px;
+  height: 50px;
+  border-radius: 5px;
+  background: #0C82C6;
+  color: #FFF;
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  outline: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.looktoday-location {
+  position: absolute;
+  top: 334px;
+  left: 425px;
+}
+
+.location-form-inputs {
+  display: flex;
+  gap: 9px;
+}
+
+/* dropdown 목록이 사진 미리보기 박스 위에 표시됨 */
+.location-dropdown-box {
+  position: absolute;
+  z-index: 2000; /* 충분히 큰 값. (1000~9999 중 하나) */
+}
+
+.looktoday-footer {
+  position: absolute;
+  top: 877px;
+  left: 0;
+  width: 100%; /* 브라우저 가로 폭 전체 */
+  min-width: 320px;
+  margin-left: calc(-50vw + 50%); /* 가운데 정렬 보정, 중앙에 맞출때(옵션) */
+  background: #94C8E6;
+  z-index: 50;
+}
+
+.icon-sun {
+  position: absolute;
+  top: 259px;
+  left: 727px;
+  width: 38px;
+  height: 46px;
+  flex-shrink: 0;
+  object-fit: contain;
+  z-index: 10;
+}
+.icon-cloud {
+  position: absolute;
+  top: 259px;
+  left: 772px;
+  width: 38px;
+  height: 46px;
+  flex-shrink: 0;
+  object-fit: contain;
+  z-index: 10;
+}
+.icon-rain {
+  position: absolute;
+  top: 259px;
+  left: 817px;
+  width: 38px;
+  height: 46px;
+  flex-shrink: 0;
+  object-fit: contain;
+  z-index: 10;
+}
+.icon-snow {
+  position: absolute;
+  top: 259px;
+  left: 862px;
+  width: 38px;
+  height: 46px;
+  flex-shrink: 0;
+  object-fit: contain;
+  z-index: 10;
 }
