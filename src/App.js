@@ -6,8 +6,7 @@ import LookToday from './pages/looktoday/LookToday';
 import Main from './pages/main/Main';
 import SignUp from './pages/auth/SignUp';
 import SignUpComplete from './pages/auth/SignUpComplete';
-import LookBook from './pages/lookbook/LookBook';
-
+import LookRecommend from './pages/weather/LookRecommend';
 function App() {
   return (
     <Router>
@@ -16,10 +15,10 @@ function App() {
           <Route path="/" element={<Main />} />
           <Route path="/login" element={<Login />} />
           <Route path="/looktoday" element={<LookToday />} />
-          <Route path="/TodayWeather" element={<TodayWeather />} />
+          <Route path="/todayWeather" element={<TodayWeather />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-up-complete" element={<SignUpComplete />} />
-          <Route path="/lookbook" element={<LookBook />} />
+          <Route path="/lookrecommend" element={<LookRecommend />} />
         </Routes>
       </div>
     </Router>

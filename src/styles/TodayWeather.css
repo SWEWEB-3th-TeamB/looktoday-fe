@@ -137,19 +137,19 @@
 
 .TodayWeather-sunrise-icon{
   position: absolute;
-  top:56.5px;
-  left:60px;
-  width: 24px;
-  height: 24px;
+  top:40px;
+  left:45px;
+  width: 60px;
+  height: 60px;
   flex-shrink: 0;
 }
 
 .TodayWeather-sunset-icon{
   position: absolute;
-  top:56.5px;
-  right:60px;
-  width: 24px;
-  height: 24px;
+  top:40px;
+  right:45px;
+  width: 60px;
+  height: 60px;
   flex-shrink: 0;
 }
 
@@ -348,5 +348,6 @@
   justify-content: center;  /* 가로 정중앙 정렬 */
   align-items: center;      /* 수직 가운데 정렬 (선택사항) */
   vertical-align: middle;
-  gap: 20px;                /* 사이 간격 */         /* 상하 여백 */
+  gap: 20px;                /* 사이 간격 */
+  margin: 20px 0;           /* 상하 여백 */
 }
