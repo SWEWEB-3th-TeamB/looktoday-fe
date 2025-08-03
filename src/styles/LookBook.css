@@ -17,3 +17,96 @@
     font-weight: 700;
     margin-bottom: 40px;
 }
+
+.lookbook-best {
+    margin-bottom: 77px;
+}
+
+.lookbook-filter {
+    margin-bottom: 13px;
+}
+
+.lookbook-filtered {
+    margin-bottom: 23px;
+}
+
+.lookbook-name {
+    color: #2C2C2C;
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    margin-left: 51px;
+}
+
+.lookbook-best-looks {
+    display: flex;
+    align-items: center;
+    gap: 13.5px;
+}
+
+.lookbook-left-arrow {
+    width: 37.5px;
+    height: 75px;
+    margin-bottom: 80px;
+    cursor: pointer;
+    transform: rotate(180deg);
+}
+
+.lookbook-right-arrow {
+    width: 37.5px;
+    height: 75px;
+    margin-bottom: 80px;
+        cursor: pointer;
+}
+
+.lookbook-left-arrow.disabled,
+.lookbook-right-arrow.disabled {
+    opacity: 10%;
+}
+
+.lookbook hr {
+    border: 0.5px solid #C4C4C4;
+}
+
+.lookbook-sort {
+    display: flex;
+    justify-content: end;
+    margin-top: 20px;
+    margin-bottom: 23px;
+}
+
+.sort-options {
+    display: flex;
+    gap: 23px;
+    color: #969696;
+    font-family: Inter;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.sort-option:hover {
+    color: #2C2C2C;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+
+.sort-option.active {
+    color: #2C2C2C;
+    font-weight: 600;
+}
+
+.best-look-cards {
+    display: flex;
+    gap: 20px;
+}
+
+.look-cards {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 52px 20px;
+}
+
+.lookbook-pagination {
+    margin-top: 136px;
+}
