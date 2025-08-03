@@ -16,18 +16,29 @@ const getTodayObj = () => {
   };
 };
 
-const Calendar = () => {
+const Calendar = ({ value, onChange }) => {
+  // 기존 value는 내장 상태 대신 외부 prop 사용
   const minYear = getTodayObj().year - 4;
   const maxYear = getTodayObj().year;
   const todayObj = getTodayObj();
-  // 날짜 상태
-  const [value, setValue] = useState(`${todayObj.year}-${String(todayObj.month).padStart(2, '0')}-${String(todayObj.day).padStart(2, '0')}`);
+  const calRef = useRef(null);
+
+  // date state를 props.value를 따라가도록
   const [open, setOpen] = useState(false);
-  const [step, setStep] = useState('yearMonth'); // 'yearMonth' 또는 'day'
+  const [step, setStep] = useState('yearMonth');
   const [selectedYear, setSelectedYear] = useState(todayObj.year);
   const [selectedMonth, setSelectedMonth] = useState(todayObj.month);
   const [selectedDay, setSelectedDay] = useState(todayObj.day);
-  const calRef = useRef(null);
+
+  // props에서 value가 오면, 연/월/일도 동기화
+  useEffect(() => {
+    if (value) {
+      const [yy, mm, dd] = value.split('-').map(Number);
+      setSelectedYear(yy);
+      setSelectedMonth(mm);
+      setSelectedDay(dd);
+    }
+  }, [value]);
 
   // 창 밖 클릭 시 닫힘 로직
   useEffect(() => {
@@ -52,12 +63,13 @@ const Calendar = () => {
 
   const handleDayClick = (day, isDisabled = false) => {
     if (isDisabled) return;
-    setSelectedDay(day);
     const newValue = `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    setValue(newValue);
+    setSelectedDay(day);
+    if (onChange) onChange(newValue);   // ⭐ LookToday로 반영!
     setOpen(false);
     setStep('yearMonth');
   };
+
 
   // 화살표 월 전후 이동
   const monthMove = (dir) => {
@@ -84,19 +96,15 @@ const Calendar = () => {
     setSelectedMonth(m);
   };
 
-  // 오늘, 삭제 버튼
   const handleToday = () => {
-    setValue(`${todayObj.year}-${String(todayObj.month).padStart(2, '0')}-${String(todayObj.day).padStart(2, '0')}`);
-    setSelectedYear(todayObj.year);
-    setSelectedMonth(todayObj.month);
-    setSelectedDay(todayObj.day);
+    const todayStr = `${todayObj.year}-${String(todayObj.month).padStart(2, '0')}-${String(todayObj.day).padStart(2, '0')}`;
+    if (onChange) onChange(todayStr);
     setOpen(false);
     setStep('yearMonth');
   };
   const handleDelete = () => {
-    setValue('');
-    setSelectedYear(todayObj.year);
-    setSelectedMonth(todayObj.month);
+    if (onChange) onChange('');
+    setOpen(false);
     setStep('yearMonth');
   };
 
@@ -127,12 +135,16 @@ const Calendar = () => {
     <div>
       {/* 달력 버튼 */}
       <div
-        className="calendar-btn"
+        className={`calendar-btn ${!value ? 'empty' : 'selected'}`}
         onClick={() => setOpen(!open)}
       >
-        <span className="calendar-btn-date">{value || '날짜 선택'}</span>
+        {/* 날짜 선택 또는 날짜 값 */}
+        <span className="calendar-btn-date">
+          {value || '날짜 선택'}
+        </span>
         <img src={calendarIcon} alt="calendar" />
       </div>
+
       {open && (
         <div className="calendar-modal" ref={calRef}>
           {step === 'yearMonth' && (

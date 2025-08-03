@@ -11,12 +11,19 @@ import Speedicon from '../../assets/images/speed.png';
 import Chevronright from '../../assets/images/chevronright.png';
 
 const TodayWeather = () => {
+    // eslint-disable-next-line no-unused-vars
     const [region, setRegion] = useState("서울특별시 노원구");
+    // eslint-disable-next-line no-unused-vars
     const [date, setdate] = useState("09:30 • 03/08 ")
+    // eslint-disable-next-line no-unused-vars
     const [temperature, settemperature] = useState(24);
+    // eslint-disable-next-line no-unused-vars
     const [sunrizetime, setsunrizetime] = useState("7:00");
+    // eslint-disable-next-line no-unused-vars
     const [sunsettime, setsunsettime] = useState("7:00");
+    // eslint-disable-next-line no-unused-vars
     const [humidity, sethumidity] = useState("10");
+    // eslint-disable-next-line no-unused-vars
     const [speed, setspeed] = useState("2");
     const [selectedRegion, setSelectedRegion] = useState('');
     const regionTemperatures = {
