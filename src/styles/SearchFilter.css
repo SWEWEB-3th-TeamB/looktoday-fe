@@ -26,3 +26,23 @@
     opacity: 50%;
     margin-top: 3px;
 }
+
+.search-filterd {
+    display: flex;
+    gap: 14px;
+}
+
+.search-filterd-item {
+    width: fit-content;
+    height: 38px;
+    border-radius: 19px;
+    background: #E2F4FF;
+    display: flex;
+    gap: 14px;
+    line-height: 38px;
+    padding: 0 18px;
+}
+
+.search-filterd-closed {
+    cursor: pointer;
+}
