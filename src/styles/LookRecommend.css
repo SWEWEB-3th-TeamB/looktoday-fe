@@ -1,0 +1,283 @@
+.LookRecommend-title {
+    position: absolute;
+    top: 138px;
+    left: 50%;
+    transform: translate(-50%);
+    color: #2C2C2C;
+    font-family: "Inria Serif", serif;
+    font-size: 45px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+@font-face {
+    font-family: 'InriaSerif';
+    src: url('../assets/fonts/InriaSerif-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../assets/fonts/Inter-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+.LookRecommend-contents {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: static;
+    transform: none;
+}
+
+.LookRecommend-weather-wrapper {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 234px;
+    left: 19px;
+}
+
+
+.LookRecommend-weather-title {
+    color: #2C2C2C;
+    font-family: Inter;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 7px;
+}
+
+.LookRecommend-weather-card {
+    position: relative;
+    width: 700px;
+    height: 213px;
+    flex-shrink: 0;
+    border-radius: 51px;   
+    border: 1px solid #2C2C2C;
+    left: -89px;
+}
+
+.LookRecommend-comment {
+    position: absolute;
+    top: 132px;
+    left: 146px;
+    color: #2C2C2C;
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 25px;
+}
+
+.LookRecommend-icon {
+    position: absolute;
+    top: 21px;
+    left: 135px;
+    width: 103px;
+    height: 103px;
+    padding: 0 7px 7px 0;
+    flex-shrink: 0;
+}
+
+.LookRecommend-temparature {
+    position: absolute;
+    top: 46px;
+    left: 235px;
+    color: #2C2C2C;
+    font-family: Inter;
+    font-size: 40px;
+    font-weight: 400;
+    letter-spacing: -2px;
+}
+
+.LookRecommend-humidityperceivedtemperature {
+    position: absolute;
+    top: 78px;
+    left: 370px;
+    color: #2C2C2C;
+    font-family: Inter;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: -0.65px;
+}
+
+.LookRecommend-region {
+    position: absolute;
+    top: 46px;
+    left: 361px;
+    color: #2C2C2C;
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 20px;
+}
+
+.LookRecommend-RegionSelect {
+    z-index: 4;
+    position: absolute;
+    top: 142px;
+    left: 440px;
+    width: 155px;
+    height: 50px;
+    border-radius: 5px;
+    border: 1px solid #FFF;
+    background: #2C2C2C;
+    color: #FFF;
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.8px;
+}
+
+.LookRecommend-outfit-wrapper {
+    position: absolute;
+    top: 258px;
+    left: 54.06%;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.LookRecommend-outfit {
+    display: flex;
+    gap: 12.23px;
+}
+
+.LookRecommend-outfit-title {
+    color: #2C2C2C;
+    font-family: Inter;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.LookRecommend-outfit1 {
+    width: 302.767px;
+    height: 232px;
+    flex-shrink: 0;
+    aspect-ratio: 302.77/232.00;
+}
+
+.LookRecommend-outfit2 {
+    width: 147.183px;
+    height: 232px;
+    flex-shrink: 0;
+    aspect-ratio: 147.18/232.00;
+}
+
+.LookRecommend-weatheritem-wrapper {
+    position: absolute;
+    top: 519px;
+    left: 7.89%;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.LookRecommend-weatheritem {
+    display: flex;
+    gap: 9.19px;
+}
+
+.LookRecommend-weatheritem-title {
+    color: #2C2C2C;
+    font-family: Inter;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.LookRecommend-weatheritem1 {
+    width: 220.811px;
+    height: 215px;
+    flex-shrink: 0;
+    aspect-ratio: 220.81/215.00;
+}
+
+.LookRecommend-weatheritem2 {
+    width: 137.063px;
+    height: 215px;
+    flex-shrink: 0;
+    aspect-ratio: 137.06/15.00;
+}
+
+.LookRecommend-acc-wrapper {
+    position: absolute;
+    top: 531px;
+    left: 48.28%;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.LookRecommend-acc {
+    display: flex;
+    gap: 8px;
+}
+
+.LookRecommend-acc-title {
+    color: #2C2C2C;
+    font-family: Inter;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.LookRecommend-acc1 {
+    width: 169.402px;
+    height: 208px;
+    flex-shrink: 0;
+    aspect-ratio: 169.40/208.00;
+}
+
+.LookRecommend-acc2 {
+    width: 156.053px;
+    height: 208px;
+    flex-shrink: 0;
+    aspect-ratio: 156.05/208.00;
+}
+
+.LookRecommend-acc3 {
+    width: 254.364px;
+    height: 209px;
+    flex-shrink: 0;
+    aspect-ratio: 254.36/209.00;
+}
+
+.weather-outfit {
+    gap: 40px;
+}
+
+@media (max-width:1400px) {
+    
+.LookRecommend-outfit-wrapper {
+    position: absolute;
+    top: 258px;
+    left: 692px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+
+.LookRecommend-acc-wrapper {
+    position: absolute;
+    top: 531px;
+    left: 101px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.LookRecommend-acc-wrapper {
+    position: absolute;
+    top: 531px;
+    left: 618px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+}
