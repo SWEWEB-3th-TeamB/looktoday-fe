@@ -29,11 +29,11 @@
 /* '날짜 선택' 상태 */
 .calendar-btn.empty .calendar-btn-date {
   position: absolute;
-  top: 10px;
-  left: 31px;
-  color: #4E4E4E;
+  top: 14.5x;
+  left: 37px;
+  color: #626262;
   font-family: 'Inter', sans-serif;
-  font-size: 17px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
@@ -110,23 +110,6 @@
   width: 11.405px;
   height: 11.405px;
   flex-shrink: 0;
-}
-
-.calendar-arrow-wrapper {
-  position: absolute;
-  top: 1px;
-  right: 11px;
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
-
-/* 달력 상/하 월 이동 화살표의 크기 */
-.calendar-arrow {
-  width: 30px;
-  height: 30px;
-  flex-shrink: 0;
-  cursor: pointer;
 }
 
 /* '년' 리스트 */
@@ -219,6 +202,7 @@
   margin-top: 10px;
   margin-left: 11px;
 }
+
 .calendar-day-yearmonth-box {
   width: 114px;
   height: 32px;
@@ -234,6 +218,23 @@
   margin-right: 28px;
   cursor: pointer;
   flex-shrink: 0; /* 폭 줄어드는 것 방지 */
+}
+
+.calendar-arrow-wrapper {
+  position: absolute;
+  top: 1px;
+  right: 11px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+/* 달력 상/하 월 이동 화살표의 크기 */
+.calendar-arrow {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
 /* 요일 표시 */

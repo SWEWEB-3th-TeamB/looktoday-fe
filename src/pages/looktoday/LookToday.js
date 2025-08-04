@@ -2,15 +2,11 @@ import React, { useState, useRef } from 'react';
 
 import Menu from '../../components/Menu';
 import Calendar from '../../components/Calendar';
-import LocationForm from '../../components/LocationForm';
+import Time from '../../components/Time';
+import RegionSelector from '../../components/RegionSelector';
 import Footer from '../../components/Footer';
 
 import '../../styles/LookToday.css';
-
-import sun from '../../assets/images/sun.png';
-import cloud from '../../assets/images/cloud.png';
-import rain from '../../assets/images/rain.png';
-import snow from '../../assets/images/snow.png';
 
 import freezing from '../../assets/images/freezing.png';
 import chilly from '../../assets/images/chilly.png';
@@ -18,9 +14,7 @@ import cool from '../../assets/images/cool.png';
 import warm from '../../assets/images/warm.png';
 import hot from '../../assets/images/hot.png';
 import sweltering from '../../assets/images/sweltering.png';
-
 import plus from '../../assets/images/plus.png';
-
 import humid from '../../assets/images/humid.png';
 import comfortable from '../../assets/images/comfortable.png';
 import dry from '../../assets/images/dry.png';
@@ -34,12 +28,6 @@ const imageMap = {
   sweltering
 };
 
-const humidityImageMap = {
-  humid,
-  comfortable,
-  dry,
-};
-
 const temperatureOptions = [
   { label: '무더워요', key: 'sweltering', color: '#D55E5E' },
   { label: '더워요', key: 'hot', color: '#E89270' },
@@ -49,22 +37,30 @@ const temperatureOptions = [
   { label: '추워요', key: 'freezing', color: '#476DB2' },
 ];
 
+const humidityImageMap = {
+  humid,
+  comfortable,
+  dry,
+};
+
 const humidityOptions = [
-  { label: '습해요', key: 'humid', color: '#5D8CCF' },
-  { label: '괜찮아요', key: 'comfortable', color: '#B8EFB3' },
-  { label: '건조해요', key: 'dry', color: '#E56A6A' },
+  { label: '습해요', key: 'humid' },
+  { label: '괜찮아요', key: 'comfortable' },
+  { label: '건조해요', key: 'dry' },
 ];
 
 const LookToday = () => {
   const [selected, setSelected] = useState('warm');
-  // 체감 습도 선택 상태
-  const [humidity, setHumidity] = useState('comfortable');
 
-  // 공개 여부 토글 상태
-  const [isPublic, setIsPublic] = useState(true);
+  const [dateValue, setDateValue] = useState(null); // 선택된 날짜(예: 'YYYY-MM-DD')
 
-  // 공개 여부 토글 함수
-  const togglePublic = () => setIsPublic(prev => !prev);
+  // 시간 선택 상태
+  const [selectedTime, setSelectedTime] = useState(null);
+
+  // 핸들러 추가
+  const handleTimeChange = (time) => {
+    setSelectedTime(time);
+  };
 
   // 기록 데이터와 lastId 상태 추가
   // eslint-disable-next-line no-unused-vars
@@ -88,6 +84,26 @@ const LookToday = () => {
     setPosts(posts.filter(post => post.id !== id));
   };
 
+  // 시/도, 구/군 선택 상태
+  const [selectedSido, setSelectedSido] = useState('');
+  const [selectedGugun, setSelectedGugun] = useState('');
+
+  // RegionSelector에서 선택값 받을 함수
+  const handleRegionChange = (value, regionType) => {
+    if (regionType === 'sido') {
+      setSelectedSido(value);
+      setSelectedGugun(''); // 시/도가 변경되면 군/구 초기화
+    } else if (regionType === 'gugun') {
+      setSelectedGugun(value);
+    }
+  };
+
+  // 공개 여부 토글 상태
+  const [isPublic, setIsPublic] = useState(true);
+
+  // 공개 여부 토글 함수
+  const togglePublic = () => setIsPublic(prev => !prev);
+
   const [preview, setPreview] = useState(null);
   const fileInputRef = useRef();
 
@@ -101,25 +117,28 @@ const LookToday = () => {
     }
   };
 
+  // 체감 습도 선택 상태
+  const [humidity, setHumidity] = useState('comfortable');
+
+  const [review, setReview] = useState('');
+  const [isReviewFocused, setIsReviewFocused] = useState(false);
+
   const handleReviewChange = e => {
     let value = e.target.value;
     if (value.length > 40) value = value.slice(0, 40);
     setReview(value);
   };
 
-
-  const [review, setReview] = useState('');
-  const [isReviewFocused, setIsReviewFocused] = useState(false);
-
-  // eslint-disable-next-line no-unused-vars
-  const [dateValue, setDateValue] = useState(null); // 선택된 날짜(예: 'YYYY-MM-DD')
-
-  // 팝업 열림 상태
-  const [isCompletePopupOpen, setIsCompletePopupOpen] = useState(false);
-
   // 완료 버튼 활성화 조건 검사 함수
   const isCompleteEnabled = !!(
-    dateValue && selected && humidity && preview && review.trim().length > 0
+    dateValue && 
+    selected && 
+    humidity && 
+    preview && 
+    review.trim().length > 0 && 
+    selectedTime !== null && 
+    selectedSido !== '' &&
+    selectedGugun !== ''
   );
 
   // 완료 버튼 클릭 핸들러
@@ -127,6 +146,9 @@ const LookToday = () => {
     if (!isCompleteEnabled) return; // 비활성 상태일 땐 작동 안 함
     setIsCompletePopupOpen(true);
   };
+
+  // 팝업 열림 상태
+  const [isCompletePopupOpen, setIsCompletePopupOpen] = useState(false);
 
   // 팝업 닫기
   const closePopup = () => {
@@ -136,56 +158,10 @@ const LookToday = () => {
   return (
     <>
       <div className="looktoday-wrapper">
-        <Menu />
+
         <div className="looktoday-container">
           <h1 className="looktoday-title">Record My Look</h1>
         </div>
-
-        <div className="calendar-btn-wrapper">
-          <Calendar 
-            value={dateValue}
-            onChange={setDateValue}  // 캘린더가 선택 날짜 전달 함수
-          />
-        </div>
-
-        <img src={sun} alt="맑음" className="icon-sun" />
-        <img src={cloud} alt="구름" className="icon-cloud" />
-        <img src={rain} alt="비" className="icon-rain" />
-        <img src={snow} alt="눈" className="icon-snow" />
-
-        {/* 기록 번호 표시 */}
-        <div className="record-number">
-          {posts.length > 0 ? `No. ${posts[posts.length - 1].id}` : 'No. 0'}
-        </div>
-
-        <hr className="looktoday-hr" />
-
-        <div className="looktoday-location">
-          <LocationForm />
-          <style>{`
-            .looktoday-location .form-error-message { display: none !important; }
-          `}</style>
-        </div>
-
-        {/* 공개 여부 토글 UI 시작 */}
-        <div className="public-toggle-label">공개</div>
-
-        <div
-          className={`public-toggle-switch ${isPublic ? 'public' : 'private'}`}
-          onClick={togglePublic}
-          role="switch"
-          aria-checked={isPublic}
-          tabIndex={0}
-          onKeyDown={e => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              togglePublic();
-            }
-          }}
-        >
-          <div className="public-toggle-thumb" />
-        </div>
-        {/* 공개 여부 토글 UI 끝 */}
 
         <div className="temp-wrapper">
           <img
@@ -212,20 +188,59 @@ const LookToday = () => {
             ))}
           </div>
         </div>
-        
-        {/* ---------------------- 체감 습도 입력 ---------------------- */}
+
+        <div className="calendar-btn-wrapper">
+          <Calendar 
+            value={dateValue}
+            onChange={setDateValue}
+          />
+        </div>
+
+        <Time value={selectedTime} onChange={handleTimeChange} />
+
+        <div className="record-number">
+          {posts.length > 0 ? `No. ${posts[posts.length - 1].id}` : 'No. 0'}
+        </div>
+
+        <hr className="looktoday-hr" />
+
+        <div className="looktoday-location">
+          <RegionSelector
+            onRegionChange={(value, type) => {
+              handleRegionChange(value, type);
+            }}
+            selectedSido={selectedSido}
+            selectedGugun={selectedGugun}
+          />
+          <style>{`
+            .looktoday-location .form-error-message { display: none !important; }
+          `}</style>
+        </div>
+
+        <div className="public-toggle-label">공개</div>
+        <div
+          className={`public-toggle-switch ${isPublic ? 'public' : 'private'}`}
+          onClick={togglePublic}
+          role="switch"
+          aria-checked={isPublic}
+          tabIndex={0}
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              togglePublic();
+            }
+          }}
+        >
+          <div className="public-toggle-thumb" />
+        </div>
 
         <div className="humidity-label">체감 습도</div>
-
-        {/* 체감 습도 이미지 */} 
         <img
           className="humidity-image"
           src={humidityImageMap[humidity]}
           alt={humidity}
         />
-
-        {/* humidityOptions를 .map()으로 버튼 렌더링 */}
-        {humidityOptions.map(({ label, key, color }) => (
+        {humidityOptions.map(({ label, key }) => (
           <button
             key={key}
             className={`humidity-btn ${key} ${humidity === key ? 'active' : ''}`}
@@ -236,7 +251,6 @@ const LookToday = () => {
         ))}
 
         <div className="codi-image-preview-box">
-          {/* 파일 input ― 항상 하나만 둠 */}
           <input
             id="codi-upload-input"
             type="file"
@@ -245,7 +259,6 @@ const LookToday = () => {
             ref={fileInputRef}
             onChange={onChangeImage}
           />
-
           {/* 사진 없을 때: plus 버튼 label로 연결 */}
           {!preview && (
             <label
@@ -257,7 +270,6 @@ const LookToday = () => {
               <img src={plus} alt="사진 추가" />
             </label>
           )}
-
           {/* 사진 있을 때: img도 label로 감싸 input 연결 */}
           {preview && (
             <label
@@ -273,7 +285,6 @@ const LookToday = () => {
               />
             </label>
           )}
-
           {/* 설명문구 ― 사진 없을 때만 */}
           {!preview && (
             <div className="codi-image-upload-desc">코디를 추가하세요</div>
@@ -289,16 +300,12 @@ const LookToday = () => {
             onBlur={() => setIsReviewFocused(false)}
             rows={2}
           />
-          {/* 가이드 텍스트 */}
           {!review && !isReviewFocused && (
             <span className="codi-review-placeholder">오늘의 코디 한 줄 평가</span>
           )}
-          {/* 글자 카운트 */}
           <span className="codi-review-counter">{review.length} / 40</span>
         </div>
 
-        {/* 예시: 날짜 선택 후 setDateValue(value) 호출 필요 */}
-        {/* 완료 버튼 */}
         <button
           className={`complete-btn ${isCompleteEnabled ? 'active' : 'disabled'}`}
           style={{ top: 765, left: 971, position: 'absolute' }}
@@ -308,7 +315,6 @@ const LookToday = () => {
           완료
         </button>
 
-        {/* 팝업 - isCompletePopupOpen true 일 때 화면 전체 옵셥 박스 + 중앙 팝업 */}
         {isCompletePopupOpen && (
           <>
             <div className="complete-popup-overlay" onClick={closePopup} />
@@ -329,10 +335,15 @@ const LookToday = () => {
             </div>
           </>
         )}
+
       </div>
+
+      <Menu />
+
       <div className="looktoday-footer">
         <Footer />
       </div>
+      
     </>
   );
 };

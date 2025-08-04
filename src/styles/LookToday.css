@@ -29,7 +29,6 @@
   line-height: normal;
 }
 
-/* 온도계 이미지 */
 .temp-wrapper {
   position: absolute;
   top: 267px;
@@ -94,6 +93,23 @@
   left: 425px;
 }
 
+.looktoday-location {
+  position: absolute;
+  top: 334px;
+  left: 425px;
+}
+
+.region-selector {
+  display: flex;
+  gap: 9px;
+}
+
+/* dropdown 목록이 사진 미리보기 박스 위에 표시됨 */
+.location-dropdown-box {
+  position: absolute;
+  z-index: 2000; /* 충분히 큰 값. (1000~9999 중 하나) */
+}
+
 .record-number {
   position: absolute;
   top: 282px;
@@ -120,7 +136,6 @@
   flex-shrink: 0;
   margin: 0;
   padding: 0;
-  z-index: 1;
 }
 
 .public-toggle-label {
@@ -132,7 +147,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   line-height: normal;
   user-select: none;
   cursor: default;
@@ -145,7 +160,6 @@
   width: 66px;
   height: 31px;
   border-radius: 20px;
-  box-shadow: 0 -2px 3px 0 rgba(0, 0, 0, 0.20) inset;
   cursor: pointer;
   transition: background 0.3s ease;
   display: flex;
@@ -263,22 +277,6 @@
   justify-content: start;
 }
 
-/* 미리보기 이미지 (사진 선택 시 나타남) */
-.codi-image-preview-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 15px;
-  display: block;
-}
-
-.codi-image-preview-img-label {
-  display: block;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-}
-
 .codi-image-upload-btn {
   position: absolute;
   top: 113px;
@@ -296,6 +294,21 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+.codi-image-preview-img-label {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.codi-image-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px;
+  display: block;
 }
 
 .codi-image-upload-desc {
@@ -389,17 +402,15 @@
 
 /* 비활성화 상태 */
 .complete-btn.disabled {
-  background-color: #EBEBEB; /* fill */
+  background-color: #EBEBEB;
   color: #959595;
-  stroke: #FFF;
-  stroke-width: 1px;
   cursor: not-allowed;
   pointer-events: none; /* 클릭 안되도록 */
 }
 
 /* 활성화 상태 */
 .complete-btn.active {
-  background-color: #2C2C2C; /* fill */
+  background-color: #2C2C2C;
   color: #FFF;
   stroke: #FFF;
   stroke-width: 1px;
@@ -431,22 +442,6 @@
   z-index: 1000;
 }
 
-/* 팝업 박스 */
-.complete-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 670px;
-  height: 300px;
-  transform: translate(-50%, -50%);
-  background: #FFF;
-  border-radius: 20px;
-  box-sizing: border-box;
-  /* 내부 요소를 수동 위치로 조정할 것이므로 기본 플렉스 해제 */
-  z-index: 1000;
-}
-
-/* 제목 */
 .complete-popup-title {
   /* 공통 스타일: 가운데 정렬, 줄바꿈 허용 */
   position: absolute;
@@ -461,11 +456,9 @@
   line-height: normal;
   color: #2C2C2C;
 }
-
 .complete-popup-title .title-english {
   font-family: 'Inria Serif', serif;
 }
-
 .complete-popup-title .title-korean {
   font-family: 'Inter', sans-serif;
 }
@@ -511,23 +504,6 @@
   justify-content: center;
 }
 
-.looktoday-location {
-  position: absolute;
-  top: 334px;
-  left: 425px;
-}
-
-.location-form-inputs {
-  display: flex;
-  gap: 9px;
-}
-
-/* dropdown 목록이 사진 미리보기 박스 위에 표시됨 */
-.location-dropdown-box {
-  position: absolute;
-  z-index: 2000; /* 충분히 큰 값. (1000~9999 중 하나) */
-}
-
 .looktoday-footer {
   position: absolute;
   top: 877px;
@@ -537,45 +513,4 @@
   margin-left: calc(-50vw + 50%); /* 가운데 정렬 보정, 중앙에 맞출때(옵션) */
   background: #94C8E6;
   z-index: 50;
-}
-
-.icon-sun {
-  position: absolute;
-  top: 259px;
-  left: 727px;
-  width: 38px;
-  height: 46px;
-  flex-shrink: 0;
-  object-fit: contain;
-  z-index: 10;
-}
-.icon-cloud {
-  position: absolute;
-  top: 259px;
-  left: 772px;
-  width: 38px;
-  height: 46px;
-  flex-shrink: 0;
-  object-fit: contain;
-  z-index: 10;
-}
-.icon-rain {
-  position: absolute;
-  top: 259px;
-  left: 817px;
-  width: 38px;
-  height: 46px;
-  flex-shrink: 0;
-  object-fit: contain;
-  z-index: 10;
-}
-.icon-snow {
-  position: absolute;
-  top: 259px;
-  left: 862px;
-  width: 38px;
-  height: 46px;
-  flex-shrink: 0;
-  object-fit: contain;
-  z-index: 10;
 }

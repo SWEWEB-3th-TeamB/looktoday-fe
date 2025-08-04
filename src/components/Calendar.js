@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
+
 import '../styles/Calendar.css';
-import calendarIcon from '../assets/images/calendar.png';
+
+import calendarEmpty from '../assets/images/calendar-empty.png';
+import calendarSelected from '../assets/images/calendar-selected.png';
 import arrowUp from '../assets/images/arrow-up.png';
 import calArrowUp from '../assets/images/calendar-arrow-up.png';
 import calArrowDown from '../assets/images/calendar-arrow-down.png';
@@ -17,7 +20,6 @@ const getTodayObj = () => {
 };
 
 const Calendar = ({ value, onChange }) => {
-  // 기존 value는 내장 상태 대신 외부 prop 사용
   const minYear = getTodayObj().year - 4;
   const maxYear = getTodayObj().year;
   const todayObj = getTodayObj();
@@ -69,7 +71,6 @@ const Calendar = ({ value, onChange }) => {
     setOpen(false);
     setStep('yearMonth');
   };
-
 
   // 화살표 월 전후 이동
   const monthMove = (dir) => {
@@ -130,7 +131,6 @@ const Calendar = ({ value, onChange }) => {
     return days;
   };
 
-  // 렌더링
   return (
     <div>
       {/* 달력 버튼 */}
@@ -142,7 +142,7 @@ const Calendar = ({ value, onChange }) => {
         <span className="calendar-btn-date">
           {value || '날짜 선택'}
         </span>
-        <img src={calendarIcon} alt="calendar" />
+        <img src={!value ? calendarEmpty : calendarSelected} alt="calendar" />
       </div>
 
       {open && (
