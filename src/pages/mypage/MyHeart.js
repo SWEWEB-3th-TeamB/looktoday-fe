@@ -9,11 +9,11 @@ const myHeart = () => {
   return (
     <>
       <div className="myheart-wrapper">
-        <Menu />
         <div className="myheart-container">
           <h1 className="myheart-title">My Heart</h1>
         </div>
       </div>
+      <Menu />
       <Sidebar />  
       <div className="myheart-footer">
         <Footer />

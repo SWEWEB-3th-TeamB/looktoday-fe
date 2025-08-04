@@ -1,0 +1,204 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/Inter-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.time-box {
+  width: 100px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  border: 1px solid #959595;
+  background: #FFF;
+  position: absolute;
+  user-select: none;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+}
+
+.time-box.empty .time-display {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.time-box.empty .time-text {
+  color: #626262;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: normal;
+  padding-left: 11.5px;
+}
+
+.time-box.empty .time-arrow {
+  width: 17.66px;
+  height: 17.66px;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
+  position: absolute;
+  top: 13.5px;
+  left: 72px;
+  user-select: none;
+}
+
+.time-box.selected .time-display {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+}
+
+.time-box.selected .time-text {
+  color: #4e4e4e;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: normal;
+  padding-left: 27px;
+}
+
+.time-box.selected .time-arrow {
+  width: 17.66px;
+  height: 17.66px;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
+  position: absolute;
+  top: 13.5px;
+  left: 71px;
+  user-select: none;
+}
+
+.time-arrow {
+  position: absolute;
+  top: 13.5px;
+  left: 72px; /* empty 상태 위치 */
+  width: 17.66px;
+  height: 17.66px;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
+  user-select: none;
+  transition: transform 0.2s ease;
+  transform-origin: center;
+}
+
+.time-arrow.rotate {
+  transform: rotate(180deg);
+}
+
+/* selected 상태 화살표 위치가 left: 71px 이므로 조정 필요 시 아래와 같이 따로 지정 가능 */
+.time-box.selected .time-arrow {
+  left: 71px;
+}
+
+/* Dropdown 시간 목록 */
+.time-dropdown {
+  position: absolute;
+  width: 100px;
+  height: 120px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  border: 1px solid #959595;
+  background: #FFF;
+  top: 56px; /* 46px (box height) + 10px gap */
+  left: 0;
+  z-index: 5000;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  overflow: hidden; /* 외부 넘침 숨김 */
+  padding-top: 7px; /* 첫번째 숫자와 스크롤바 시작점 맞춤 */
+  box-sizing: border-box;
+}
+
+/* 옵션 목록: 오른쪽 스크롤바 공간 만큼 너비 조절, 스크롤바 숨김 */
+.time-options {
+  font-variant-numeric: tabular-nums;
+  margin-top: 0px; /* padding-top으로 이미 여백 조절 */
+  flex-grow: 1;
+  overflow-y: auto;
+
+  max-height: 106px;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: normal;
+  color: #626262;
+
+  /* 브라우저 기본 스크롤바 숨기기 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.time-options::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* 각 시간 항목 */
+.time-option {
+  user-select: none;
+  cursor: pointer;
+  width: 100%;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.time-option > span {
+  padding-left: 27px; /* 텍스트 왼쪽 간격 */
+}
+
+.time-option:last-child {
+  margin-bottom: 0; /* 마지막 숫자 아래 여백 제거 */
+}
+
+/* 활성화된 시간 */
+.time-option.active {
+  font-weight: 400;
+  color: #2C2C2C;
+  background: #94C8E6;
+  border-radius: 5px;
+  padding-left: 0;
+  padding-right: 0;
+  height: 21px; /* 기존 18px에서 +3px */
+  display: flex;
+  align-items: center;
+}
+
+.time-option.active > span {
+  padding-left: 27px; /* 텍스트 위치 조정 */
+}
+
+/* 커스텀 스크롤바 트랙: 오른쪽에 고정 */
+.time-scrollbar-track {
+  width: 6px;
+  height: 106px; /* 120px - padding-top(7px) - margin bottom 약간 제외 */
+  flex-shrink: 0;
+  border-radius: 3.5px;
+  background: #fff;
+  position: relative;
+  margin-left: auto;
+  margin-right: 3px;
+  margin-top: 0;
+}
+
+.time-scrollbar {
+  width: 6px;
+  background: #959595; /* 스크롤바 색상 */
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 3.5px;
+  transition: transform 0.1s linear;
+  will-change: transform;
+  /* 스크롤바 너비가 트랙과 같도록 맞춤 */
+  box-sizing: border-box;
+}

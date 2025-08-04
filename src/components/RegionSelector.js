@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import '../styles/RegionSelector.css';
-import arrow from '../../src/assets/images/regoin-arrow.png';
+import arrow from '../../src/assets/images/region-arrow.png';
 
 const regions = {
   '서울특별시': ['강남구', '강동구', '강북구', '강서구', '관악구',
@@ -32,22 +32,44 @@ const RegionSelector = ({ onRegionChange }) => {
   const [sidoOpen, setSidoOpen] = useState(false);
   const [gugunOpen, setGugunOpen] = useState(false);
 
+  // ref 할당
+  const containerRef = useRef(null);
+
+  // 바깥 클릭 감지 함수
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setSidoOpen(false);
+        setGugunOpen(false);
+      }
+    }
+
+    if (sidoOpen || gugunOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [sidoOpen, gugunOpen]);
+
   const handleSidoSelect = (value) => {
     setSido(value);
     setGugun('');
-    onRegionChange(value);
+    onRegionChange(value, 'sido');  // 두 번째 인자로 변경 종류 전달);
     setSidoOpen(false);
     setGugunOpen(false); // 동시에 열리지 않도록
   };
 
   const handleGugunSelect = (value) => {
     setGugun(value);
+    onRegionChange(value, 'gugun'); // 두 번째 인자로 변경 종류 전달
     setGugunOpen(false);
     setSidoOpen(false); // 동시에 열리지 않도록
   };
 
   return (
-    <div className="region-selector">
+    <div className="region-selector" ref={containerRef}>
       <div className="region-selector-sido">
         <div
           className={`region-selector-form ${sido === '' ? 'placeholder' : ''}`}
