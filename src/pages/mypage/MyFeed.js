@@ -6,12 +6,13 @@ import Calendar from '../../components/Calendar';
 import LookCard from '../../components/LookCard';
 import Pagination from '../../components/Pagination';
 import Footer from '../../components/Footer';
+import MyFeedCardOption from '../../components/MyFeedCardOption';
 
 import lookbook from '../../assets/images/lookbook-empty.png';
 
-import '../../styles/MyHeart.css';
+import '../../styles/MyFeed.css';
 
-const MyHeart = () => {
+const MyFeed = () => {
 
   const [activeFilter, setActiveFilter] = useState(null); // '12m', '1m', '2m', 'custom'
   const [startDate, setStartDate] = useState('');
@@ -43,13 +44,13 @@ const MyHeart = () => {
     <>
       <Menu />
       <Sidebar />
-      <div className="myheart-wrapper">
+      <div className="myfeed-wrapper">
 
-        <div className="myheart-container">
-          <h1 className="myheart-title">MY HEART</h1>
+        <div className="myfeed-container">
+          <h1 className="myfeed-title">MY FEED</h1>
         </div>
 
-        <div className="myheart-filter-bar">
+        <div className="myfeed-filter-bar">
           {/* 최근 12개월 */}
           <button
             className={`filter-btn-12m${activeFilter === '12m' ? ' active' : ''}`}
@@ -112,37 +113,42 @@ const MyHeart = () => {
           >조회</button>
         </div>
 
-        <div className="myheart-guide-text">
+        <div className="myfeed-guide-text">
           최대 12개월 단위로 조회 가능하며, 최근 5년간의 게시물을 조회하실 수 있습니다.
         </div>
 
-        <div className="myheart-hr-container">
-          <hr className="myheart-hr" />
-          <span className="myheart-count-text">총 {posts.length}건</span>
+        <div className="myfeed-hr-container">
+          <hr className="myfeed-hr" />
+          <span className="myfeed-count-text">총 {posts.length}건</span>
         </div>
 
-        <div className="myheart-cards">
-          {[...Array(8)].map((_, index) => (
-            <LookCard
-                key={index}
-                image={lookbook}
-                locationTemp="서울시 노원구 · 29℃"
-                nickname="닉네임"
-                likeCount={11}
-            />
-          ))}
+        <div className="myfeed-cards hide-nickname-heart">
+            {[...Array(8)].map((_, index) => (
+                <div key={index} className="myfeed-card-with-option" style={{ position: "relative", width: "224.5px" }}>
+                    {/* 기존 카드 렌더링 */}
+                    <LookCard
+                        image={lookbook}
+                        locationTemp="서울시 노원구 · 29℃"
+                        nickname="닉네임"
+                        likeCount={11}
+                    />
+
+                    {/* 옵션 버튼과 옵션창 */}
+                    <MyFeedCardOption />
+                </div>
+            ))}
         </div>
 
-        <div className="myheart-pagination">
+        <div className="myfeed-pagination">
           <Pagination />
         </div>
       </div>
 
-      <div className="myheart-footer">
+      <div className="myfeed-footer">
         <Footer />
       </div>
     </>
   );
 };
 
-export default MyHeart;
+export default MyFeed;

@@ -8,6 +8,7 @@ import SignUp from './pages/auth/SignUp';
 import SignUpComplete from './pages/auth/SignUpComplete';
 import LookRecommend from './pages/weather/LookRecommend';
 import MyHeart from './pages/mypage/MyHeart';
+import MyFeed from './pages/mypage/MyFeed';
 import LookBook from './pages/lookbook/LookBook';
 import Profile from './pages/profilesettings/Profile';
 import ChangePassword from './pages/profilesettings/ChanegePassword';
@@ -26,6 +27,7 @@ function App() {
           <Route path="/sign-up-complete" element={<SignUpComplete />} />
           <Route path="/lookrecommend" element={<LookRecommend />} />
           <Route path="/myheart" element={<MyHeart />} />
+          <Route path="/myfeed" element={<MyFeed />} />
           <Route path="/lookbook" element={<LookBook />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/change-password" element={<ChangePassword />} />

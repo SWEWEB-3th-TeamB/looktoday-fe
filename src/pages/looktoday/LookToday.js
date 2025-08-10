@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 
 import Menu from '../../components/Menu';
 import Calendar from '../../components/Calendar';

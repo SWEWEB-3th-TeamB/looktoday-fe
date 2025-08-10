@@ -13,13 +13,13 @@
 }
 
 /* 전체 wrapper는 사이드바 너비 고려 */
-.myheart-wrapper {
+.myfeed-wrapper {
   max-width: 1280px;
   margin-left: 246px;
   position: relative;
 }
 
-.myheart-container {
+.myfeed-container {
   position: absolute;
   top: 108px; /* 메뉴바 높이 고려 */
   width: 100%;
@@ -27,7 +27,7 @@
   justify-content: center;
 }
 
-.myheart-title {
+.myfeed-title {
   color: #2C2C2C;
   font-family: 'Inria Serif', serif;
   font-size: 45px;
@@ -36,7 +36,7 @@
   line-height: normal;
 }
 
-.myheart-filter-bar {
+.myfeed-filter-bar {
   position: absolute;
   top: 246px;
   /* left: 68px; */
@@ -184,7 +184,7 @@
   pointer-events: auto
 }
 
-.myheart-guide-text {
+.myfeed-guide-text {
   position: absolute;
   top: 317px;
   left: 50%; /* 화면의 가운데 기준 */
@@ -196,20 +196,20 @@
   text-align: center;
 }
 
-.myheart-hr-container {
+.myfeed-hr-container {
   position: absolute;
-  top: 406px;  /* hr의 top */
+  top: 406px; /* hr의 top */
   left: 50%;
   transform: translateX(-50%);
   width: 944px;
 }
 
-.myheart-hr {
+.myfeed-hr {
   width: 100%;
   border: 1px solid #C4C4C4;
 }
 
-.myheart-count-text {
+.myfeed-count-text {
   position: absolute;
   top: -30px; /* hr 위로 올릴 거리 */
   right: 0; /* hr 오른쪽 끝에 맞춤 */
@@ -220,13 +220,13 @@
 }
 
 /* LookCard의 look-img에 강제로 크기 적용 */
-.myheart-cards .look-img {
+.myfeed-cards .look-img {
   width: 220.8px !important;
   height: 276px !important;
   object-fit: cover; /* 비율 유지 + 자르기 */
 }
 
-.myheart-cards {
+.myfeed-cards {
   position: absolute;
   top: 443px;
   left: 50%; /* 화면의 가운데 기준 */
@@ -236,7 +236,7 @@
   gap: 53px 20px;
 }
 
-.myheart-pagination {
+.myfeed-pagination {
   position: absolute;
   top: 1368px;
   width: 100%;
@@ -244,9 +244,68 @@
   justify-content: center;
 }
 
-.myheart-footer {
+.myfeed-footer {
   position: absolute;
   top: 1548px;
   left: 0;
   width: 100%;
+}
+
+/* MyFeed 페이지에서만 닉네임/하트 숨기기 */
+.hide-nickname-heart .look-nick,
+.hide-nickname-heart .look-heart {
+  display: none !important;
+}
+
+.myfeed-card-with-option {
+  position: relative;
+  width: 224.5px;
+}
+
+/* 옵션 버튼 */
+.option-btn {
+  position: absolute;
+  top: 292px;
+  left: 210.7px;
+  width: 4px;
+  height: 16px;
+  flex-shrink: 0;
+  cursor: pointer;
+  z-index: 10;
+}
+.option-btn img {
+  width: 100%;
+  height: 100%;
+}
+
+/* 옵션 창 */
+.option-popup {
+  position: absolute;
+  top: 301px;
+  left: 50%;
+  transform: translateX(-50%) rotate(90deg);
+  display: flex;
+  width: 59px;
+  height: 26px;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  border-radius: 7px;
+  background: #E2F4FF;
+  z-index: 20;
+}
+
+.option-popup button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.option-popup button img {
+  width: 22px;
+  height: 22px;
+  transform: rotate(-90deg);
 }
