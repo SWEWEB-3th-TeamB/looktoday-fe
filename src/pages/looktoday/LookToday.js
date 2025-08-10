@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 
 import Menu from '../../components/Menu';
 import Calendar from '../../components/Calendar';
-import LocationForm from '../../components/LocationForm';
+import RegionSelector from '../../components/RegionSelector';
 import Footer from '../../components/Footer';
 
 import '../../styles/LookToday.css';
@@ -161,7 +161,7 @@ const LookToday = () => {
         <hr className="looktoday-hr" />
 
         <div className="looktoday-location">
-          <LocationForm />
+          <RegionSelector />
           <style>{`
             .looktoday-location .form-error-message { display: none !important; }
           `}</style>

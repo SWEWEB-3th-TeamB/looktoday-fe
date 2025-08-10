@@ -1,7 +1,8 @@
+import { useState } from 'react';
+
 import '../styles/Pagination.css';
 
 import arrow from '../assets/images/pagination-arrow.png'
-import { useState } from 'react';
 
 const Pagination = () => {
     const [currentPage, setCurrentPage] = useState(1);

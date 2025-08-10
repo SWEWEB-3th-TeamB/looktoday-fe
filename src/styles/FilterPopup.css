@@ -1,0 +1,192 @@
+.filter-popup-overlay {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.29);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.filter-popup-content {
+    width: 420px;
+    height: 576px;
+    background: #FFF;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: Inter;
+}
+
+.filter-popup-close {
+    width: 38px;
+    height: 38px;
+    position: absolute;
+    top: 13px;
+    right: 13px;
+    cursor: pointer;
+}
+
+.filter-popup-select {
+    display: flex;
+    margin-top: 65px;
+}
+
+.filter-popup-select-item {
+    width: 140px;
+    text-align: center;
+    padding-bottom: 9px;
+    border-bottom: 2px solid #E8E8E8;
+    color: #7A7A7A;
+    cursor: pointer;
+}
+
+.filter-popup-select-item.active {
+    border-bottom: 2px solid #0C82C6;
+    color: #2C2C2C;
+    font-weight: 600;
+}
+
+.filter-popup-btn {
+    width: 333px;
+    height: 46px;
+    border-radius: 9px;
+    background: #0C82C6;
+    text-align: center;
+    line-height: 46px;
+    color: #FFF;
+    font-size: 16px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 32px;
+    cursor: pointer;
+}
+
+.filter-popup-region {
+    margin: 39px 0 0 44px;
+}
+
+.temp-selector {
+    margin: 30px 0 0 44px;
+}
+
+.temp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 10px;
+    grid-auto-rows: minmax(30px, auto);
+}
+
+.temp-item {
+    display: flex;
+    align-items: center;
+}
+
+.temp-item span {
+    margin-left: 5px;
+    color: #9C9C9C;
+}
+
+.temp-item input[type="radio"]:checked+span {
+    color: #2C2C2C;
+}
+
+.temp-custom-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.temp-custom-inputs input {
+    display: inline-block;
+    width: 133px;
+    height: 33px;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.temp-custom-inputs input:disabled {
+    border: 1px solid #DFDFDF;
+    background: #F2F2F2;
+}
+
+.temp-custom-inputs input:focus {
+    outline: none;
+    border: 1px solid #4ABDFF;
+}
+
+.temp-custom-inputs input::placeholder {
+    color: #626262;
+}
+
+.temp-custom-inputs .tilde {
+    color: #9C9C9C;
+    font-size: 25px;
+}
+
+.temp-custom-inputs .unit {
+    color: #9C9C9C;
+    font-size: 16px;
+}
+
+.filter-popup-date {
+    display: flex;
+    margin: 39px 0 0 44px;
+    align-items: center;
+}
+
+/* FilterPopup.css */
+.filter-popup-date .calendar-btn {
+    width: 145px;
+    height: 46px;
+    border: 1px solid #959595;
+    border-radius: 9px;
+    padding: 6px 10px;
+}
+
+.filter-popup-date .calendar-btn.empty .calendar-btn-date {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    color: #4E4E4E;
+    font-size: 16px;
+}
+
+.filter-popup-date .calendar-btn.selected .calendar-btn-date {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    color: #2C2C2C;
+    font-size: 16px;
+}
+
+.filter-popup-date .calendar-btn img {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* 각 캘린더를 기준점으로 */
+.filter-popup-date .calendar-field {
+    position: relative;
+}
+
+/* 모달을 해당 캘린더 가운데로 */
+.filter-popup-date .calendar-field .calendar-modal {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    z-index: 1000;
+}
+
+.filter-popup-date .tilde {
+    margin: 0px 13px;
+    color: #9C9C9C;
+    font-size: 25px;
+}
