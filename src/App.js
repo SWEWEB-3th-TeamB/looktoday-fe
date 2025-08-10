@@ -10,6 +10,7 @@ import SignUpComplete from './pages/auth/SignUpComplete';
 import LookRecommend from './pages/weather/LookRecommend';
 
 import MyHeart from './pages/mypage/MyHeart';
+import MyFeed from './pages/mypage/MyFeed';
 import LookBook from './pages/lookbook/LookBook';
 
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/lookrecommend" element={<LookRecommend />} />
 
           <Route path="/myheart" element={<MyHeart />} />
+          <Route path="/myfeed" element={<MyFeed />} />
           <Route path="/lookbook" element={<LookBook />} />
 
         </Routes>

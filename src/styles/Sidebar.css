@@ -30,8 +30,8 @@
 /* 선택된 메뉴 박스 (파란 배경박스) */
 .sidebar-menu-box {
   position: absolute;
-  width: 226px;
-  height: 57px;
+  width: 222px;
+  height: 53px;
   border-radius: 9px;
   background: #E2F4FF;
   flex-shrink: 0;

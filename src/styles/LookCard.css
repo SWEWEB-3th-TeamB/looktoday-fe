@@ -1,5 +1,5 @@
 .best-look {
-    font-family: Inter;
+    font-family: 'Inter';
     width: 260px;
     position: relative;
     cursor: pointer;
@@ -67,7 +67,7 @@
 }
 
 .look {
-    font-family: Inter;
+    font-family: 'Inter';
     width: 224.5px;
     position: relative;
     cursor: pointer;
