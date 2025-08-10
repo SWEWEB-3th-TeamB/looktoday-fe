@@ -27,8 +27,8 @@ const Footer = () => {
                     </div>
                     <div className='footer-row'>
                         <div className='footer-role'>Contact Us</div>
-                        <div className='footer-url'><img src={instagram} />swuweb@instagram.com</div>
-                        <div className='footer-url'><img src={email} />swuweb0320@gmail.com</div>
+                        <div className='footer-url'><img src={instagram} alt="인스타그램" />swuweb@instagram.com</div>
+                        <div className='footer-url'><img src={email} alt = "이메일" />swuweb0320@gmail.com</div>
                     </div>
                 </div>
                 <div className='footer-rights'>All rights reserved<img src={company} alt='company' />SWUWEB 3TH</div>

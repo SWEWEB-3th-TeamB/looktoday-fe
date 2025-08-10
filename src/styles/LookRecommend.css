@@ -1,3 +1,9 @@
+.LookRecommend-page {
+  min-height: 1086px;
+  display: flex;
+  flex-direction: column;
+}
+
 .LookRecommend-title {
     position: absolute;
     top: 138px;
@@ -28,6 +34,7 @@
 
 .LookRecommend-contents {
     display: flex;
+    flex: 1 0 auto; /*푸터붙이기용*/
     flex-direction: column;
     justify-content: center;
     position: static;
@@ -280,4 +287,9 @@
     gap: 9px;
 }
 
+}
+
+.LookRecommend-page > .footer {
+  margin-top: auto;
+  width: 100%;
 }

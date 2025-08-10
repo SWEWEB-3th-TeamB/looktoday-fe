@@ -71,6 +71,7 @@ const LookBook = () => {
                     <div className='lookbook-best-looks'>
                         <img
                             src={arrow}
+                            alt='왼쪽 화살표'
                             className={`lookbook-left-arrow ${currentIndex === 0 ? 'disabled' : ''}`}
                             onClick={handlePrev}
                         />
@@ -81,6 +82,7 @@ const LookBook = () => {
                         </div>
                         <img
                             src={arrow}
+                            alt='오른쪽 화살표'
                             className={`lookbook-right-arrow ${currentIndex + VISIBLE_COUNT >= TOTAL_ITEMS ? 'disabled' : ''
                                 }`}
                             onClick={handleNext}

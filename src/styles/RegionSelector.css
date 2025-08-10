@@ -57,6 +57,27 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
+/* 스크롤바 전체 넓이 */
+.region-selector-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* 스크롤바 트랙 배경은 팝업 배경과 같게 */
+.region-selector-dropdown::-webkit-scrollbar-track {
+  background: #fff;
+  border-radius: 6px;
+  margin-top: 10px;   /* 위에서 10px 아래에 시작 */
+  margin-bottom: 10px;
+  margin-right: 3px;  /* 오른쪽에서 3px 떨어짐 */
+}
+
+/* 스크롤바 핸들러에 둥근 모서리와 색상 */
+.region-selector-dropdown::-webkit-scrollbar-thumb {
+  background-color: #959595;
+  border-radius: 9px;
+  margin-right: 3px;
+}
+
 .region-selector-dropdown li {
   padding: 10px 16px;
   font-size: 14px;

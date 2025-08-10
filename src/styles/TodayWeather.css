@@ -1,16 +1,18 @@
 .today-weather-page {
   position: relative;
-  min-height: 100vh;
+  min-height: 1391px;         
+  display: flex;                 /* 추가 */
+  flex-direction: column;        /* 추가 */
   background: linear-gradient(128deg, rgba(235, 249, 255, 0.00) 0%, #EBF9FF 100%);
-  padding: 20px;
   z-index: 0;
-} /*배경*/
+}
 
 .weather-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   z-index: 1;
+  flex: 1 0 auto;                /* 추가 */
 }
 
 @font-face {
@@ -32,11 +34,18 @@
   margin-bottom: 37px;
 }
 
-.TodayWeather-mainWeather{
+.Todayweather-card-group{
   position: absolute;
-  top:322px;
-  right:82px;
-  width: 561px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 263px 125px 125px;
+  gap: 26px 24px;
+  top: 322px;
+  left: 51.91%;
+}
+
+.TodayWeather-mainWeather{
+  grid-column: 1 / 4;
   height: 158px;
   flex-shrink: 0;
   border-radius: 16px;
@@ -46,6 +55,8 @@
   /* Light/Pop_shadow */
   box-shadow: 0px 6px 20px 0px rgba(0, 0, 0, 0.20);
   backdrop-filter: blur(100px); /*살짝 수정*/
+
+  box-sizing: border-box
 }
 
 .TodayWeather-region{
@@ -103,9 +114,7 @@
 }
 
 .TodayWeather-sunrisesunset{
-  position: absolute;
-  top:506px;
-  right:380px;
+  grid-column: 1 / 2;
   width: 263px !important;
   height: 158px !important;
   flex-shrink: 0 !important;
@@ -114,6 +123,7 @@
   background: linear-gradient(180deg, #94C8E6 0%, #46A0D3 100%) !important;
   box-shadow: 0px 5.231px 17.435px 0px rgba(0, 0, 0, 0.20) !important;
   backdrop-filter: blur(34.87031936645508px) !important;
+  box-sizing: border-box;
 }
 
 .TodayWeather-sunrisesunset-contents{
@@ -137,19 +147,19 @@
 
 .TodayWeather-sunrise-icon{
   position: absolute;
-  top:40px;
-  left:45px;
-  width: 60px;
-  height: 60px;
+  top:56.5px;
+  left:60px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
 }
 
 .TodayWeather-sunset-icon{
   position: absolute;
-  top:40px;
-  right:45px;
-  width: 60px;
-  height: 60px;
+  top:56.5px;
+  right:60px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
 }
 
@@ -186,9 +196,7 @@
 }
 
 .TodayWeather-humidityCard{
-  position: absolute;
-  top:506px;
-  right:227px;
+  grid-column: 2 / 3;
   width: 125px;
   height: 158px;
   flex-shrink: 0;
@@ -197,6 +205,7 @@
   background: linear-gradient(180deg, #94C8E6 0%, #46A0D3 100%);
   box-shadow: 0px 5.231px 17.435px 0px rgba(0, 0, 0, 0.20);
   backdrop-filter: blur(34.87031936645508px);
+  box-sizing: border-box;
 }
 
 .TodayWeather-humidity-contents{
@@ -244,9 +253,7 @@
 
 
 .TodayWeather-speedCard{
-  position: absolute;
-  top:506px;
-  right:83px;
+  grid-column: 3/ 4;
   width: 125px;
   height: 158px;
   flex-shrink: 0;
@@ -255,6 +262,7 @@
   background: linear-gradient(180deg, #94C8E6 0%, #46A0D3 100%);
   box-shadow: 0px 5.231px 17.435px 0px rgba(0, 0, 0, 0.20);
   backdrop-filter: blur(34.87031936645508px);
+  box-sizing: border-box;
 }
 
 .TodayWeather-speed-contents{
@@ -348,6 +356,10 @@
   justify-content: center;  /* 가로 정중앙 정렬 */
   align-items: center;      /* 수직 가운데 정렬 (선택사항) */
   vertical-align: middle;
-  gap: 20px;                /* 사이 간격 */
-  margin: 20px 0;           /* 상하 여백 */
+  gap: 20px;                /* 사이 간격 */         /* 상하 여백 */
+}
+
+.Today-weather-footer {
+  width: 100%;
+  margin-top: auto;              /* 핵심 */
 }
