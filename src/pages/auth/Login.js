@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Menu from '../../components/Menu';
 import Form from '../../components/Form';
 import AuthButton from '../../components/AuthButton';
@@ -15,7 +13,7 @@ const Login = () => {
         <div className='login-title'>Login</div>
         <div className='login-form'>
           <Form type='email' placeholder='이메일' />
-          <Form type='password' placeholder='비밀번호' />
+          <Form type='password' placeholder='비밀번호'  showEye={true}/>
         </div>
         <div className='login-btn'>
           <AuthButton text='로그인' />

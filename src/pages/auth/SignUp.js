@@ -29,8 +29,8 @@ const SignUp = () => {
                     </div>
                     <div className='sign-up-inputs'>
                         <Form type='email' placeholder='이메일' />
-                        <Form type='password' placeholder='비밀번호 (특수문자 포함, 8자 이상)' />
-                        <Form type='password' placeholder='비밀번호 (특수문자 포함, 8자 이상)' />
+                        <Form type='password' placeholder='비밀번호 (특수문자 포함, 8자 이상)' showEye={true}/>
+                        <Form type='password' placeholder='비밀번호 (특수문자 포함, 8자 이상)' showEye={true}/>
                         <Form type='text' placeholder='닉네임' />
                         <Form type='text' placeholder='생년월일 임시' />
                         <RegionSelector onRegionChange={setSelectedRegion}/>

@@ -1,3 +1,7 @@
+.form {
+    position: relative;
+}
+
 .form input {
     width: 333px;
     height: 46px;
@@ -26,4 +30,13 @@
     color: #EF0000;
     font-size: 12px;
     margin-top: 4px;
+}
+
+.form img {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    top: 11px;
+    right: 19px;
+    cursor: pointer;
 }
