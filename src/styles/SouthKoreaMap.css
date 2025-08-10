@@ -10,8 +10,8 @@ path {
 
 svg {
   position: absolute;
-  top: 0;
-  left: 0;
+  top:0;
+  left:5%;
   width: 903px;
   height: 1088px;
   z-index: -1;
