@@ -5,7 +5,7 @@ import '../styles/Form.css';
 import eyeOn from '../assets/images/eye-on.png'
 import eyeOff from '../assets/images/eye-off.png'
 
-const Form = ({ type, placeholder, showEye }) => {
+const Form = ({ type, placeholder, showEye, value, onChange }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const toggleEye = () => {
@@ -17,6 +17,8 @@ const Form = ({ type, placeholder, showEye }) => {
       <input
         type={showPassword ? 'text' : type}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
       />
       <div className='form-error-message'>안내메시지</div>
       {showEye && (

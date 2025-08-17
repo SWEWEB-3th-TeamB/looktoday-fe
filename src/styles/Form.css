@@ -40,3 +40,14 @@
     right: 19px;
     cursor: pointer;
 }
+
+/* 기본 브라우저 눈 아이콘 제거 (크롬/엣지) */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-textfield-decoration-container {
+  display: none !important;
+}

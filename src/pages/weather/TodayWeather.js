@@ -3,11 +3,11 @@ import Menu from '../../components/Menu';
 import SouthKoreaMap from '../../components/SouthKoreaMap';
 import RegionSelector from '../../components/RegionSelector';
 import '../../styles/TodayWeather.css';
-import Weathericon from '../../assets/images/rainstorm.png';
-import Sunriseicon from '../../assets/images/sunrise.png';
-import Sunseticon from '../../assets/images/sunset.png';
-import Humidityicon from '../../assets/images/humidity.png';
-import Speedicon from '../../assets/images/speed.png';
+import Weather from '../../assets/images/rainstorm.png';
+import Sunrise from '../../assets/images/sunrise.png';
+import Sunset from '../../assets/images/sunset.png';
+import Humidity from '../../assets/images/humidity.png';
+import Speed from '../../assets/images/speed.png';
 import Chevronright from '../../assets/images/chevronright.png';
 import Footer from '../../components/Footer';
 
@@ -52,52 +52,52 @@ const TodayWeather = () => {
             <Menu />
             <div className="weather-content">
                 <h2 className="today-weather-page-title">How's the weather?</h2>
-                <div className="TodayWeather-RegionSelector">
+                <div className="today-weather-region-selector">
                     <RegionSelector onRegionChange={setSelectedRegion} />
-                    <button className='TodayWeather-RegionSelector-button'>RegionSelector</button>
+                    <button className='today-weather-region-selector-button'>RegionSelector</button>
                 </div>
                 <SouthKoreaMap className="svg-map" selectedRegion={selectedRegion} regionTemperatures={regionTemperatures} />
-                <div className='Todayweather-card-group'>
-                    <div className="TodayWeather-mainWeather">
-                        <div className="TodayWeather-left">
-                            <p className="TodayWeather-region">{region}</p>
-                            <p className="TodayWeather-date">{date}</p>
-                            <p className="TodayWeather-temperature">{temperature}°C</p>
+                <div className='today-weather-card-group'>
+                    <div className="today-weather-main-weather">
+                        <div className="today-weather-left">
+                            <p className="today-weather-region">{region}</p>
+                            <p className="today-weather-date">{date}</p>
+                            <p className="today-weather-temperature">{temperature}°C</p>
                         </div>
-                        <div className="TodayWeather-right">
-                            <img className="TodayWeather-icon" src={Weathericon} alt="Weathericon" />
-                        </div>
-                    </div>
-                    <div className="TodayWeather-sunrisesunset">
-                        <div className="TodayWeather-sunrisesunset-contents">
-                            <p className="TodayWeather-sunrisesunset-title">SUNRISE/SUNSET</p>
-                            <img className="TodayWeather-sunrise-icon" src={Sunriseicon} alt="Sunriseicon" />
-                            <img className="TodayWeather-sunset-icon" src={Sunseticon} alt="Sunseticon" />
-                            <p className="TodayWeather-sunrise">{sunrizetime}am</p>
-                            <p className="TodayWeather-sunset">{sunsettime}pm</p>
+                        <div className="today-weather-right">
+                            <img className="today-weather-icon" src={Weather} alt="weather" />
                         </div>
                     </div>
-                    <div className="TodayWeather-humidityCard">
-                        <div className="TodayWeather-humidity-contents">
-                            <p className="TodayWeather-humidity-title">HUMIDITY</p>
-                            <img className="TodayWeather-humitity-icon" src={Humidityicon} alt="humudityicon" />
-                            <p className="TodayWeather-humidity">{humidity}%</p>
+                    <div className="today-weather-sunrisesunset">
+                        <div className="today-weather-sunrisesunset-contents">
+                            <p className="today-weather-sunrisesunset-title">SUNRISE/SUNSET</p>
+                            <img className="today-weather-sunrise-icon" src={Sunrise} alt="sunrise" />
+                            <img className="today-weather-sunset-icon" src={Sunset} alt="sunset" />
+                            <p className="today-weather-sunrise">{sunrizetime}am</p>
+                            <p className="today-weather-sunset">{sunsettime}pm</p>
                         </div>
                     </div>
-                    <div className="TodayWeather-speedCard">
-                        <div className="TodayWeather-speed-contents">
-                            <p className="TodayWeather-speed-title">SPEED</p>
-                            <img className="TodayWeather-speed-icon" src={Speedicon} alt="speedicon" />
-                            <p className="TodayWeather-speed">{speed}m/s</p>
+                    <div className="today-weather-humidity-card">
+                        <div className="today-weather-humidity-contents">
+                            <p className="today-weather-humidity-title">HUMIDITY</p>
+                            <img className="today-weather-humitity-icon" src={Humidity} alt="humudity" />
+                            <p className="today-weather-humidity">{humidity}%</p>
+                        </div>
+                    </div>
+                    <div className="today-weather-speed-card">
+                        <div className="today-weather-speed-contents">
+                            <p className="today-weather-speed-title">SPEED</p>
+                            <img className="today-weather-speed-icon" src={Speed} alt="speed" />
+                            <p className="today-weather-speed">{speed}m/s</p>
                         </div>
                     </div>
                 </div>
-                <button className="gotoLookRecommend">
+                <button className="go-to-look-recommend">
                     룩 추천 보러가기
                     <img src={Chevronright} alt="chevronright" className="chevronright" />
                 </button>
             </div>
-            <div className='Today-weather-footer'>
+            <div className='today-weather-footer'>
             <Footer/>
             </div>
         </div>
