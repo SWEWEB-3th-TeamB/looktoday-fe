@@ -1,8 +1,8 @@
 .today-weather-page {
   position: relative;
   min-height: 1391px;         
-  display: flex;                 /* 추가 */
-  flex-direction: column;        /* 추가 */
+  display: flex;                
+  flex-direction: column;       
   background: linear-gradient(128deg, rgba(235, 249, 255, 0.00) 0%, #EBF9FF 100%);
   z-index: 0;
 }
@@ -12,7 +12,7 @@
   flex-direction: column;
   align-items: center;
   z-index: 1;
-  flex: 1 0 auto;                /* 추가 */
+  flex: 1 0 auto;              
 }
 
 @font-face {
@@ -34,7 +34,7 @@
   margin-bottom: 37px;
 }
 
-.Todayweather-card-group{
+.today-weather-card-group{
   position: absolute;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -44,7 +44,7 @@
   left: 51.91%;
 }
 
-.TodayWeather-mainWeather{
+.today-weather-main-weather{
   grid-column: 1 / 4;
   height: 158px;
   flex-shrink: 0;
@@ -54,12 +54,12 @@
 
   /* Light/Pop_shadow */
   box-shadow: 0px 6px 20px 0px rgba(0, 0, 0, 0.20);
-  backdrop-filter: blur(100px); /*살짝 수정*/
+  backdrop-filter: blur(100px); 
 
   box-sizing: border-box
 }
 
-.TodayWeather-region{
+.today-weather-region{
   position: absolute !important;
   top: 30px !important;
   left: 24px !important;
@@ -67,10 +67,10 @@
   font-size: 24px !important;
   font-style: normal !important;
   font-weight: 700 !important;
-  line-height: 20px !important; /* 83.333% */
+  line-height: 20px !important; 
 }
 
-.TodayWeather-date{
+.today-weather-date{
   position: absolute !important;
   top: 58px !important;
   left: 24px !important;
@@ -82,7 +82,7 @@
   line-height: 16px !important; /* 114.286% */
 }
 
-.TodayWeather-temperature{
+.today-weather-temperature{
   position: absolute !important;
   top: 86px !important;
   left: 24px !important;
@@ -94,7 +94,7 @@
   line-height: normal;
 }
 
-.TodayWeather-icon{
+.today-weather-icon{
   position: absolute !important;
   top: 31px !important;
   left: 426px !important;
@@ -105,15 +105,15 @@
   flex-shrink: 0 !important;
 }
 
-.TodayWeather-left{
+.today-weather-left{
   position:relative;
 }
 
-.TodayWeather-right{
+.today-weather-right{
   position:relative;
 }
 
-.TodayWeather-sunrisesunset{
+.today-weather-sunrisesunset{
   grid-column: 1 / 2;
   width: 263px !important;
   height: 158px !important;
@@ -126,11 +126,11 @@
   box-sizing: border-box;
 }
 
-.TodayWeather-sunrisesunset-contents{
+.today-weather-sunrisesunset-contents{
   position: relative;
 }
 
-.TodayWeather-sunrisesunset-title{
+.today-weather-sunrisesunset-title{
   position:absolute;
   top:14px;
   left:17px;
@@ -145,7 +145,7 @@
   line-height: normal;
 }
 
-.TodayWeather-sunrise-icon{
+.today-weather-sunrise-icon{
   position: absolute;
   top:56.5px;
   left:60px;
@@ -154,7 +154,7 @@
   flex-shrink: 0;
 }
 
-.TodayWeather-sunset-icon{
+.today-weather-sunset-icon{
   position: absolute;
   top:56.5px;
   right:60px;
@@ -163,7 +163,7 @@
   flex-shrink: 0;
 }
 
-.TodayWeather-sunrise{
+.today-weather-sunrise{
   position: absolute;
   top:91px;
   left:37px;
@@ -179,7 +179,7 @@
   line-height: normal;
 }
 
-.TodayWeather-sunset{
+.today-weather-sunset{
   position: absolute;
   top:91px;
   right:37px;
@@ -195,7 +195,7 @@
   line-height: normal;
 }
 
-.TodayWeather-humidityCard{
+.today-weather-humidity-card{
   grid-column: 2 / 3;
   width: 125px;
   height: 158px;
@@ -208,11 +208,11 @@
   box-sizing: border-box;
 }
 
-.TodayWeather-humidity-contents{
+.today-weather-humidity-contents{
   position: relative;
 }
 
-.TodayWeather-humidity-title{
+.today-weather-humidity-title{
   position:absolute;
   top:14px;
   left:5px;
@@ -227,7 +227,7 @@
   line-height: normal;
 }
 
-.TodayWeather-humitity-icon{
+.today-weather-humitity-icon{
   position:absolute;
   top:51px;
   left: 50%;
@@ -237,7 +237,7 @@
   flex-shrink: 0;
 }
 
-.TodayWeather-humidity{
+.today-weather-humidity{
   position: absolute;
   top:87px;
   left: 50%;
@@ -252,7 +252,7 @@
 }
 
 
-.TodayWeather-speedCard{
+.today-weather-speed-card{
   grid-column: 3/ 4;
   width: 125px;
   height: 158px;
@@ -265,11 +265,11 @@
   box-sizing: border-box;
 }
 
-.TodayWeather-speed-contents{
+.today-weather-speed-contents{
   position: relative;
 }
 
-.TodayWeather-speed-title{
+.today-weather-speed-title{
   position:absolute;
   top:14px;
   left:5px;
@@ -284,7 +284,7 @@
   line-height: normal;
 }
 
-.TodayWeather-speed-icon{
+.today-weather-speed-icon{
   position:absolute;
   top:49px;
   left: 50%;
@@ -294,7 +294,7 @@
   flex-shrink: 0;
 }
 
-.TodayWeather-speed{
+.today-weather-speed{
   position: absolute;
   top:87px;
   left: 50%;
@@ -308,7 +308,7 @@
   line-height: normal;
 }
 
-.gotoLookRecommend{
+.go-to-look-recommend{
   position: absolute;
   top:716px;
   right: 83px;
@@ -336,7 +336,7 @@
   flex-shrink: 0;
 }
 
-.TodayWeather-RegionSelector-button{
+.today-weather-region-selector-button{
   width: 155px;
   height: 50px;
   flex-shrink: 0;
@@ -351,7 +351,7 @@
   line-height: normal;
 }
 
-.TodayWeather-RegionSelector {
+.today-weather-region-selector {
   display: flex;
   justify-content: center;  /* 가로 정중앙 정렬 */
   align-items: center;      /* 수직 가운데 정렬 (선택사항) */
@@ -359,7 +359,7 @@
   gap: 20px;                /* 사이 간격 */         /* 상하 여백 */
 }
 
-.Today-weather-footer {
+.today-weather-footer {
   width: 100%;
-  margin-top: auto;              /* 핵심 */
+  margin-top: auto;              
 }

@@ -1,10 +1,10 @@
-.LookRecommend-page {
+.look-recommend-page {
   min-height: 1086px;
   display: flex;
   flex-direction: column;
 }
 
-.LookRecommend-title {
+.look-recommend-title {
     position: absolute;
     top: 138px;
     left: 50%;
@@ -32,7 +32,7 @@
     font-display: swap;
 }
 
-.LookRecommend-contents {
+.look-recommend-contents {
     display: flex;
     flex: 1 0 auto; /*푸터붙이기용*/
     flex-direction: column;
@@ -41,7 +41,7 @@
     transform: none;
 }
 
-.LookRecommend-weather-wrapper {
+.look-recommend-weather-wrapper {
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -50,7 +50,7 @@
 }
 
 
-.LookRecommend-weather-title {
+.look-recommend-weather-title {
     color: #2C2C2C;
     font-family: Inter;
     font-size: 25px;
@@ -60,7 +60,7 @@
     margin-bottom: 7px;
 }
 
-.LookRecommend-weather-card {
+.look-recommend-weather-card {
     position: relative;
     width: 700px;
     height: 213px;
@@ -70,7 +70,7 @@
     left: -89px;
 }
 
-.LookRecommend-comment {
+.look-recommend-comment {
     position: absolute;
     top: 132px;
     left: 146px;
@@ -81,7 +81,7 @@
     line-height: 25px;
 }
 
-.LookRecommend-icon {
+.look-recommend-icon {
     position: absolute;
     top: 21px;
     left: 135px;
@@ -91,7 +91,7 @@
     flex-shrink: 0;
 }
 
-.LookRecommend-temparature {
+.look-recommend-temparature {
     position: absolute;
     top: 46px;
     left: 235px;
@@ -102,7 +102,7 @@
     letter-spacing: -2px;
 }
 
-.LookRecommend-humidityperceivedtemperature {
+.look-recommend-humidityperceivedtemperature {
     position: absolute;
     top: 78px;
     left: 370px;
@@ -113,7 +113,7 @@
     letter-spacing: -0.65px;
 }
 
-.LookRecommend-region {
+.look-recommend-region {
     position: absolute;
     top: 46px;
     left: 361px;
@@ -124,7 +124,7 @@
     line-height: 20px;
 }
 
-.LookRecommend-RegionSelect {
+.look-recommend-region-select {
     z-index: 4;
     position: absolute;
     top: 142px;
@@ -141,7 +141,7 @@
     letter-spacing: -0.8px;
 }
 
-.LookRecommend-outfit-wrapper {
+.look-recommend-outfit-wrapper {
     position: absolute;
     top: 258px;
     left: 54.06%;
@@ -150,33 +150,33 @@
     gap: 9px;
 }
 
-.LookRecommend-outfit {
+.look-recommend-outfit {
     display: flex;
     gap: 12.23px;
 }
 
-.LookRecommend-outfit-title {
+.look-recommend-outfit-title {
     color: #2C2C2C;
     font-family: Inter;
     font-size: 25px;
     font-weight: 700;
 }
 
-.LookRecommend-outfit1 {
+.look-recommend-outfit1 {
     width: 302.767px;
     height: 232px;
     flex-shrink: 0;
     aspect-ratio: 302.77/232.00;
 }
 
-.LookRecommend-outfit2 {
+.look-recommend-outfit2 {
     width: 147.183px;
     height: 232px;
     flex-shrink: 0;
     aspect-ratio: 147.18/232.00;
 }
 
-.LookRecommend-weatheritem-wrapper {
+.look-recommend-weatheritem-wrapper {
     position: absolute;
     top: 519px;
     left: 7.89%;
@@ -185,33 +185,33 @@
     gap: 9px;
 }
 
-.LookRecommend-weatheritem {
+.look-recommend-weatheritem {
     display: flex;
     gap: 9.19px;
 }
 
-.LookRecommend-weatheritem-title {
+.look-recommend-weatheritem-title {
     color: #2C2C2C;
     font-family: Inter;
     font-size: 25px;
     font-weight: 700;
 }
 
-.LookRecommend-weatheritem1 {
+.look-recommend-weatheritem1 {
     width: 220.811px;
     height: 215px;
     flex-shrink: 0;
     aspect-ratio: 220.81/215.00;
 }
 
-.LookRecommend-weatheritem2 {
+.look-recommend-weatheritem2 {
     width: 137.063px;
     height: 215px;
     flex-shrink: 0;
     aspect-ratio: 137.06/15.00;
 }
 
-.LookRecommend-acc-wrapper {
+.look-recommend-acc-wrapper {
     position: absolute;
     top: 531px;
     left: 48.28%;
@@ -220,33 +220,33 @@
     gap: 9px;
 }
 
-.LookRecommend-acc {
+.look-recommend-acc {
     display: flex;
     gap: 8px;
 }
 
-.LookRecommend-acc-title {
+.look-recommend-acc-title {
     color: #2C2C2C;
     font-family: Inter;
     font-size: 25px;
     font-weight: 700;
 }
 
-.LookRecommend-acc1 {
+.look-recommend-acc1 {
     width: 169.402px;
     height: 208px;
     flex-shrink: 0;
     aspect-ratio: 169.40/208.00;
 }
 
-.LookRecommend-acc2 {
+.look-recommend-acc2 {
     width: 156.053px;
     height: 208px;
     flex-shrink: 0;
     aspect-ratio: 156.05/208.00;
 }
 
-.LookRecommend-acc3 {
+.look-recommend-acc3 {
     width: 254.364px;
     height: 209px;
     flex-shrink: 0;
@@ -259,7 +259,7 @@
 
 @media (max-width:1400px) {
     
-.LookRecommend-outfit-wrapper {
+.look-recommend-outfit-wrapper {
     position: absolute;
     top: 258px;
     left: 692px;
@@ -269,7 +269,7 @@
 }
 
 
-.LookRecommend-acc-wrapper {
+.look-recommend-acc-wrapper {
     position: absolute;
     top: 531px;
     left: 101px;
@@ -278,7 +278,7 @@
     gap: 9px;
 }
 
-.LookRecommend-acc-wrapper {
+.look-recommend-acc-wrapper {
     position: absolute;
     top: 531px;
     left: 618px;
@@ -289,7 +289,7 @@
 
 }
 
-.LookRecommend-page > .footer {
+.look-recommend-page > .footer {
   margin-top: auto;
   width: 100%;
 }

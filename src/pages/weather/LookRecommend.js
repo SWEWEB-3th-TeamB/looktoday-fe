@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import lookRecommendData from './LookRecommendData';
 import Menu from '../../components/Menu';
 import '../../styles/LookRecommend.css';
-import Weathericon from '../../assets/images/rainstorm.png';
+import Weather from '../../assets/images/rainstorm.png';
 import Footer from '../../components/Footer';
 
 function LookRecommend() {
@@ -34,53 +34,53 @@ function LookRecommend() {
     require(`../../assets/images/LookRecommendPhoto/${folder}/${filename}`);
 
   return (
-    <div className='LookRecommend-page'>
+    <div className='look-recommend-page'>
       <Menu />
-      <h2 className='LookRecommend-title'>LookRecommend</h2>
-      <div className='LookRecommend-contents'>
-        <div className='LookRecommend-contents-firstline'>
-          <div className='LookRecommend-weather-wrapper'>
-            <p className="LookRecommend-weather-title">WAETHER</p>
-            <div className='LookRecommend-weather-card'>
-              <img className="LookRecommend-icon" src={Weathericon} alt="Weathericon" />
-              <p className="LookRecommend-temparature">{temperature}°C</p>
-              <p className="LookRecommend-region">{region}</p>
-              <p className="LookRecommend-humidityperceivedtemperature">
+      <h2 className='look-recommend-title'>LookRecommend</h2>
+      <div className='look-recommend-contents'>
+        <div className='look-recommend-contents-firstline'>
+          <div className='look-recommend-weather-wrapper'>
+            <p className="look-recommend-weather-title">WAETHER</p>
+            <div className='look-recommend-weather-card'>
+              <img className="look-recommend-icon" src={Weather} alt="weather" />
+              <p className="look-recommend-temparature">{temperature}°C</p>
+              <p className="look-recommend-region">{region}</p>
+              <p className="look-recommend-humidityperceivedtemperature">
                 습도 {humidity}% 체감온도 {perceivedTemp} °C
               </p>
-              <button className='LookRecommend-RegionSelect'>다른 지역 선택하기</button>
-              <div className='LookRecommend-comment'>
+              <button className='look-recommend-region-select'>다른 지역 선택하기</button>
+              <div className='look-recommend-comment'>
                 #{content?.comments[0]}<br />#{content?.comments[1]}
               </div>
             </div>
           </div>
 
-          <div className='LookRecommend-help'></div>
-          <div className='LookRecommend-outfit-wrapper'>
-            <div className='LookRecommend-outfit-title'>OUTFIT</div>
-            <div className='LookRecommend-outfit'>
+          <div className='look-recommend-help'></div>
+          <div className='look-recommend-outfit-wrapper'>
+            <div className='look-recommend-outfit-title'>OUTFIT</div>
+            <div className='look-recommend-outfit'>
               {content?.outfits.map((img, idx) => (
-                <img key={idx} className={`LookRecommend-outfit${idx+1}`} src={getImagePath(condition, img)} alt={`outfit${idx+1}`} />
+                <img key={idx} className={`look-recommend-outfit${idx+1}`} src={getImagePath(condition, img)} alt={`outfit${idx+1}`} />
               ))}
             </div>
           </div>
         </div>
 
-        <div className='LookRecommend-contents-secondline'>
-          <div className='LookRecommend-weatheritem-wrapper'>
-            <div className='LookRecommend-weatheritem-title'>WEATHER ITEM</div>
-            <div className='LookRecommend-weatheritem'>
+        <div className='look-recommend-contents-secondline'>
+          <div className='look-recommend-weatheritem-wrapper'>
+            <div className='look-recommend-weatheritem-title'>WEATHER ITEM</div>
+            <div className='look-recommend-weatheritem'>
               {content?.weatherItems.map((img, idx) => (
-                <img key={idx} className={`LookRecommend-weatheritem${idx+1}`} src={getImagePath(condition, img)} alt={`weatheritem${idx+1}`} />
+                <img key={idx} className={`look-recommend-weatheritem${idx+1}`} src={getImagePath(condition, img)} alt={`weatheritem${idx+1}`} />
               ))}
             </div>
           </div>
 
-          <div className='LookRecommend-acc-wrapper'>
-            <div className='LookRecommend-acc-title'>ACC</div>
-            <div className='LookRecommend-acc'>
+          <div className='look-recommend-acc-wrapper'>
+            <div className='look-recommend-acc-title'>ACC</div>
+            <div className='look-recommend-acc'>
               {content?.accessories.map((img, idx) => (
-                <img key={idx} className={`LookRecommend-acc${idx+1}`} src={getImagePath(condition, img)} alt={`acc${idx+1}`} />
+                <img key={idx} className={`look-recommend-acc${idx+1}`} src={getImagePath(condition, img)} alt={`acc${idx+1}`} />
               ))}
             </div>
           </div>
