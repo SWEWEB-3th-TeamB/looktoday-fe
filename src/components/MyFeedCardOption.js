@@ -1,7 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
+
+import DeletePopup from '../components/DeletePopup';
+
 import optionIcon from '../assets/images/option.png';
 import editIcon from '../assets/images/edit.png';
 import trashCanIcon from '../assets/images/trash-can.png';
+
+import '../../src/styles/MyFeedCardOption.css';
 
 const MyFeedCardOption = () => {
   const [open, setOpen] = useState(false);
@@ -15,6 +20,22 @@ const MyFeedCardOption = () => {
     if (open) document.addEventListener('mousedown', closeOnClickOutside);
     return () => document.removeEventListener('mousedown', closeOnClickOutside);
   }, [open]);
+
+  // 완료 버튼 클릭 핸들러
+  const handleCompleteClick = () => {
+    setIsCompletePopupOpen(true);
+  };
+
+  // 팝업 열림 상태
+  const [isCompletePopupOpen, setIsCompletePopupOpen] = useState(false);
+
+  // 팝업 닫기
+  const closePopup = () => setIsCompletePopupOpen(false);
+
+  const handleDelete = () => {
+    // 실제 삭제 로직 실행
+    closePopup();
+  };
 
   return (
     <div>
@@ -80,12 +101,18 @@ const MyFeedCardOption = () => {
               flexShrink: 0,
               aspectRatio: "1/1"
             }}
-            onClick={() => alert("삭제 클릭")}
+            onClick={handleCompleteClick}
           >
             <img src={trashCanIcon} alt="삭제" style={{ width: "100%", height: "100%" }} />
           </button>
         </div>
       )}
+
+      {/* 팝업을 카드 내 추가가 아니라, Portal에서 페이지 전체에 렌더 */}
+      {isCompletePopupOpen &&
+        <DeletePopup onCancel={closePopup} onDelete={handleDelete} />
+      }
+
     </div>
   );
 };

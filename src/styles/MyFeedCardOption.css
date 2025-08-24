@@ -1,0 +1,113 @@
+/* 팝업 Overlay - 화면 전체 반투명 배경 */
+.delete-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.29);
+  z-index: 999;
+}
+
+/* 팝업 박스 - 중앙 정렬 */
+.delete-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 200px;
+  transform: translate(-50%, -50%);
+  background: #FFF;
+  border-radius: 20px;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.delete-popup-title {
+  /* 공통 스타일: 가운데 정렬, 줄바꿈 허용 */
+  position: absolute;
+  left: 50%;
+  top: 30px;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: normal;
+  color: #2C2C2C;
+}
+.delete-popup-title .title-english {
+  font-family: 'Inria Serif', serif;
+}
+.delete-popup-title .title-korean {
+  font-family: 'Inter', sans-serif;
+}
+
+/* 본문 텍스트 */
+.delete-popup-desc {
+  position: absolute;
+  top: 70.5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  color: #2C2C2C;
+  line-height: 25px;
+  margin: 0;
+  white-space: pre-line; /* 엔터 줄바꿈 */
+}
+
+.delete-popup-btns {
+  position: absolute;
+  left: 50%;
+  top: 135px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;   /* 버튼 간격 16px */
+}
+
+/* 취소 버튼 */
+.delete-popup-cancel-btn {
+  position: static;
+  width: 100px;
+  height: 40px;
+  border-radius: 5px;
+  background: #EBEBEB;
+  color: #959595;
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  outline: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 삭제 버튼 */
+.delete-popup-delete-btn {
+  position: static;
+  width: 100px;
+  height: 40px;
+  border-radius: 5px;
+  background: #EF0000;
+  color: #FFF;
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  outline: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

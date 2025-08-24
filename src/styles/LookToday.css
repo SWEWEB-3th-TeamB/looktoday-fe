@@ -433,8 +433,8 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 670px;
-  height: 300px;
+  width: 400px;
+  height: 200px;
   transform: translate(-50%, -50%);
   background: #FFF;
   border-radius: 20px;
@@ -446,12 +446,12 @@
   /* 공통 스타일: 가운데 정렬, 줄바꿈 허용 */
   position: absolute;
   left: 50%;
-  top: 47px;
+  top: 30px;
   transform: translateX(-50%);
   width: 100%;
   text-align: center;
   margin: 0;
-  font-size: 30px;
+  font-size: 18px;
   font-weight: 700;
   line-height: normal;
   color: #2C2C2C;
@@ -466,34 +466,34 @@
 /* 본문 텍스트 */
 .complete-popup-desc {
   position: absolute;
-  top: 111px;
+  top: 68.5px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   text-align: center;
   font-family: 'Inter', sans-serif;
-  font-size: 24px;
+  font-size: 16px;
   font-weight: 400;
   color: #2C2C2C;
-  line-height: 40px;
+  line-height: 25px;
   margin: 0;
-  white-space: pre-line; /* 엔터 줄바꿈 지원 */
+  white-space: pre-line; /* 엔터 줄바꿈 */
 }
 
 /* 확인 버튼 */
 .complete-popup-close-btn {
   position: absolute;
   left: 50%;
-  top: 215px;
+  top: 135px;
   transform: translateX(-50%);
-  width: 155px;
-  height: 50px;
+  width: 100px;
+  height: 40px;
   border-radius: 5px;
   background: #0C82C6;
   color: #FFF;
   font-family: 'Inter', sans-serif;
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 17px;
+  font-weight: 400;
   border: none;
   cursor: pointer;
   text-align: center;
