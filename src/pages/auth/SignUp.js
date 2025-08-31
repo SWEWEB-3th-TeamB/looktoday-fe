@@ -76,7 +76,6 @@ const SignUp = () => {
         }
     };
 
-
     const handleCheckNickname = async () => {
         if (!nickname.trim()) return;
 
