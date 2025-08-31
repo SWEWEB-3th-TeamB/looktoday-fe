@@ -1,5 +1,6 @@
 .form {
-    position: relative;
+  position: relative;
+  padding-bottom: 21px;
 }
 
 .form input {
@@ -10,6 +11,10 @@
     padding-left: 16px;
     padding-top: 1px;
     font-size: 14px;
+}
+
+.form input[aria-invalid="true"] {
+  border-color: #EF0000;
 }
 
 .form input:hover {
@@ -27,9 +32,19 @@
 }
 
 .form-error-message {
-    color: #EF0000;
-    font-size: 12px;
-    margin-top: 4px;
+  position: absolute;
+  left: 0;
+  top: calc(46px + 4px);
+  color: #EF0000;
+  font-size: 12px;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.form input[aria-invalid="true"] ~ .form-error-message {
+  visibility: visible;
+  opacity: 1;
 }
 
 .form img {

@@ -1,21 +1,32 @@
 import { useNavigate } from 'react-router-dom';
-
 import '../styles/AuthButton.css';
 
-const AuthButton = ({ to, text }) => {
-    const navigate = useNavigate();
+const AuthButton = ({ to, text, onClick, disabled }) => {
+  const navigate = useNavigate();
 
-    const handleClick = () => {
-        if (to) {
-            navigate(to);
-        } else {
-            console.log('이동 없음');
-        }
+  const handleClick = (e) => {
+    if (onClick) {
+      onClick(e);
+      return;
     }
 
-    return (
-        <div className='authButton' onClick={handleClick}>{text}</div>
-    );
-}
+    if (to) {
+      navigate(to);
+    } else {
+      console.log('이동 없음');
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      className="authButton"
+      onClick={handleClick}
+      disabled={disabled}
+    >
+      {text}
+    </button>
+  );
+};
 
 export default AuthButton;
