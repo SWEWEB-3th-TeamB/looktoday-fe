@@ -29,7 +29,6 @@
 /* '날짜 선택' 상태 */
 .calendar-btn.empty .calendar-btn-date {
   position: absolute;
-  top: 14.5x;
   left: 37px;
   color: #626262;
   font-family: 'Inter', sans-serif;
@@ -73,10 +72,7 @@
 }
 
 .calendar-modal {
-  position: absolute;
-  left: 50%;
   transform: translateX(-50%);
-  top: 56px; /* 버튼 아래 10px */
   width: 228px;
   height: 319px;
   border-radius: 10px;

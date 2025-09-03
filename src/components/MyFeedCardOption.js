@@ -8,9 +8,30 @@ import trashCanIcon from '../assets/images/trash-can.png';
 
 import '../../src/styles/MyFeedCardOption.css';
 
-const MyFeedCardOption = () => {
+import { useNavigate } from 'react-router-dom'; // 수정
+
+async function deletePost(postId, token) {
+  try {
+    const res = await fetch(`https://looktoday.kr/api/lookPost/${postId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    return { success: false, message: '네트워크 에러가 발생했습니다.' };
+  }
+}
+
+const MyFeedCardOption = ({ postId, onDeleteSuccess }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef();
+  const navigate = useNavigate(); // 수정
+
+  const userToken = localStorage.getItem('access_token');
 
   // 옵션창 바깥 클릭시 닫기
   useEffect(() => {
@@ -32,10 +53,27 @@ const MyFeedCardOption = () => {
   // 팝업 닫기
   const closePopup = () => setIsCompletePopupOpen(false);
 
-  const handleDelete = () => {
-    // 실제 삭제 로직 실행
+  const handleDelete = async () => {
+    // 실제 삭제 로직
+    if (!postId || !userToken) {
+      alert("삭제에 필요한 정보가 없습니다.");
+      closePopup(); // 팝업 닫기
+      return;
+    }
+    const res = await deletePost(postId, userToken);
+    if (res.success) {
+      alert("게시물이 성공적으로 삭제되었습니다.");
+      onDeleteSuccess && onDeleteSuccess(postId); // 상위에서 상태 제거 등 처리
+    } else {
+      alert(res.message || "삭제 중 오류가 발생했습니다.");
+    }
     closePopup();
   };
+
+  const handleEditClick = () => {
+    navigate('/mypage/looktoday-edit'); // 하드코딩 연결용
+  };
+  // 기존 코드 내 수정 버튼 onClick에서 handleEditClick 호출
 
   return (
     <div>
@@ -89,7 +127,7 @@ const MyFeedCardOption = () => {
               aspectRatio: "1/1",
               marginBottom: "5px"
             }}
-            onClick={() => alert("수정 클릭")}
+            onClick={handleEditClick}
           >
             <img src={editIcon} alt="수정" style={{ width: "100%", height: "100%"}} />
           </button>
