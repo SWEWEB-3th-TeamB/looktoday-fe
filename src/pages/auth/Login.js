@@ -52,6 +52,10 @@ const Login = () => {
       }
 
       console.log("로그인", data);
+
+      const TOKEN = data.result.token; // 토큰
+      localStorage.setItem("token", TOKEN); // 로컬스토리지에 토큰 저장
+
       navigate("/");
 
     } catch (error) {
