@@ -36,6 +36,52 @@ const SignUp = () => {
 
     const isValidEmail = (v) => /^\S+@\S+\.\S+$/.test(v);
 
+    // 생년월일
+    const [birthDigits, setBirthDigits] = useState("");
+    const onlyDigits = (v = "") => (v || "").replace(/\D/g, "");
+
+    const formatBirthForInput = (digits = "") => {
+        const d = onlyDigits(digits).slice(0, 8);
+        const y = d.slice(0, 4);
+        const m = d.slice(4, 6);
+        const day = d.slice(6, 8);
+        let out = y;
+        if (m) out += "/" + m;
+        if (day) out += "/" + day;
+        return out;             // 화면 표시용: 1999/01/01
+    };
+
+    const formatBirthForServer = (digits = "") => {
+        const d = onlyDigits(digits);
+        if (d.length !== 8) return null;
+        const y = parseInt(d.slice(0, 4), 10);
+        const m = parseInt(d.slice(4, 6), 10);
+        const day = parseInt(d.slice(6, 8), 10);
+        if (y < 1900 || y > 2100) return null;
+        if (m < 1 || m > 12) return null;
+        if (day < 1 || day > 31) return null;
+        return `${String(y)}/${String(m).padStart(2, "0")}/${String(day).padStart(2, "0")}`; // 서버용
+    };
+
+
+    // 최종 전송 전 검증/정규화: 잘못된 월/일이면 null 반환
+    const normalizeBirthForSubmit = (v = "") => {
+        const d = onlyDigits(v);
+        if (d.length !== 8) return null;
+        const y = parseInt(d.slice(0, 4), 10);
+        const m = parseInt(d.slice(4, 6), 10);
+        const day = parseInt(d.slice(6, 8), 10);
+
+        // 간단 검증 (필요하면 윤년/각 달 일수까지 더 엄밀하게 체크 가능)
+        if (y < 1900 || y > 2100) return null;
+        if (m < 1 || m > 12) return null;
+        if (day < 1 || day > 31) return null;
+
+        const mm = String(m).padStart(2, "0");
+        const dd = String(day).padStart(2, "0");
+        return `${y}/${mm}/${dd}`;
+    };
+
     const navigate = useNavigate();
 
     // 이메일 중복확인
@@ -52,6 +98,8 @@ const SignUp = () => {
                 { method: 'GET' }
             );
             const data = await res.json().catch(() => ({}));
+
+            console.log("✅ check-email response:", res.status, data);
 
             if (!res.ok) {
                 const msg = data?.message || '이메일 중복확인에 실패했습니다.';
@@ -76,6 +124,7 @@ const SignUp = () => {
         }
     };
 
+    // 닉네임 중복확인
     const handleCheckNickname = async () => {
         if (!nickname.trim()) return;
 
@@ -114,18 +163,33 @@ const SignUp = () => {
         }
     }
 
+    // 회원가입 버튼 클릭시
     const handleSubmit = async (e) => {
-        e.preventDefault?.(); // 기본 이동 막기
+        e.preventDefault?.();
+
+        // birth 변환 (비필수면 비어있을 때는 ""로 보냄)
+        let birthForServer = "";
+        if (birthDigits.trim()) {
+            birthForServer = formatBirthForServer(birthDigits);
+            if (!birthForServer) {
+                const msg = "생년월일 형식이 올바르지 않습니다. YYYY/MM/DD로 입력해주세요.";
+                setServerError(msg);
+                alert(msg);
+                return;
+            }
+        }
+
         const payload = {
             email,
             password,
             confirmPassword,
             nickname,
-            birth,
+            birth: birthForServer,   // ← 서버에는 항상 YYYY/MM/DD
             si,
             gungu
         };
-        console.log("회원가입", payload);
+
+        console.log("회원가입 payload:", payload);
 
         try {
             const res = await fetch(`${API_BASE}/api/auth/signup`, {
@@ -134,15 +198,16 @@ const SignUp = () => {
                 body: JSON.stringify(payload),
             });
 
-            const data = await res.json().catch(() => ({}));
-            console.log("data", data);
+            // 400 디버깅 강화: json 실패 시 text로도 로그
+            let data;
+            try { data = await res.clone().json(); }
+            catch { data = { raw: await res.text() }; }
+            console.log("signup response", res.status, data);
 
             if (!res.ok) {
                 alert(data?.message || "회원가입 실패");
                 return;
             }
-
-            // 성공시 바로 이동
             navigate("/sign-up-complete");
         } catch (error) {
             console.error(error);
@@ -184,9 +249,15 @@ const SignUp = () => {
 
                         <Form type='text' name='nickname' placeholder='닉네임' required
                             value={nickname} onChange={(e) => setNickname(e.target.value)} />
-
-                        <Form type='text' name='birth' placeholder='생년월일 임시'
-                            value={birth} onChange={(e) => setBirth(e.target.value)} />
+                        <Form
+                            type="text"
+                            name="birth"
+                            placeholder="생년월일 (YYYY/MM/DD)"
+                            value={formatBirthForInput(birthDigits)}                  // 표시: 1999/01/01
+                            onChange={(e) => setBirthDigits(onlyDigits(e.target.value).slice(0, 8))} // 상태: 19990101
+                            inputMode="numeric"
+                            maxLength={10}
+                        />
                         <RegionSelector onRegionChange={(value, kind) => {
                             if (kind === 'sido') { setSi(value); setGungu(''); }
                             if (kind === 'gugun') { setGungu(value); }
