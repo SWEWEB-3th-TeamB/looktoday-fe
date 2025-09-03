@@ -8,7 +8,7 @@ import Pagination from '../../components/Pagination';
 import Footer from '../../components/Footer';
 import MyFeedCardOption from '../../components/MyFeedCardOption';
 
-import lookbook from '../../assets/images/lookbook-empty.png';
+// import lookbook from '../../assets/images/lookbook-empty.png';
 
 import '../../styles/MyFeed.css';
 
@@ -21,6 +21,8 @@ const MyFeed = () => {
   const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth() + 1;
+
+  const [posts, setPosts] = useState([]);
 
   function getPrevMonth(offset=1) {
     let year = currentYear;
@@ -38,7 +40,40 @@ const MyFeed = () => {
   const prev1Text = `${prev1.month}월`; // 예: '7월'
   const prev2Text = `${prev2.month}월`; // 예: '6월'
 
-  const [posts] = useState([...Array(8)]); // 임시 데이터
+  const handleSearch = () => {
+    if (!startDate || !endDate) return;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    if (start > end) {
+      alert("시작 날짜가 종료 날짜보다 늦습니다.\n올바른 기간을 선택해 주세요.");
+      return;
+    }
+    // 정상 조회 동작
+  };
+
+  const todayStr = new Date().toISOString().slice(0,10); // '2025-08-31'
+
+  const handleStartDateChange = (date) => {
+    if (date > todayStr) {
+      alert("오늘 이후의 날짜는 선택할 수 없습니다.\n다시 선택해 주세요.");
+      return;
+    }
+    setActiveFilter('custom');
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date) => {
+    if (date > todayStr) {
+      alert("오늘 이후의 날짜는 선택할 수 없습니다.\n다시 선택해 주세요.");
+      return;
+    }
+    setActiveFilter('custom');
+    setEndDate(date);
+  };
+
+  const handleDeleteSuccess = (deletedId) => {
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== deletedId));
+  };
 
   return (
     <>
@@ -86,20 +121,14 @@ const MyFeed = () => {
           <div className="filter-calendar-start">
             <Calendar
               value={startDate}
-              onChange={date => {
-                setActiveFilter('custom');
-                setStartDate(date);
-              }}
+              onChange={handleStartDateChange}
             />
           </div>
           <span className="filter-tilde">~</span>
           <div className="filter-calendar-end">
             <Calendar
               value={endDate}
-              onChange={date => {
-                setActiveFilter('custom');
-                setEndDate(date);
-              }}
+              onChange={handleEndDateChange}
             />
           </div>
 
@@ -107,9 +136,7 @@ const MyFeed = () => {
           <button
             className={`filter-btn-search${(startDate && endDate) ? ' active' : ''}`}
             disabled={!(startDate && endDate)}
-            onClick={() => {
-              if (startDate && endDate) {/* 조회 함수 실행 */}
-            }}
+            onClick={handleSearch}
           >조회</button>
         </div>
 
@@ -123,20 +150,22 @@ const MyFeed = () => {
         </div>
 
         <div className="myfeed-cards hide-nickname-heart">
-            {[...Array(8)].map((_, index) => (
-                <div key={index} className="myfeed-card-with-option" style={{ position: "relative", width: "224.5px" }}>
-                    {/* 기존 카드 렌더링 */}
-                    <LookCard
-                        image={lookbook}
-                        locationTemp="서울시 노원구 · 29℃"
-                        nickname="닉네임"
-                        likeCount={11}
-                    />
-
-                    {/* 옵션 버튼과 옵션창 */}
-                    <MyFeedCardOption />
-                </div>
-            ))}
+          {posts.map(post => (
+            <div key={post.id} className="myfeed-card-with-option" style={{ position: "relative", width: "224.5px" }}>
+              <LookCard
+                image={post.image}
+                locationTemp={post.locationTemp}
+                nickname={post.nickname}
+                likeCount={post.likeCount}
+                lookId={post.lookId}
+                initiallyLiked={post.initiallyLiked} 
+              />
+              <MyFeedCardOption
+                postId={post.id}
+                onDeleteSuccess={handleDeleteSuccess}
+              />
+            </div>
+          ))}
         </div>
 
         <div className="myfeed-pagination">

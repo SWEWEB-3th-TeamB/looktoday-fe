@@ -66,6 +66,7 @@ const Calendar = ({ value, onChange }) => {
   const handleYearClick = (year) => {
     setSelectedYear(year);
     setSelectedMonth(todayObj.year === year ? todayObj.month : 1);
+    setSelectedDay(todayObj.year === year ? todayObj.day : 1);
     setStep('yearMonth');
   };
   // 월 클릭 시 월 선택, '일' 선택단계로 이동

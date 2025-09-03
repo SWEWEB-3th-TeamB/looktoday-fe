@@ -39,6 +39,37 @@ const MyHeart = () => {
 
   const [posts] = useState([...Array(8)]); // 임시 데이터
 
+  const handleSearch = () => {
+    if (!startDate || !endDate) return;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    if (start > end) {
+      alert("시작 날짜가 종료 날짜보다 늦습니다.\n올바른 기간을 선택해 주세요.");
+      return;
+    }
+    // 정상 조회 동작
+  };
+
+  const todayStr = new Date().toISOString().slice(0,10); // '2025-08-31'
+
+  const handleStartDateChange = (date) => {
+    if (date > todayStr) {
+      alert("오늘 이후의 날짜는 선택할 수 없습니다.\n다시 선택해 주세요.");
+      return;
+    }
+    setActiveFilter('custom');
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date) => {
+    if (date > todayStr) {
+      alert("오늘 이후의 날짜는 선택할 수 없습니다.\n다시 선택해 주세요.");
+      return;
+    }
+    setActiveFilter('custom');
+    setEndDate(date);
+  };
+
   return (
     <>
       <Menu />
@@ -85,20 +116,14 @@ const MyHeart = () => {
           <div className="filter-calendar-start">
             <Calendar
               value={startDate}
-              onChange={date => {
-                setActiveFilter('custom');
-                setStartDate(date);
-              }}
+              onChange={handleStartDateChange}
             />
           </div>
           <span className="filter-tilde">~</span>
           <div className="filter-calendar-end">
             <Calendar
               value={endDate}
-              onChange={date => {
-                setActiveFilter('custom');
-                setEndDate(date);
-              }}
+              onChange={handleEndDateChange}
             />
           </div>
 
@@ -106,9 +131,7 @@ const MyHeart = () => {
           <button
             className={`filter-btn-search${(startDate && endDate) ? ' active' : ''}`}
             disabled={!(startDate && endDate)}
-            onClick={() => {
-              if (startDate && endDate) {/* 조회 함수 실행 */}
-            }}
+            onClick={handleSearch}
           >조회</button>
         </div>
 
