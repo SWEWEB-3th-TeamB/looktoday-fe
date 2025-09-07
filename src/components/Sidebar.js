@@ -47,7 +47,6 @@ export default function Sidebar() {
 
   return (
     <div className="sidebar-wrapper">
-      {/* 제목 */}
       <div className="sidebar-title">My Page</div>
 
       {/* 메뉴 박스 */}

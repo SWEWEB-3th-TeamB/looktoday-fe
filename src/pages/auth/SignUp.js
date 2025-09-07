@@ -187,10 +187,12 @@ const SignUp = () => {
 
                         <Form type='text' name='birth' placeholder='생년월일 임시'
                             value={birth} onChange={(e) => setBirth(e.target.value)} />
-                        <RegionSelector onRegionChange={(value, kind) => {
-                            if (kind === 'sido') { setSi(value); setGungu(''); }
-                            if (kind === 'gugun') { setGungu(value); }
-                        }} />
+                        <RegionSelector
+                            onRegionChange={({ sido, gugun }) => {
+                                setSi(sido);          // 시/도는 항상 최신 값으로 세팅
+                                setGungu(gugun || ''); // 시/도 바꾸면 gugun이 ''로 들어오므로 초기화 효과 동일
+                            }}
+                        />
                     </div>
                     <div className='sign-up-check-btn'>
                         {/* 이메일 */}
