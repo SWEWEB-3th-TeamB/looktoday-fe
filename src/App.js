@@ -13,6 +13,7 @@ import LookBook from './pages/lookbook/LookBook';
 import Profile from './pages/profilesettings/Profile';
 import ChangePassword from './pages/profilesettings/ChanegePassword';
 import ChangePasswordComplete from './pages/profilesettings/ChangePasswordComplete';
+import LookTodayEdit from './pages/looktoday/LookTodayEdit';
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
           <Route path="/" element={<Main />} />
           <Route path="/login" element={<Login />} />
           <Route path="/looktoday" element={<LookToday />} />
-          <Route path="/todayWeather" element={<TodayWeather />} />
+          <Route path="/today-weather" element={<TodayWeather />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-up-complete" element={<SignUpComplete />} />
           <Route path="/lookrecommend" element={<LookRecommend />} />
@@ -32,6 +33,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/change-password-complete" element={<ChangePasswordComplete />} />
+          <Route path="/mypage/looktoday-edit/:postId" element={<LookTodayEdit />} />
         </Routes>
       </div>
     </Router>
