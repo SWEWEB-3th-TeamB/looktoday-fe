@@ -65,19 +65,27 @@ async function uploadPost({
   form.append('image', image);
   form.append('date', date);
   form.append('hour', hour);
-  form.append('isPublic', isPublic);
+  form.append('isPublic', String(isPublic));
   form.append('si', si);
   form.append('gungu', gungu);
   form.append('apparent_temp', apparent_temp);
   form.append('apparent_humidity', apparent_humidity);
   form.append('comment', comment);
 
-  const res = await fetch('https://lookpost.kr/api/lookPost', {
+  const res = await fetch('http://43.203.195.97:3000/api/lookPost', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}` },
     body: form
   });
-  return await res.json();
+
+  // 서버가 500 에러 등으로 JSON이 아닌 응답을 줄 경우를 대비
+  const responseText = await res.text();
+  try {
+    return JSON.parse(responseText);
+  } catch (e) {
+    console.error("JSON 파싱 실패:", responseText);
+    throw new Error("서버 응답이 올바르지 않습니다.");
+  }
 }
 
 const LookToday = () => {
@@ -136,7 +144,7 @@ const LookToday = () => {
   const [review, setReview] = useState('');
   const [isReviewFocused, setIsReviewFocused] = useState(false);
 
-  const token = localStorage.getItem('access_token');
+  const token = localStorage.getItem("token");
 
   const handleReviewChange = e => {
     let value = e.target.value;
@@ -160,34 +168,61 @@ const LookToday = () => {
   const handleCompleteClick = async () => {
     if (!isCompleteEnabled) return;
 
-    const result = await uploadPost({
+    // 선택된 key에 해당하는 한글 label 찾기
+    const tempLabel = temperatureOptions.find(option => option.key === temperature)?.label;
+    const humidityLabel = humidityOptions.find(option => option.key === humidity)?.label;
+
+    // 만약 해당하는 label을 찾지 못하면 함수 종료
+    if (!tempLabel || !humidityLabel) {
+      alert("온도 또는 습도 값이 유효하지 않습니다.");
+      return;
+    }
+
+    // 확인 (디버깅용)
+    console.log({
       image,
       date: dateValue,
-      hour: selectedTime ? selectedTime.toString() : '',
-      isPublic: isPublic ? true : false,
+      hour: selectedTime,
+      isPublic,
       si: selectedSido,
       gungu: selectedGugun,
-      apparent_temp: temperature,
-      apparent_humidity: humidity,
+      apparent_temp: tempLabel, // 영문 key 대신 한글 label 전송
+      apparent_humidity: humidityLabel, // 영문 key 대신 한글 label 전송
       comment: review,
       token
     });
 
-    if (result.success) {
-      // 고유 번호는 "완료된 시점"에만 증가
-      const newId = lastId + 1;
+    try {
+      const result = await uploadPost({
+        image,
+        date: dateValue,
+        hour: selectedTime ? selectedTime.toString() : '',
+        isPublic: isPublic, // boolean 값을 그대로 전달
+        si: selectedSido,
+        gungu: selectedGugun,
+        apparent_temp: tempLabel, // 수정된 값
+        apparent_humidity: humidityLabel, // 수정된 값
+        comment: review,
+        token
+      });
 
-      // posts에 실제 데이터 추가
-      setPosts([...posts, { id: newId, content: review }]);
-
-      // lastId 업데이트
-      setLastId(newId);
-      
-      // 성공 시 팝업 열기
-      setIsCompletePopupOpen(true);
-      // 등록 성공시 마이페이지 이동 등 처리
-    } else {
-      alert(result.message || "업로드에 실패했습니다.");
+      if (result.success) {
+        // 고유 번호는 "완료된 시점"에만 증가
+        const newId = lastId + 1;
+        // posts에 실제 데이터 추가
+        setPosts([...posts, { id: newId, content: review }]);
+        // lastId 업데이트
+        setLastId(newId);
+        // 성공 시 팝업 열기
+        setIsCompletePopupOpen(true);
+        // 등록 성공시 마이페이지 이동 등 처리
+      } else {
+        alert(result.message || "업로드에 실패했습니다.");
+      }
+    }catch (error) {
+      // JSON 파싱 에러 등 네트워크 외 에러 처리
+      console.error("업로드 처리 중 오류 발생:", error);
+      alert("서버로부터 올바른 응답을 받지 못했습니다. 잠시 후 다시 시도해주세요.");
     }
   };
 

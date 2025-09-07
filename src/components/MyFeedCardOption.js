@@ -26,7 +26,7 @@ async function deletePost(postId, token) {
   }
 }
 
-const MyFeedCardOption = ({ postId, onDeleteSuccess }) => {
+const MyFeedCardOption = ({ postData, onDeleteSuccess }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef();
   const navigate = useNavigate(); // 수정
@@ -71,7 +71,9 @@ const MyFeedCardOption = ({ postId, onDeleteSuccess }) => {
   };
 
   const handleEditClick = () => {
-    navigate('/mypage/looktoday-edit'); // 하드코딩 연결용
+    navigate(`/mypage/looktoday-edit/${postData.id}`, {
+      state: { initialData: postData }
+    });
   };
   // 기존 코드 내 수정 버튼 onClick에서 handleEditClick 호출
 

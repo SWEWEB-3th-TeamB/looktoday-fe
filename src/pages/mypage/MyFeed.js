@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Menu from '../../components/Menu';
 import Sidebar from '../../components/Sidebar';
@@ -23,6 +23,45 @@ const MyFeed = () => {
   const currentMonth = today.getMonth() + 1;
 
   const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    // 페이지가 처음 렌더링될 때 내 피드 목록을 불러오는 함수
+    const fetchMyPosts = async () => {
+      try {
+        // 로컬 스토리지에서 토큰 가져오기
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("로그인 토큰이 없습니다.");
+          // 필요하다면 로그인 페이지로 보내는 처리
+          return;
+        }
+
+        // 서버에 GET 요청 보내기
+        const response = await fetch('http://43.203.195.97:3000/api/fetchPost', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('서버에서 데이터를 가져오는 데 실패했습니다.');
+        }
+
+        const data = await response.json();
+
+        // 받아온 데이터로 posts state 업데이트
+        if (data.success) {
+          setPosts(data.posts); // 서버 응답 형식에 따라 data.posts 또는 data.data 등으로 수정
+        }
+
+      } catch (error) {
+        console.error("피드 로딩 중 오류:", error);
+      }
+    };
+
+    fetchMyPosts(); // 함수 실행
+  }, []); // []를 비워두면 컴포넌트가 처음 마운트될 때 딱 한 번만 실행됨.
 
   function getPrevMonth(offset=1) {
     let year = currentYear;
@@ -161,7 +200,7 @@ const MyFeed = () => {
                 initiallyLiked={post.initiallyLiked} 
               />
               <MyFeedCardOption
-                postId={post.id}
+                postData={post}
                 onDeleteSuccess={handleDeleteSuccess}
               />
             </div>
