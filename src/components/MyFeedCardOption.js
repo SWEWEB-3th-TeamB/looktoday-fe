@@ -54,6 +54,8 @@ const MyFeedCardOption = ({ postData, onDeleteSuccess }) => {
   const closePopup = () => setIsCompletePopupOpen(false);
 
   const handleDelete = async () => {
+    const postId = postData.id; 
+    
     // 실제 삭제 로직
     if (!postId || !userToken) {
       alert("삭제에 필요한 정보가 없습니다.");
