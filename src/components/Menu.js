@@ -12,6 +12,15 @@ const Menu = () => {
   const location = useLocation();
   const [isLogin, setIsLogin] = useState(false);
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLogin(true);
+    } else {
+      setIsLogin(false);
+    }
+  }, []);
+
   // 메뉴 선택 시 active 반영
   useEffect(() => {
     const path = location.pathname;
@@ -19,6 +28,9 @@ const Menu = () => {
     if (path === '/today-weather') setActiveMenu('WEATHER');
     else if (path === '/looktoday') setActiveMenu('LOOKTODAY');
     else if (path === '/lookbook') setActiveMenu('LOOKBOOK');
+    else if (['/profile', '/myfeed', '/myheart'].includes(path)) {
+      setActiveMenu('MYPAGE');
+    }
     else if (
       path === '/login' ||
       path === '/sign-up' ||
