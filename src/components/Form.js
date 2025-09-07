@@ -1,9 +1,8 @@
-import { useMemo, useState } from 'react';
-
+import { useMemo, useState, useEffect } from 'react';
 import '../styles/Form.css';
 
-import eyeOn from '../assets/images/eye-on.png'
-import eyeOff from '../assets/images/eye-off.png'
+import eyeOn from '../assets/images/eye-on.png';
+import eyeOff from '../assets/images/eye-off.png';
 
 const Form = ({
   type,
@@ -16,6 +15,9 @@ const Form = ({
   compareWith,
   customMessages = {},
   onValidChange,
+  onErrorChange,
+  validateOnChange = false,
+  forceShowError = false,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [touched, setTouched] = useState(false);
@@ -34,11 +36,11 @@ const Form = ({
     ...customMessages,
   };
 
+  // 에러 메시지 계산
   const error = useMemo(() => {
     const v = (value ?? '').trim();
 
     if (required && v.length === 0) return M.required;
-
     if (!required && v.length === 0) return '';
 
     if (name === 'email') {
@@ -58,6 +60,11 @@ const Form = ({
     return '';
   }, [name, value, required, compareWith, M]);
 
+  // 에러 상태를 부모 컴포넌트로 전달
+  useEffect(() => {
+    onValidChange?.(!error);
+    onErrorChange?.(error);
+  }, [error, onValidChange, onErrorChange]);
 
   return (
     <div className='form'>
@@ -75,27 +82,27 @@ const Form = ({
         value={value}
         onChange={(e) => {
           onChange?.(e);
+          if (validateOnChange && !touched) setTouched(true);
         }}
         onBlur={() => {
           setTouched(true);
-          onValidChange?.(!error);
         }}
-        aria-invalid={touched && !!error}
-        aria-describedby={touched && error ? `${name}-error` : undefined}
+        aria-invalid={(touched || forceShowError) && !!error}
+        aria-describedby={(touched || forceShowError) && error ? `${name}-error` : undefined}
       />
 
       {showEye && type === 'password' && (
         <img
           src={showPassword ? eyeOn : eyeOff}
           alt={showPassword ? 'eye-on' : 'eye-off'}
-          onClick={() => setShowPassword((p) => !p)}
+          onClick={toggleEye}
           role='button'
           tabIndex={0}
         />
       )}
 
       <div id={`${name}-error`} className='form-error-message'>
-        {touched ? error : ' '}
+        {(touched || forceShowError) ? error : ' '}
       </div>
     </div>
   );

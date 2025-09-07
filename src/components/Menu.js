@@ -15,7 +15,7 @@ const Menu = () => {
     useEffect(() => {
         const path = location.pathname;
 
-        if (path === '/TodayWeather') setActiveMenu('WEATHER');
+        if (path === '/today-weather') setActiveMenu('WEATHER');
         else if (path === '/looktoday') setActiveMenu('LOOKTODAY');
         else if (path === '/lookbook') setActiveMenu('LOOKBOOK');
         else if (path === '/login' || path === '/sign-up' || path === '/sign-up-complete') setActiveMenu('LOGIN');
@@ -35,7 +35,7 @@ const Menu = () => {
                 </div>
                 <div className='menu-group'>
                     <div
-                        onClick={() => { setActiveMenu('WEATHER'); navigate('/TodayWeather'); }}
+                        onClick={() => { setActiveMenu('WEATHER'); navigate('/today-weather'); }}
                         className={activeMenu === 'WEATHER' ? 'active-menu' : ''}
                     >
                         WEATHER

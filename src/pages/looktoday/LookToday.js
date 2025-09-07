@@ -49,39 +49,65 @@ const humidityOptions = [
   { label: '건조해요', key: 'dry' },
 ];
 
+async function uploadPost({
+  image,            // File 객체
+  date,             // YYYY-MM-DD (string)
+  hour,             // 예: "14"
+  isPublic,         // true 또는 false
+  si,               // 시/도
+  gungu,            // 구/군
+  apparent_temp,    // 체감온도
+  apparent_humidity,// 체감습도
+  comment,          // 코멘트
+  token             // Bearer Token
+}) {
+  const form = new FormData();
+  form.append('image', image);
+  form.append('date', date);
+  form.append('hour', hour);
+  form.append('isPublic', isPublic);
+  form.append('si', si);
+  form.append('gungu', gungu);
+  form.append('apparent_temp', apparent_temp);
+  form.append('apparent_humidity', apparent_humidity);
+  form.append('comment', comment);
+
+  const res = await fetch('https://lookpost.kr/api/lookPost', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}` },
+    body: form
+  });
+  return await res.json();
+}
+
 const LookToday = () => {
-  const [selected, setSelected] = useState('warm');
-
+  const [temperature, setSelected] = useState('warm');
   const [dateValue, setDateValue] = useState(null); // 선택된 날짜(예: 'YYYY-MM-DD')
+  const [selectedTime, setSelectedTime] = useState(null); // 시간 선택 상태
 
-  // 시간 선택 상태
-  const [selectedTime, setSelectedTime] = useState(null);
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const fileInputRef = useRef();
 
-  // 핸들러 추가
+  const [posts, setPosts] = useState([]);
+  const [lastId, setLastId] = useState(0);
+
+  // 작성 중 표시될 번호 (미리보기용)
+  const currentPostNumber = lastId + 1;
+
+  // 파일 선택 핸들러
+  const onChangeImage = e => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setPreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleTimeChange = (time) => {
     setSelectedTime(time);
-  };
-
-  // 기록 데이터와 lastId 상태 추가
-  // eslint-disable-next-line no-unused-vars
-  const [posts, setPosts] = useState([
-    { id: 1, content: '첫 번째 기록' },
-  ]);
-  // eslint-disable-next-line no-unused-vars
-  const [lastId, setLastId] = useState(1);
-
-  // 새 기록 추가 함수 (원하는 시점에 호출)
-  // eslint-disable-next-line no-unused-vars
-  const addPost = (content) => {
-    const newId = lastId + 1;
-    setPosts([...posts, { id: newId, content }]);
-    setLastId(newId);
-  };
-
-  // 기록 삭제 함수
-  // eslint-disable-next-line no-unused-vars
-  const deletePost = (id) => {
-    setPosts(posts.filter(post => post.id !== id));
   };
 
   // 시/도, 구/군 선택 상태
@@ -104,24 +130,13 @@ const LookToday = () => {
   // 공개 여부 토글 함수
   const togglePublic = () => setIsPublic(prev => !prev);
 
-  const [preview, setPreview] = useState(null);
-  const fileInputRef = useRef();
-
-  // 파일 선택 핸들러
-  const onChangeImage = e => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result);
-      reader.readAsDataURL(file);
-    }
-  };
-
   // 체감 습도 선택 상태
   const [humidity, setHumidity] = useState('comfortable');
 
   const [review, setReview] = useState('');
   const [isReviewFocused, setIsReviewFocused] = useState(false);
+
+  const token = localStorage.getItem('access_token');
 
   const handleReviewChange = e => {
     let value = e.target.value;
@@ -132,7 +147,7 @@ const LookToday = () => {
   // 완료 버튼 활성화 조건 검사 함수
   const isCompleteEnabled = !!(
     dateValue && 
-    selected && 
+    temperature && 
     humidity && 
     preview && 
     review.trim().length > 0 && 
@@ -142,9 +157,38 @@ const LookToday = () => {
   );
 
   // 완료 버튼 클릭 핸들러
-  const handleCompleteClick = () => {
-    if (!isCompleteEnabled) return; // 비활성 상태일 땐 작동 안 함
-    setIsCompletePopupOpen(true);
+  const handleCompleteClick = async () => {
+    if (!isCompleteEnabled) return;
+
+    const result = await uploadPost({
+      image,
+      date: dateValue,
+      hour: selectedTime ? selectedTime.toString() : '',
+      isPublic: isPublic ? true : false,
+      si: selectedSido,
+      gungu: selectedGugun,
+      apparent_temp: temperature,
+      apparent_humidity: humidity,
+      comment: review,
+      token
+    });
+
+    if (result.success) {
+      // 고유 번호는 "완료된 시점"에만 증가
+      const newId = lastId + 1;
+
+      // posts에 실제 데이터 추가
+      setPosts([...posts, { id: newId, content: review }]);
+
+      // lastId 업데이트
+      setLastId(newId);
+      
+      // 성공 시 팝업 열기
+      setIsCompletePopupOpen(true);
+      // 등록 성공시 마이페이지 이동 등 처리
+    } else {
+      alert(result.message || "업로드에 실패했습니다.");
+    }
   };
 
   // 팝업 열림 상태
@@ -165,7 +209,7 @@ const LookToday = () => {
 
         <div className="temp-wrapper">
           <img
-            src={imageMap[selected]}
+            src={imageMap[temperature]}
             alt="thermometer"
             className="thermometer"
           />
@@ -174,12 +218,12 @@ const LookToday = () => {
             {temperatureOptions.map((option) => (
               <button
                 key={option.key}
-                className={`temp-button ${selected === option.key ? 'active' : ''}`}
+                className={`temp-button ${temperature === option.key ? 'active' : ''}`}
                 style={{
-                  backgroundColor: selected === option.key ? option.color : '#FFF',
-                  border: selected === option.key ? 'none' : '1px solid #E2E2E2',
-                  color: selected === option.key ? '#FFF' : '#2C2C2C',
-                  textShadow: selected === option.key ? '1px 1px 5px rgba(0, 0, 0, 0.3)' : 'none'
+                  backgroundColor: temperature === option.key ? option.color : '#FFF',
+                  border: temperature === option.key ? 'none' : '1px solid #E2E2E2',
+                  color: temperature === option.key ? '#FFF' : '#2C2C2C',
+                  textShadow: temperature === option.key ? '1px 1px 5px rgba(0, 0, 0, 0.3)' : 'none'
                 }}
                 onClick={() => setSelected(option.key)}
               >
@@ -199,7 +243,7 @@ const LookToday = () => {
         <Time value={selectedTime} onChange={handleTimeChange} />
 
         <div className="record-number">
-          {posts.length > 0 ? `No. ${posts[posts.length - 1].id}` : 'No. 0'}
+          No. {currentPostNumber}
         </div>
 
         <hr className="looktoday-hr" />

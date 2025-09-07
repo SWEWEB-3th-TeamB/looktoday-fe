@@ -14,5 +14,5 @@ svg {
   left:5%;
   width: 903px;
   height: 1088px;
-  z-index: -1;
+  z-index: -1000;
 }

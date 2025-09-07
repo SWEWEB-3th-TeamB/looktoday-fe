@@ -67,6 +67,47 @@ const Time = ({ value, onChange }) => {
     }
   }, [open]);
 
+  const isDragging = useRef(false);
+  const dragStartY = useRef(0);
+  const initialScrollTop = useRef(0);
+
+  const handleScrollbarMouseDown = (e) => {
+    e.preventDefault();
+    isDragging.current = true;
+    dragStartY.current = e.clientY;
+    initialScrollTop.current = optionsRef.current.scrollTop;
+    document.addEventListener('mousemove', handleScrollbarMouseMove);
+    document.addEventListener('mouseup', handleScrollbarMouseUp);
+  };
+
+  const handleScrollbarMouseMove = (e) => {
+    if (!isDragging.current) return;
+    const options = optionsRef.current;
+    const scrollbarHeight = 50;
+    const clientHeight = options.clientHeight;
+    const scrollHeight = options.scrollHeight;
+    const maxScrollTop = scrollHeight - clientHeight;
+    const maxScrollbarTop = clientHeight - scrollbarHeight;
+
+    // 마우스 이동 거리 계산
+    const deltaY = e.clientY - dragStartY.current;
+    let newScrollbarTop = ((initialScrollTop.current / maxScrollTop) * maxScrollbarTop) + deltaY;
+    newScrollbarTop = Math.max(0, Math.min(maxScrollbarTop, newScrollbarTop));
+
+    // 스크롤 위치 계산 및 적용
+    const newScrollTop = maxScrollTop > 0
+      ? (newScrollbarTop / maxScrollbarTop) * maxScrollTop
+      : 0;
+    options.scrollTop = newScrollTop;
+    onScroll(); // 위치 최신화
+  };
+
+  const handleScrollbarMouseUp = () => {
+    isDragging.current = false;
+    document.removeEventListener('mousemove', handleScrollbarMouseMove);
+    document.removeEventListener('mouseup', handleScrollbarMouseUp);
+  };
+
   return (
     <div
       className={`time-box ${selectedTime === null ? 'empty' : 'selected'}`}
@@ -106,6 +147,7 @@ const Time = ({ value, onChange }) => {
             <div 
               className="time-scrollbar"
               ref={scrollbarRef}
+              onMouseDown={handleScrollbarMouseDown}
             />
           </div>
         </div>
