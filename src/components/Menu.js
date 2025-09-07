@@ -10,6 +10,7 @@ const Menu = () => {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [isLogin, setIsLogin] = useState(false);
 
   // 메뉴 선택 시 active 반영
   useEffect(() => {
