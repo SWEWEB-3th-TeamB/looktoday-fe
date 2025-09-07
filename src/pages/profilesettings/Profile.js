@@ -1,11 +1,12 @@
 import { useState } from 'react';
 
 import Menu from '../../components/Menu';
-import RegionSelector from '../../components/RegionSelector';
 import Footer from '../../components/Footer';
-import Completeicon from '../../assets/images/complete.png';
 import Sidebar from '../../components/Sidebar';
 import Form from '../../components/Form';
+import RegionSelector from '../../components/RegionSelector';
+
+import Completeicon from '../../assets/images/complete.png';
 
 import '../../styles/Profile.css';
 

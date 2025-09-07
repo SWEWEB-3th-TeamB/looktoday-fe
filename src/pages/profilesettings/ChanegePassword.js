@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 import Menu from '../../components/Menu';
 import Form from '../../components/Form';
-import RegionSelector from '../../components/RegionSelector';
 import AuthButton from '../../components/AuthButton';
 import Footer from '../../components/Footer';
 
