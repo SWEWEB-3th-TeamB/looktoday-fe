@@ -16,6 +16,7 @@ const Menu = () => {
     const path = location.pathname;
 
     if (path === '/today-weather') setActiveMenu('WEATHER');
+    if (path === '/today-weather') setActiveMenu('WEATHER');
     else if (path === '/looktoday') setActiveMenu('LOOKTODAY');
     else if (path === '/lookbook') setActiveMenu('LOOKBOOK');
     else if (
@@ -74,15 +75,29 @@ const Menu = () => {
           >
             LOOKBOOK
           </div>
-          <div
-            onClick={() => {
-              setActiveMenu('LOGIN');
-              navigate('/login');
-            }}
-            className={activeMenu === 'LOGIN' ? 'active-menu' : ''}
-          >
-            LOGIN
-          </div>
+
+          {/* 로그인 상태에 따라 메뉴 변경 */}
+          {isLogin ? (
+            <div
+              onClick={() => {
+                setActiveMenu('MYPAGE');
+                navigate('/profile');
+              }}
+              className={activeMenu === 'MYPAGE' ? 'active-menu' : ''}
+            >
+              MY PAGE
+            </div>
+          ) : (
+            <div
+              onClick={() => {
+                setActiveMenu('LOGIN');
+                navigate('/login');
+              }}
+              className={activeMenu === 'LOGIN' ? 'active-menu' : ''}
+            >
+              LOGIN
+            </div>
+          )}
         </div>
       </div>
     </div>
