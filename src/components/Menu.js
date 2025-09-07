@@ -16,7 +16,6 @@ const Menu = () => {
     const path = location.pathname;
 
     if (path === '/today-weather') setActiveMenu('WEATHER');
-    if (path === '/today-weather') setActiveMenu('WEATHER');
     else if (path === '/looktoday') setActiveMenu('LOOKTODAY');
     else if (path === '/lookbook') setActiveMenu('LOOKBOOK');
     else if (
