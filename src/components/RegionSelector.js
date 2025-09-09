@@ -38,7 +38,7 @@ const RegionSelector = ({ onRegionChange, initialSido = '', initialGugun = '' })
     if (!sido) return; // 시/도가 없으면 통지할 게 없음
     onRegionChange?.({ sido, gugun });
     didNotifyRef.current = true;
-  }, []);
+  }, [sido, gugun, onRegionChange]);
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -59,6 +59,7 @@ const RegionSelector = ({ onRegionChange, initialSido = '', initialGugun = '' })
     setSido(value);
     setGugun('');
     emitChange(value, ''); // 시/도만 선택됨
+    onRegionChange(value, 'sido');
     setSidoOpen(false);
     setGugunOpen(false);
   };
@@ -66,6 +67,7 @@ const RegionSelector = ({ onRegionChange, initialSido = '', initialGugun = '' })
   const handleGugunSelect = (value) => {
     setGugun(value);
     emitChange(sido, value);
+    onRegionChange(value, 'gugun');
     setGugunOpen(false);
     setSidoOpen(false);
   };

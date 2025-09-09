@@ -174,7 +174,17 @@ const TodayWeather = () => {
 
   // RegionSelector에서 객체로 전달 받음
   const handleRegionChange = ({ sido, gugun }) => {
-    setPending({ sido, gugun });
+    setPending(prev => {
+      // 시/도가 바뀌면 구/군을 초기화
+      if (sido && sido !== prev.sido) {
+        return { sido, gugun: "" };
+      }
+      // 구/군만 바뀌면 기존 시/도를 유지
+      if (gugun) {
+        return { ...prev, gugun };
+      }
+      return prev;
+    });
   };
 
   // 공용 로더

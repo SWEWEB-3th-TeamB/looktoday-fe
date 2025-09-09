@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useCallback } from "react";
 
 import Menu from '../../components/Menu';
 import Calendar from '../../components/Calendar';
@@ -89,7 +90,7 @@ async function uploadPost({
 }
 
 const LookToday = () => {
-  const [temperature, setSelected] = useState('warm');
+  const [temperature, setTemperature] = useState('warm');
   const [dateValue, setDateValue] = useState(null); // 선택된 날짜(예: 'YYYY-MM-DD')
   const [selectedTime, setSelectedTime] = useState(null); // 시간 선택 상태
 
@@ -123,14 +124,14 @@ const LookToday = () => {
   const [selectedGugun, setSelectedGugun] = useState('');
 
   // RegionSelector에서 선택값 받을 함수
-  const handleRegionChange = (value, regionType) => {
+  const handleRegionChange = useCallback((value, regionType) => {
     if (regionType === 'sido') {
       setSelectedSido(value);
       setSelectedGugun(''); // 시/도가 변경되면 군/구 초기화
     } else if (regionType === 'gugun') {
       setSelectedGugun(value);
     }
-  };
+  }, []);
 
   // 공개 여부 토글 상태
   const [isPublic, setIsPublic] = useState(true);
@@ -151,6 +152,17 @@ const LookToday = () => {
     if (value.length > 40) value = value.slice(0, 40);
     setReview(value);
   };
+
+  console.log("isCompleteEnabled 조건 값 확인:", {
+    dateValue: dateValue,
+    temperature: temperature,
+    humidity: humidity,
+    preview: preview,
+    isReviewValid: review.trim().length > 0,
+    isTimeSelected: selectedTime !== null,
+    isSidoSelected: selectedSido !== '',
+    isGugunSelected: selectedGugun !== ''
+  });
 
   // 완료 버튼 활성화 조건 검사 함수
   const isCompleteEnabled = !!(
@@ -206,7 +218,7 @@ const LookToday = () => {
         token
       });
 
-      if (result.success) {
+      if (result.success || result.message?.includes("성공")) {
         // 고유 번호는 "완료된 시점"에만 증가
         const newId = lastId + 1;
         // posts에 실제 데이터 추가
@@ -260,7 +272,7 @@ const LookToday = () => {
                   color: temperature === option.key ? '#FFF' : '#2C2C2C',
                   textShadow: temperature === option.key ? '1px 1px 5px rgba(0, 0, 0, 0.3)' : 'none'
                 }}
-                onClick={() => setSelected(option.key)}
+                onClick={() => setTemperature(option.key)}
               >
                 {option.label}
               </button>
