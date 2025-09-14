@@ -6,7 +6,7 @@ import heartCount from '../assets/images/heart-empty.png';
 
 import '../styles/LookCard.css';
 
-const BestLookCard = ({ image, rank, locationTemp, nickname, likeCount }) => {
+const BestLookCard = ({ image, rank, temperature, nickname, likeCount, location }) => {
     const [liked, setLiked] = useState(false);
 
     const handleLikeToggle = () => {
@@ -24,7 +24,7 @@ const BestLookCard = ({ image, rank, locationTemp, nickname, likeCount }) => {
                 onClick={handleLikeToggle}
                 style={{ cursor: 'pointer' }}
             />
-            <div className='look-loc-temp'>{locationTemp}</div>
+            <div className='look-loc-temp'>{location} · {temperature}℃</div>
             <div className='look-nick'>{nickname}</div>
             <div className='look-heart-count'>
                 <img src={heartCount} alt='heart-empty' />{likeCount}

@@ -10,18 +10,18 @@ const Menu = () => {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // 로그인 여부 상태
   const [isLogin, setIsLogin] = useState(false);
 
+  // URL이 변경될 때마다 토큰을 체크해 로그인 상태 갱신
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      setIsLogin(true);
-    } else {
-      setIsLogin(false);
-    }
-  }, []);
+    console.log('현재 토큰 값:', token); // 디버깅용
+    setIsLogin(!!token); // token이 있으면 true, 없으면 false
+  }, [location.pathname]);
 
-  // 메뉴 선택 시 active 반영
+  // 메뉴 클릭 시 active 상태 업데이트
   useEffect(() => {
     const path = location.pathname;
 
@@ -30,8 +30,7 @@ const Menu = () => {
     else if (path === '/lookbook') setActiveMenu('LOOKBOOK');
     else if (['/profile', '/myfeed', '/myheart'].includes(path)) {
       setActiveMenu('MYPAGE');
-    }
-    else if (
+    } else if (
       path === '/login' ||
       path === '/sign-up' ||
       path === '/sign-up-complete'
@@ -69,6 +68,7 @@ const Menu = () => {
           >
             WEATHER
           </div>
+
           <div
             onClick={() => {
               setActiveMenu('LOOKTODAY');
@@ -78,6 +78,7 @@ const Menu = () => {
           >
             LOOKTODAY
           </div>
+
           <div
             onClick={() => {
               setActiveMenu('LOOKBOOK');

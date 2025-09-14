@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Menu from '../../components/Menu';
 import SearchFilter from '../../components/SearchFilter';
 import SearchFiltered from '../../components/SearchFiltered';
@@ -8,14 +8,12 @@ import ScrollButton from '../../components/ScrollButton';
 import Footer from '../../components/Footer';
 import LookCard from '../../components/LookCard';
 import BestLookCard from '../../components/BestLookCard';
+import LookPopup from './LookPopup';
 
 import '../../styles/LookBook.css';
 
 import arrow from '../../assets/images/pagination-arrow.png';
 import lookbook from '../../assets/images/lookbook-empty.png';
-
-const TOTAL_ITEMS = 10;
-const VISIBLE_COUNT = 4;
 
 const LookBook = () => {
     const [filters, setFilters] = useState([
@@ -25,6 +23,10 @@ const LookBook = () => {
     ]);
     const [selectedSort, setSelectedSort] = useState('최신순');
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [bestLookList, setBestLookList] = useState([]);
+    const [lookList, setLookList] = useState([]);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [selectedLook, setSelectedLook] = useState(null);
 
     // 적용된 필터 삭제
     const handleRemoveFilter = (indexToRemove) => {
@@ -36,29 +38,73 @@ const LookBook = () => {
         setSelectedSort(value);
     };
 
-    // Best 아이템 정렬
-    const items = Array.from({ length: TOTAL_ITEMS }, (_, i) => ({
-        rank: i + 1,
-        image: lookbook,
-        locationTemp: '서울시 노원구 · 29℃',
-        nickname: '닉네임',
-        likeCount: 11,
-    }));
+    const handleBestLook = async () => {
+        try {
+            const res = await fetch('http://43.203.195.97:3000/api/looks/best', {
+                method: "GET",
+            });
+
+            const data = await res.json();
+            console.log("data", data);
+            console.log("message", data.message);
+
+            setBestLookList(data.result);
+
+        } catch (error) {
+            console.error("Error fetching best looks:", error);
+        }
+    }
+
+    useEffect(() => {
+        handleBestLook();
+    }, []);
 
     // Best 아이템 왼쪽 화살표 클릭시
     const handlePrev = () => {
-        setCurrentIndex((prev) => Math.max(prev - VISIBLE_COUNT, 0));
+        setCurrentIndex((prev) => Math.max(prev - 4, 0));
     };
 
     // Best 아이템 오른쪽 화살표 클릭시
     const handleNext = () => {
         setCurrentIndex((prev) =>
-            Math.min(prev + VISIBLE_COUNT, TOTAL_ITEMS - VISIBLE_COUNT)
+            Math.min(prev + 4, bestLookList.length - 4)
         );
     };
 
     // BestLookCard를 4개만 잘라서 보여줌
-    const visibleItems = items.slice(currentIndex, currentIndex + VISIBLE_COUNT);
+    const visibleItems = bestLookList.slice(currentIndex, currentIndex + 4);
+
+    const fetchLookList = async () => {
+        try {
+            const res = await fetch('http://43.203.195.97:3000/api/looks', {
+                method: "GET",
+            });
+
+            const data = await res.json();
+            console.log("look data", data);
+
+            // looks 배열만 상태에 저장
+            setLookList(data.result.looks);
+        } catch (error) {
+            console.error("Error fetching looks:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchLookList();
+    }, []);
+
+    // 팝업 열기
+    const handleOpenPopup = (look) => {
+        setSelectedLook(look);
+        setIsPopupOpen(true);
+    };
+
+    // 팝업 닫기
+    const handleClosePopup = () => {
+        setIsPopupOpen(false);
+        setSelectedLook(null);
+    };
 
     return (
         <div className="lookbook-wrap">
@@ -67,7 +113,6 @@ const LookBook = () => {
                 <div className='lookbook-title'>Find Your Style</div>
                 <div className='lookbook-best'>
                     <div className='lookbook-name'>Best 10</div>
-
                     <div className='lookbook-best-looks'>
                         <img
                             src={arrow}
@@ -77,13 +122,22 @@ const LookBook = () => {
                         />
                         <div className='best-look-cards'>
                             {visibleItems.map((item) => (
-                                <BestLookCard key={item.rank} {...item} />
+                                <div key={item.looktoday_id} onClick={() => handleOpenPopup(item)}>
+                                    <BestLookCard
+                                        rank={item.post_count}
+                                        image={item.Image?.imageUrl || lookbook}
+                                        temperature={item.temperature ?? '-'}
+                                        location={`${item.si} ${item.gungu}`}
+                                        nickname={item.User.nickname}
+                                        likeCount={item.like_count}
+                                    />
+                                </div>
                             ))}
                         </div>
                         <img
                             src={arrow}
                             alt='오른쪽 화살표'
-                            className={`lookbook-right-arrow ${currentIndex + VISIBLE_COUNT >= TOTAL_ITEMS ? 'disabled' : ''
+                            className={`lookbook-right-arrow ${currentIndex + 4 >= bestLookList.length ? 'disabled' : ''
                                 }`}
                             onClick={handleNext}
                         />
@@ -101,15 +155,22 @@ const LookBook = () => {
                 </div>
                 <div className='lookbook-outfits'>
                     <div className='look-cards'>
-                        {[...Array(18)].map((_, index) => (
-                            <LookCard
-                                key={index}
-                                image={lookbook}
-                                locationTemp="서울시 노원구 · 29℃"
-                                nickname="닉네임"
-                                likeCount={11}
-                            />
-                        ))}
+                        {lookList.length === 0 ? (
+                            <div>룩 데이터가 없습니다.</div>
+                        ) : (
+                            lookList.map((item) => (
+                                <div key={item.looktoday_id} onClick={() => handleOpenPopup(item)}>
+                                    <LookCard
+                                        lookId={item.looktoday_id}
+                                        image={item.Image?.imageUrl || lookbook}
+                                        locationTemp={`${item.si} ${item.gungu} · ${item.temperature ?? '-'}℃`}
+                                        nickname={item.User.nickname}
+                                        likeCount={item.like_count}
+                                        initiallyLiked={false}
+                                    />
+                                </div>
+                            ))
+                        )}
                     </div>
                 </div>
                 <div className='lookbook-pagination'>
@@ -118,6 +179,12 @@ const LookBook = () => {
             </div>
             <ScrollButton />
             <Footer />
+
+            <LookPopup
+                isOpen={isPopupOpen}
+                onClose={handleClosePopup}
+                look={selectedLook}
+            />
         </div>
     );
 };

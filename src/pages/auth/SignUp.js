@@ -167,24 +167,30 @@ const SignUp = () => {
     const handleSubmit = async (e) => {
         e.preventDefault?.();
 
-        // birth 변환 (비필수면 비어있을 때는 ""로 보냄)
-        let birthForServer = "";
-        if (birthDigits.trim()) {
-            birthForServer = formatBirthForServer(birthDigits);
-            if (!birthForServer) {
-                const msg = "생년월일 형식이 올바르지 않습니다. YYYY/MM/DD로 입력해주세요.";
-                setServerError(msg);
-                alert(msg);
-                return;
-            }
+        // 생년월일 필수 체크
+        if (!birthDigits.trim()) {
+            const msg = "생년월일은 필수 입력값입니다.";
+            setServerError(msg);
+            alert(msg);
+            return;
         }
 
+        // 생년월일 형식 변환 및 검증
+        const birthForServer = formatBirthForServer(birthDigits);
+        if (!birthForServer) {
+            const msg = "생년월일 형식이 올바르지 않습니다. YYYY/MM/DD로 입력해주세요.";
+            setServerError(msg);
+            alert(msg);
+            return;
+        }
+
+        // 서버로 보낼 데이터 구성
         const payload = {
             email,
             password,
             confirmPassword,
             nickname,
-            birth: birthForServer,   // ← 서버에는 항상 YYYY/MM/DD
+            birth: birthForServer, // 항상 YYYY/MM/DD 형식으로 서버 전송
             si,
             gungu
         };
@@ -198,22 +204,27 @@ const SignUp = () => {
                 body: JSON.stringify(payload),
             });
 
-            // 400 디버깅 강화: json 실패 시 text로도 로그
             let data;
-            try { data = await res.clone().json(); }
-            catch { data = { raw: await res.text() }; }
+            try {
+                data = await res.clone().json();
+            } catch {
+                data = { raw: await res.text() };
+            }
             console.log("signup response", res.status, data);
 
+            // 서버 응답이 실패일 경우
             if (!res.ok) {
                 alert(data?.message || "회원가입 실패");
                 return;
             }
+
+            // 회원가입 성공 시
             navigate("/sign-up-complete");
         } catch (error) {
             console.error(error);
             alert("네트워크 오류 발생");
         }
-    }
+    };
 
     return (
         <div className="wrap">
@@ -228,7 +239,7 @@ const SignUp = () => {
                         <label>비밀번호*</label>
                         <label>비밀번호 확인*</label>
                         <label>닉네임*</label>
-                        <label>생년월일</label>
+                        <label>생년월일*</label>
                         <label>위치*</label>
                     </div>
                     <div className='sign-up-inputs'>
@@ -250,12 +261,16 @@ const SignUp = () => {
                         <Form type='text' name='nickname' placeholder='닉네임' required
                             value={nickname} onChange={(e) => setNickname(e.target.value)} />
 
-                        <Form type='text' name='birth' placeholder='생년월일 임시'
-                            value={birth} onChange={(e) => setBirth(e.target.value)} />
+                        <Form type='text' name='birth' placeholder='생년월일 (YYYY/MM/DD)' required
+                            value={birth} onChange={(e) => {
+                                const formatted = formatBirthForInput(e.target.value);
+                                setBirth(formatted);
+                                setBirthDigits(e.target.value);
+                            }} />
                         <RegionSelector
                             onRegionChange={({ sido, gugun }) => {
-                                setSi(sido);          // 시/도는 항상 최신 값으로 세팅
-                                setGungu(gugun || ''); // 시/도 바꾸면 gugun이 ''로 들어오므로 초기화 효과 동일
+                                setSi(sido);
+                                setGungu(gugun || '');
                             }}
                         />
                     </div>

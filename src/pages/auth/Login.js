@@ -93,7 +93,7 @@ const Login = () => {
           <AuthButton text='로그인' onClick={handleLoginClick} />
         </div>
         <div className='login-links'>
-          <div className='login-link'><a href='/sign-up'>회원가입</a></div>ㅣ<div className='login-link'>비밀번호 찾기</div>
+          <div className='login-link'><a href='/sign-up'>회원가입</a></div>ㅣ<div className='login-link'><a href='/change-password'>비밀번호 찾기</a></div>
         </div>
       </div>
       <Footer />

@@ -1,0 +1,157 @@
+.look-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.look-popup-content {
+    background: #fff;
+    width: 666px;
+    height: 508px;
+    position: relative;
+}
+
+.look-popup-content hr {
+    position: absolute;
+    top: 64px;
+    width: 666px;
+    border: 1px solid #E8E8E8;
+}
+
+.look-popup-nick {
+    position: absolute;
+    top: 25px;
+    left: 27px;
+    color: #2C2C2C;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.look-popup-close {
+    width: 38px;
+    height: 38px;
+    position: absolute;
+    top: 13px;
+    right: 13px;
+    cursor: pointer;
+}
+
+.look-popup-image {
+    position: relative;
+    width: 308.8px;
+    height: 386px;
+    top: 93px;
+    left: 27px;
+}
+
+.look-popup-main-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 308.8px;
+    height: 386px;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.look-popup-heart-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 10.8px;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+
+.look-popup-info {
+    position: absolute;
+    top: 111px;
+    left: 362px;
+}
+
+.look-popup-info {
+    position: absolute;
+    top: 111px;
+    left: 362px;
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    color: #2C2C2C;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    line-height: 1.2;
+    margin-bottom: 30px;
+}
+
+.info-label {
+    font-weight: 700;
+    min-width: 125px;
+    text-align: left;
+}
+
+.info-value {
+    flex: 1;
+    text-align: left;
+    word-break: break-word;
+}
+
+.comment-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+}
+
+.comment-row .info-label {
+    margin-bottom: 10px;
+}
+
+.look-popup-date {
+    position: absolute;
+    bottom: 29px;
+    left: 353px;
+    color: #969696;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.look-popup-like {
+    position: absolute;
+    bottom: 29px;
+    right: 28px;
+    display: flex;
+    align-items: center;
+}
+
+.look-popup-like img {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+}
+
+.look-popup-heart-count {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #969696;
+}
+
+.look-popup-heart-count img {
+    transform: translateY(1px);
+    vertical-align: middle;
+}
