@@ -14,6 +14,7 @@ import Profile from './pages/profilesettings/Profile';
 import ChangePassword from './pages/profilesettings/ChanegePassword';
 import ChangePasswordComplete from './pages/profilesettings/ChangePasswordComplete';
 import LookTodayEdit from './pages/looktoday/LookTodayEdit';
+import Verification from './pages/profilesettings/Verification';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/myfeed" element={<MyFeed />} />
           <Route path="/lookbook" element={<LookBook />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/verification" element={<Verification />} />
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/change-password-complete" element={<ChangePasswordComplete />} />
           <Route path="/mypage/looktoday-edit/:postId" element={<LookTodayEdit />} />
