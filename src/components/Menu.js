@@ -76,7 +76,7 @@ const Menu = () => {
             }}
             className={activeMenu === 'LOOKTODAY' ? 'active-menu' : ''}
           >
-            LOOKTODAY
+            LOOK TODAY
           </div>
 
           <div
@@ -86,7 +86,7 @@ const Menu = () => {
             }}
             className={activeMenu === 'LOOKBOOK' ? 'active-menu' : ''}
           >
-            LOOKBOOK
+            LOOK BOOK
           </div>
 
           {/* 로그인 상태에 따라 메뉴 변경 */}

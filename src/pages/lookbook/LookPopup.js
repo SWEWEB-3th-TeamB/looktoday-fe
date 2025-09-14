@@ -80,8 +80,8 @@ const LookPopup = ({ isOpen, onClose, look }) => {
           {/* 좋아요 영역 */}
           <div className="look-popup-like">
             <div className="look-popup-heart-count">
-              <img src={heartCount} alt="heart-empty" />
-              {count}
+              <img src={heartCount} alt="heart-empty" className="look-popup-heart-icon" />
+              <span className="look-popup-like-count">{count}</span>
             </div>
           </div>
         </div>

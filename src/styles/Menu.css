@@ -21,6 +21,7 @@ body {
   position: relative;
   width: 100%;
   min-width: inherit;
+  z-index: 100;
 }
 
 .menu-gnb {
@@ -38,7 +39,7 @@ body {
 }
 
 .menu-group {
-  font-family: 'InriaSerif', serif;
+  font-family: 'InriaSerif';
   display: flex;
   justify-content: space-between;
   gap: 41px;
