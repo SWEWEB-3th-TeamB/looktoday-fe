@@ -1,0 +1,112 @@
+@font-face {
+  font-family: 'InriaSerif';
+  src: url('../assets/fonts/InriaSerif-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+.main {
+  width: 100%;
+  min-width: 1280px;
+}
+
+.main-weather-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 386px;
+  background: #F7FAFC;
+  z-index: 0;
+}
+
+.main-weather {
+  position: relative;
+  width: 1280px;
+  margin: 0 auto;
+  color: #0C82C6;
+  z-index: 1;
+}
+
+.main-weather-title {
+  position: absolute;
+  top: 31.5px;
+  right: 67px;
+  font-family: 'InriaSerif', serif;
+  font-size: 96px;
+  color: #F7FAFC;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: #0C82C6;
+  overflow: hidden;
+}
+
+.main-weather-title span {
+  display: inline-block;
+  width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: typing 1.5s steps(19, end) forwards;
+}
+
+.main-weather-title strong {
+  color: #0C82C6;
+  font-weight: 700;
+}
+
+/* 애니메이션 */
+@keyframes typing {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+.main-weather-info {
+  position: absolute;
+  top: 149.5px;
+  right: 74px;
+  font-size: 32px;
+}
+
+.main-weather-date {
+  position: absolute;
+  top: 185.5px;
+  left: 565px;
+  font-family: 'InriaSerif', serif;
+  font-size: 20px;
+}
+
+.main-weather-info span {
+  font-family: 'InriaSerif', serif;
+}
+
+.main-weather-text {
+  position: absolute;
+  top: 336.5px;
+  right: 201px;
+}
+
+.main-weather-text span {
+  display: block;
+  font-size: 20px;
+  color: #3C95C8;
+}
+
+.main-weather-rainy {
+  position: absolute;
+  width: 390px;
+  height: 474px;
+  top: 113.5px;
+  left: 109px;
+}
+
+.main-weather-umbrella {
+  position: absolute;
+  width: 368px;
+  height: 455px;
+  top: 212.5px;
+  left: 297px;
+}
