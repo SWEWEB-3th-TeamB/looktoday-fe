@@ -8,7 +8,7 @@ import trashCanIcon from '../assets/images/trash-can.png';
 
 import '../../src/styles/MyFeedCardOption.css';
 
-import { useNavigate } from 'react-router-dom'; // 수정
+import { useNavigate } from 'react-router-dom';
 
 async function deletePost(postId, token) {
   try {
@@ -19,8 +19,17 @@ async function deletePost(postId, token) {
         'Content-Type': 'application/json'
       }
     });
-    const data = await res.json();
-    return data;
+    if (res.ok) {
+      try {
+        const data = await res.json();
+        return data.success ? data : { success: true, message: "삭제되었습니다."};
+      } catch (e) {
+        return { success: true, message: "삭제되었습니다."};
+      }
+    }
+    const errorData = await res.json();
+    return { success: false, message: errorData.message || '삭제에 실패했습니다.' };
+
   } catch (e) {
     return { success: false, message: '네트워크 에러가 발생했습니다.' };
   }
@@ -28,10 +37,11 @@ async function deletePost(postId, token) {
 
 const MyFeedCardOption = ({ postData, onDeleteSuccess }) => {
   const [open, setOpen] = useState(false);
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const ref = useRef();
-  const navigate = useNavigate(); // 수정
+  const navigate = useNavigate();
 
-  const userToken = localStorage.getItem('access_token');
+  const userToken = localStorage.getItem('token');
 
   // 옵션창 바깥 클릭시 닫기
   useEffect(() => {
@@ -42,30 +52,26 @@ const MyFeedCardOption = ({ postData, onDeleteSuccess }) => {
     return () => document.removeEventListener('mousedown', closeOnClickOutside);
   }, [open]);
 
-  // 완료 버튼 클릭 핸들러
-  const handleCompleteClick = () => {
-    setIsCompletePopupOpen(true);
+  const handleDeleteClick = () => {
+    setOpen(false); // 옵션창 닫기
+    setIsDeletePopupOpen(true); // 삭제 확인 팝업 열기
   };
 
-  // 팝업 열림 상태
-  const [isCompletePopupOpen, setIsCompletePopupOpen] = useState(false);
+  const closePopup = () => setIsDeletePopupOpen(false);
 
-  // 팝업 닫기
-  const closePopup = () => setIsCompletePopupOpen(false);
+  const handleDeleteConfirm = async () => {
+    const postId = postData.looktoday_id;
 
-  const handleDelete = async () => {
-    const postId = postData.id; 
-    
-    // 실제 삭제 로직
     if (!postId || !userToken) {
       alert("삭제에 필요한 정보가 없습니다.");
-      closePopup(); // 팝업 닫기
+      closePopup();
       return;
     }
-    const res = await deletePost(postId, userToken);
+
+    const res = await deletePost(postData.id, userToken);
     if (res.success) {
       alert("게시물이 성공적으로 삭제되었습니다.");
-      onDeleteSuccess && onDeleteSuccess(postId); // 상위에서 상태 제거 등 처리
+      onDeleteSuccess(postData.id); // 부모 컴포넌트(MyFeed)에 삭제 알림
     } else {
       alert(res.message || "삭제 중 오류가 발생했습니다.");
     }
@@ -73,15 +79,13 @@ const MyFeedCardOption = ({ postData, onDeleteSuccess }) => {
   };
 
   const handleEditClick = () => {
-    navigate(`/mypage/looktoday-edit/${postData.id}`, {
+    navigate(`/mypage/looktoday-edit/${postData.looktoday_id}`, {
       state: { initialData: postData }
     });
   };
-  // 기존 코드 내 수정 버튼 onClick에서 handleEditClick 호출
 
   return (
     <div>
-      {/* 옵션 버튼 */}
       <div
         className="option-btn"
         onClick={() => setOpen(!open)}
@@ -143,7 +147,7 @@ const MyFeedCardOption = ({ postData, onDeleteSuccess }) => {
               flexShrink: 0,
               aspectRatio: "1/1"
             }}
-            onClick={handleCompleteClick}
+            onClick={handleDeleteClick}
           >
             <img src={trashCanIcon} alt="삭제" style={{ width: "100%", height: "100%" }} />
           </button>
@@ -151,10 +155,9 @@ const MyFeedCardOption = ({ postData, onDeleteSuccess }) => {
       )}
 
       {/* 팝업을 카드 내 추가가 아니라, Portal에서 페이지 전체에 렌더 */}
-      {isCompletePopupOpen &&
-        <DeletePopup onCancel={closePopup} onDelete={handleDelete} />
+      {isDeletePopupOpen &&
+        <DeletePopup onCancel={closePopup} onDelete={handleDeleteConfirm} />
       }
-
     </div>
   );
 };
