@@ -111,7 +111,7 @@ const MyFeed = () => {
   };
 
   const handleDeleteSuccess = (deletedId) => {
-    setPosts(prevPosts => prevPosts.filter(post => post.id !== deletedId));
+    setPosts(prevPosts => prevPosts.filter(post => post.looktoday_id !== deletedId));
   };
 
   return (

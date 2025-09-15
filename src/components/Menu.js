@@ -94,7 +94,7 @@ const Menu = () => {
             <div
               onClick={() => {
                 setActiveMenu('MYPAGE');
-                navigate('/profile');
+                navigate('/myfeed');
               }}
               className={activeMenu === 'MYPAGE' ? 'active-menu' : ''}
             >

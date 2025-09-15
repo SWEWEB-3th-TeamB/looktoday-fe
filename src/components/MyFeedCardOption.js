@@ -36,6 +36,8 @@ async function deletePost(postId, token) {
 }
 
 const MyFeedCardOption = ({ postData, onDeleteSuccess }) => {
+  console.log("MyFeedCardOption이 받은 postData:", postData);
+
   const [open, setOpen] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const ref = useRef();
@@ -68,10 +70,10 @@ const MyFeedCardOption = ({ postData, onDeleteSuccess }) => {
       return;
     }
 
-    const res = await deletePost(postData.id, userToken);
+    const res = await deletePost(postId, userToken);
     if (res.success) {
       alert("게시물이 성공적으로 삭제되었습니다.");
-      onDeleteSuccess(postData.id); // 부모 컴포넌트(MyFeed)에 삭제 알림
+      onDeleteSuccess(postId); // 부모 컴포넌트(MyFeed)에 삭제 알림
     } else {
       alert(res.message || "삭제 중 오류가 발생했습니다.");
     }
