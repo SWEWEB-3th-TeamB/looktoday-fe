@@ -9,10 +9,10 @@ import myHeart from '../assets/images/my-heart.png';
 import myLogout from '../assets/images/my-logout.png';
 
 const menus = [
-  { key: 'profile', name: '프로필 설정', icon: myProfile, boxTop: 81,  imgTop: 95,  textTop: 95 },
-  { key: 'myfeed',  name: '내 피드',     icon: myFeed,    boxTop: 146, imgTop: 160, textTop: 160 },
-  { key: 'myheart', name: '내 좋아요',   icon: myHeart,   boxTop: 211, imgTop: 225, textTop: 225 },
-  { key: 'logout',  name: '로그아웃',    icon: myLogout,  boxTop: 276, imgTop: 291, textTop: 290 },
+  { key: 'myfeed', name: '내 피드', icon: myFeed, boxTop: 81, imgTop: 95, textTop: 95 },
+  { key: 'myheart', name: '내 좋아요', icon: myHeart, boxTop: 146, imgTop: 160, textTop: 160 },
+  { key: 'profile', name: '프로필 설정', icon: myProfile, boxTop: 211, imgTop: 225, textTop: 225 },
+  { key: 'logout', name: '로그아웃', icon: myLogout, boxTop: 276, imgTop: 291, textTop: 290 },
 ];
 
 export default function Sidebar() {
