@@ -11,17 +11,69 @@ const Menu = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 로그인 여부 상태
+  // 로그인 여부
   const [isLogin, setIsLogin] = useState(false);
 
-  // URL이 변경될 때마다 토큰을 체크해 로그인 상태 갱신
+  // 24시간 만료 (ms)
+  const TOKEN_EXPIRY_TIME = 24 * 60 * 60 * 1000;
+
+  // 개발 모드에서 앱 시작 시 localStorage 초기화
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      const hasCleared = sessionStorage.getItem('clearedLocalStorage');
+
+      if (!hasCleared) {
+        console.log('💻 개발 모드 첫 실행 → localStorage 초기화');
+        localStorage.clear();
+        sessionStorage.setItem('clearedLocalStorage', 'true');
+      } else {
+        console.log('💻 개발 모드 → localStorage 유지');
+      }
+    }
+  }, []);
+
+
+  // 토큰 및 만료 체크
   useEffect(() => {
     const token = localStorage.getItem('token');
-    console.log('현재 토큰 값:', token); // 디버깅용
-    setIsLogin(!!token); // token이 있으면 true, 없으면 false
-  }, [location.pathname]);
+    const tokenIssuedAt = localStorage.getItem('token_issued_at'); // 토큰 발급 시간
 
-  // 메뉴 클릭 시 active 상태 업데이트
+    console.log('📍 현재 localStorage token:', token);
+    console.log('📍 현재 localStorage tokenIssuedAt:', tokenIssuedAt);
+
+    // 1) 토큰 없으면 로그인 상태 false
+    if (!token) {
+      console.log('❌ 토큰 없음 → 로그인 상태 false');
+      setIsLogin(false);
+      return;
+    }
+
+    if (!tokenIssuedAt) {
+      console.log('❌ token_issued_at 없음 → 로그인 상태 false');
+      setIsLogin(false);
+      return;
+    }
+
+    const now = Date.now();
+    const issuedTime = parseInt(tokenIssuedAt, 10);
+
+    // 2) 토큰 만료 체크
+    if (now - issuedTime > TOKEN_EXPIRY_TIME) {
+      console.log('⏰ 토큰 만료됨 → 자동 로그아웃 처리');
+      localStorage.removeItem('token');
+      localStorage.removeItem('token_issued_at');
+      setIsLogin(false);
+      alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+      navigate('/login');
+      return;
+    }
+
+    // 3) 유효한 토큰 → 로그인 유지
+    console.log('✅ 토큰 유효 → 로그인 상태 true');
+    setIsLogin(true);
+  }, [location.pathname, navigate]);
+
+  // 메뉴 활성화 상태 업데이트
   useEffect(() => {
     const path = location.pathname;
 
@@ -59,6 +111,7 @@ const Menu = () => {
 
         {/* 메뉴 버튼 그룹 */}
         <div className="menu-group">
+          {/* WEATHER */}
           <div
             onClick={() => {
               setActiveMenu('WEATHER');
@@ -69,8 +122,13 @@ const Menu = () => {
             WEATHER
           </div>
 
+          {/* LOOK TODAY → 로그인 필수 */}
           <div
             onClick={() => {
+              if (!isLogin) {
+                alert('로그인 후 이용 가능합니다.');
+                return; // 로그인 안 했으면 여기서 멈춤
+              }
               setActiveMenu('LOOKTODAY');
               navigate('/looktoday');
             }}
@@ -79,6 +137,7 @@ const Menu = () => {
             LOOK TODAY
           </div>
 
+          {/* LOOK BOOK */}
           <div
             onClick={() => {
               setActiveMenu('LOOKBOOK');
@@ -89,7 +148,7 @@ const Menu = () => {
             LOOK BOOK
           </div>
 
-          {/* 로그인 상태에 따라 메뉴 변경 */}
+          {/* LOGIN / MY PAGE */}
           {isLogin ? (
             <div
               onClick={() => {

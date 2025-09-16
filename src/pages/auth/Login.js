@@ -19,7 +19,8 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLoginClick = async (e) => {
-    e.preventDefault?.();
+    e.preventDefault();
+    
     if (!email.trim() || !isEmailValid || !password.trim()) return;
     if (emailError || passwordError) {
       return;
@@ -54,7 +55,15 @@ const Login = () => {
       console.log("로그인", data);
 
       const TOKEN = data.result.token; // 토큰
-      localStorage.setItem("token", TOKEN); // 로컬스토리지에 토큰 저장
+
+      // 1. 토큰 저장
+      localStorage.setItem("token", TOKEN);
+
+      // 2. 토큰 발급 시각도 함께 저장 (24시간 체크용)
+      localStorage.setItem("token_issued_at", Date.now().toString());
+
+      console.log('저장된 token:', localStorage.getItem('token'));
+      console.log('저장된 token_issued_at:', localStorage.getItem('token_issued_at'));
 
       navigate("/");
 
@@ -68,7 +77,7 @@ const Login = () => {
       <Menu />
       <div className='login'>
         <div className='login-title'>Login</div>
-        <div className='login-form'>
+        <form className='login-form' onSubmit={handleLoginClick}>
           <Form
             type='email'
             name='email'
@@ -79,7 +88,8 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
             onValidChange={(ok) => setIsEmailValid(ok)}
           />
-          <Form type='password'
+          <Form
+            type='password'
             name='password'
             placeholder='비밀번호'
             showEye
@@ -88,10 +98,11 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-        </div>
-        <div className='login-btn'>
-          <AuthButton text='로그인' onClick={handleLoginClick} />
-        </div>
+
+          <div className='login-btn'>
+            <AuthButton text='로그인' />
+          </div>
+        </form>
         <div className='login-links'>
           <div className='login-link'><a href='/sign-up'>회원가입</a></div>ㅣ<div className='login-link'><a href='/change-password'>비밀번호 찾기</a></div>
         </div>
