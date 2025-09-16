@@ -25,6 +25,7 @@ const LookBook = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [bestLookList, setBestLookList] = useState([]);
     const [lookList, setLookList] = useState([]);
+    const [sortedLookList, setSortedLookList] = useState([]);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedLook, setSelectedLook] = useState(null);
 
@@ -83,7 +84,6 @@ const LookBook = () => {
             const data = await res.json();
             console.log("look data", data);
 
-            // looks 배열만 상태에 저장
             setLookList(data.result.looks);
         } catch (error) {
             console.error("Error fetching looks:", error);
@@ -93,6 +93,20 @@ const LookBook = () => {
     useEffect(() => {
         fetchLookList();
     }, []);
+
+    useEffect(() => {
+        if (lookList.length === 0) return;
+
+        const sorted = [...lookList].sort((a, b) => {
+            if (selectedSort === '최신순') {
+                return new Date(b.updatedAt) - new Date(a.updatedAt);
+            } else {
+                return b.like_count - a.like_count;
+            }
+        });
+
+        setSortedLookList(sorted);
+    }, [selectedSort, lookList]);
 
     // 팝업 열기
     const handleOpenPopup = (look) => {
@@ -121,10 +135,10 @@ const LookBook = () => {
                             onClick={handlePrev}
                         />
                         <div className='best-look-cards'>
-                            {visibleItems.map((item) => (
+                            {visibleItems.map((item, index) => (
                                 <div key={item.looktoday_id} onClick={() => handleOpenPopup(item)}>
                                     <BestLookCard
-                                        rank={item.post_count}
+                                        rank={currentIndex + index + 1}
                                         image={item.Image?.imageUrl || lookbook}
                                         temperature={item.temperature ?? '-'}
                                         location={`${item.si} ${item.gungu}`}
@@ -155,10 +169,10 @@ const LookBook = () => {
                 </div>
                 <div className='lookbook-outfits'>
                     <div className='look-cards'>
-                        {lookList.length === 0 ? (
+                        {sortedLookList.length === 0 ? (
                             <div>룩 데이터가 없습니다.</div>
                         ) : (
-                            lookList.map((item) => (
+                            sortedLookList.map((item) => (
                                 <div key={item.looktoday_id} onClick={() => handleOpenPopup(item)}>
                                     <LookCard
                                         lookId={item.looktoday_id}

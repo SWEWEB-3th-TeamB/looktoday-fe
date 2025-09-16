@@ -9,7 +9,15 @@ import '../styles/LookCard.css';
 const BestLookCard = ({ image, rank, temperature, nickname, likeCount, location }) => {
     const [liked, setLiked] = useState(false);
 
-    const handleLikeToggle = () => {
+    const handleLikeToggle = (e) => {
+        e.stopPropagation();
+
+        const token = localStorage.getItem('access_token');
+
+        if (!token) {
+            alert("로그인 후 이용 가능합니다.");
+            return;
+        }
         setLiked(!liked);
     };
 
@@ -24,14 +32,16 @@ const BestLookCard = ({ image, rank, temperature, nickname, likeCount, location 
                 onClick={handleLikeToggle}
                 style={{ cursor: 'pointer' }}
             />
-            <div className='look-loc-temp'>{location} · {temperature}℃</div>
+            <div className='look-loc-temp'>
+                {location} · {temperature}℃
+            </div>
             <div className='look-nick'>{nickname}</div>
             <div className='look-heart-count'>
-                <img src={heartCount} alt='heart-empty' />{likeCount}
+                <img src={heartCount} alt='heart-empty' />
+                {likeCount}
             </div>
         </div>
     );
 };
-
 
 export default BestLookCard;

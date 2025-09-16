@@ -19,7 +19,7 @@ const AuthButton = ({ to, text, onClick, disabled }) => {
 
   return (
     <button
-      type="button"
+      type="submit"
       className="authButton"
       onClick={handleClick}
       disabled={disabled}

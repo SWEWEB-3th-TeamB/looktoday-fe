@@ -7,19 +7,19 @@ import heartCount from '../assets/images/heart-empty.png';
 import '../styles/LookCard.css';
 
 async function likePost(lookId, token) {
-  const res = await fetch(`https://looktoday.kr/api/looks/${lookId}/like`, {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-  });
-  return await res.json();
+    const res = await fetch(`https://looktoday.kr/api/looks/${lookId}/like`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+    });
+    return await res.json();
 }
 
 async function unlikePost(lookId, token) {
-  const res = await fetch(`https://looktoday.kr/api/looks/${lookId}/like`, {
-    method: 'DELETE',
-    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-  });
-  return await res.json();
+    const res = await fetch(`https://looktoday.kr/api/looks/${lookId}/like`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+    });
+    return await res.json();
 }
 
 const LookCard = ({ image, locationTemp, nickname, likeCount, lookId, initiallyLiked }) => {
@@ -66,7 +66,10 @@ const LookCard = ({ image, locationTemp, nickname, likeCount, lookId, initiallyL
                 src={liked ? heartFilled : heartUnfilled}
                 alt='heart'
                 className='look-heart'
-                onClick={handleLikeToggle}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleLikeToggle();
+                }}
                 style={{ cursor: 'pointer' }}
             />
             <div className='look-loc-temp'>{locationTemp}</div>
