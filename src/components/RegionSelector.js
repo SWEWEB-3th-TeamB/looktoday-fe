@@ -3,7 +3,7 @@ import '../styles/RegionSelector.css';
 import arrow from '../../src/assets/images/region-arrow.png';
 
 const regions = {
-   '서울특별시': ['강남구','강동구','강북구','강서구','관악구','광진구','구로구','금천구','노원구','도봉구','동대문구','동작구','마포구','서대문구','서초구','성동구','성북구','송파구','양천구','영등포구','용산구','은평구','종로구','중구','중랑구'],
+  '서울특별시': ['강남구','강동구','강북구','강서구','관악구','광진구','구로구','금천구','노원구','도봉구','동대문구','동작구','마포구','서대문구','서초구','성동구','성북구','송파구','양천구','영등포구','용산구','은평구','종로구','중구','중랑구'],
   '부산광역시': ['중구','서구','동구','영도구','부산진구','동래구','남구','북구','해운대구','사하구','금정구','강서구','연제구','수영구','사상구','기장군'],
   '대구광역시': ['중구','동구','서구','남구','북구','수성구','달서구','달성군','군위군'],
   '인천광역시': ['중구','동구','미추홀구','연수구','남동구','부평구','계양구','서구','강화군','옹진군'],
@@ -22,7 +22,7 @@ const regions = {
   '세종특별자치시': ['세종시']
 };
 
-const RegionSelector = ({ onRegionChange, initialSido = '', initialGugun = '' }) => {
+const RegionSelector = ({ onRegionChange, onRegionSelect, initialSido = '', initialGugun = '' }) => {
   const [sido, setSido] = useState(() => initialSido || '');
   const [gugun, setGugun] = useState(() => {
     if (!initialSido) return '';
@@ -31,14 +31,6 @@ const RegionSelector = ({ onRegionChange, initialSido = '', initialGugun = '' })
   const [sidoOpen, setSidoOpen] = useState(false);
   const [gugunOpen, setGugunOpen] = useState(false);
   const containerRef = useRef(null);
-
-  const didNotifyRef = useRef(false);
-  useEffect(() => {
-    if (didNotifyRef.current) return;
-    if (!sido) return; // 시/도가 없으면 통지할 게 없음
-    onRegionChange?.({ sido, gugun });
-    didNotifyRef.current = true;
-  }, [sido, gugun, onRegionChange]);
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -51,29 +43,44 @@ const RegionSelector = ({ onRegionChange, initialSido = '', initialGugun = '' })
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [sidoOpen, gugunOpen]);
 
-  const emitChange = (nextSido, nextGugun = '') => {
-    onRegionChange?.({ sido: nextSido, gugun: nextGugun });
-  };
-
+  /** 
+   * SignUp.js → 새 핸들러 onRegionSelect만 호출
+   * 다른 페이지 → 기존 onRegionChange만 호출
+   */
   const handleSidoSelect = (value) => {
     setSido(value);
     setGugun('');
-    emitChange(value, ''); // 시/도만 선택됨
-    onRegionChange(value, 'sido');
+
+    // SignUp.js가 새 핸들러를 쓰는 경우
+    if (onRegionSelect) {
+      onRegionSelect({ sido: value, gugun: '' });
+    } 
+    // 다른 페이지는 기존 핸들러 유지
+    else if (onRegionChange) {
+      onRegionChange(value, 'sido');
+    }
+
     setSidoOpen(false);
     setGugunOpen(false);
   };
 
   const handleGugunSelect = (value) => {
     setGugun(value);
-    emitChange(sido, value);
-    onRegionChange(value, 'gugun');
+
+    if (onRegionSelect) {
+      onRegionSelect({ sido, gugun: value });
+    } 
+    else if (onRegionChange) {
+      onRegionChange(value, 'gugun');
+    }
+
     setGugunOpen(false);
     setSidoOpen(false);
   };
 
   return (
     <div className="region-selector" ref={containerRef}>
+      {/* 시/도 선택 */}
       <div className="region-selector-sido">
         <div
           className={`region-selector-form ${sido === '' ? 'placeholder' : ''}`}
@@ -94,6 +101,7 @@ const RegionSelector = ({ onRegionChange, initialSido = '', initialGugun = '' })
         )}
       </div>
 
+      {/* 군/구 선택 */}
       <div className="region-selector-gugun">
         <div
           className={`region-selector-form ${!sido ? 'disabled' : ''}`}
