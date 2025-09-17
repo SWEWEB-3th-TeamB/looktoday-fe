@@ -20,7 +20,7 @@ const Login = () => {
 
   const handleLoginClick = async (e) => {
     e.preventDefault();
-    
+
     if (!email.trim() || !isEmailValid || !password.trim()) return;
     if (emailError || passwordError) {
       return;
@@ -100,7 +100,7 @@ const Login = () => {
           />
 
           <div className='login-btn'>
-            <AuthButton text='로그인' />
+            <AuthButton text='로그인' onClick={handleLoginClick} />
           </div>
         </form>
         <div className='login-links'>

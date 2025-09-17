@@ -32,7 +32,6 @@ const Menu = () => {
     }
   }, []);
 
-
   // 토큰 및 만료 체크
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -94,7 +93,8 @@ const Menu = () => {
   }, [location.pathname]);
 
   return (
-    <div className="menu">
+    // ✅ 메인 페이지('/')일 때만 menu-main 클래스가 추가됨
+    <div className={`menu ${location.pathname === '/' ? 'menu-main' : ''}`}>
       <div className="menu-gnb">
         {/* 로고 영역 */}
         <div
