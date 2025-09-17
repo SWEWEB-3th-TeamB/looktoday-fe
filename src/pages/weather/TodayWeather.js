@@ -1,4 +1,3 @@
-// src/pages/TodayWeather.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
@@ -32,7 +31,7 @@ async function getWeather(si, gungu) {
   const res = await fetch(url, { method: 'GET', headers: { Accept: 'application/json' } });
   const text = await res.text();
 
-  // 🔎 디버깅: 서버 원문 응답을 콘솔에서 바로 확인
+  // 디버깅: 서버 원문 응답을 콘솔에서 바로 확인
   console.log('[weather raw]', res.status, text);
 
   // 실패(status 4xx/5xx)
@@ -86,6 +85,7 @@ function isWeatherSuccess(json) {
   // data가 없고 평평한(flat) 응답일 수도 있으니 핵심 필드가 있으면 성공으로 간주
   const base = json?.data ?? json;
   const hasCore =
+    base?.날씨 != null ||
     base?.온도 != null || base?.temp != null || base?.temperature != null ||
     base?.습도 != null || base?.humidity != null ||
     base?.풍속 != null || base?.wind != null || base?.windSpeed != null ||
@@ -121,6 +121,11 @@ const parseWeather = (json) => {
   const h = base?.습도 ?? base?.humidity;
   const s = base?.풍속 ?? base?.wind ?? base?.windSpeed;
 
+  const feels = base?.체감온도 ?? base?.feels_like ?? base?.apparentTemperature;
+  const cond = base?.날씨 ?? base?.weather ?? base?.condition ?? base?.sky;
+  const pop = base?.강수확률 ?? base?.POP ?? base?.pop;
+  const pcp = base?.강수량 ?? base?.PCP ?? base?.pcp ?? base?.precipitation;
+
   const hhmm = typeof timeRaw === 'string' ? timeRaw.slice(0, 5) : '-';
 
   return {
@@ -129,8 +134,14 @@ const parseWeather = (json) => {
     temperature: typeof t === 'number' ? Math.round(t) : (typeof t === 'string' ? t : '-'),
     humidity: (typeof h === 'number' || typeof h === 'string') ? h : '-',
     speed: (typeof s === 'number' || typeof s === 'string') ? s : '-',
+
+    // 추가 반환
+    condition: typeof cond === 'string' ? cond : '-',
+    perceived: typeof feels === 'number' ? Math.round(feels) : feels ?? '-',
+    pop, pcp,
   };
 };
+
 
 const parseSun = (json) => {
   const base = json?.data ?? json ?? {};
@@ -153,7 +164,7 @@ const TodayWeather = () => {
   const [sido, setSido] = useState('서울특별시');
   const [gugun, setGugun] = useState('노원구');
 
-  const [pending, setPending] = useState({ sido: '', gugun: '' }); // 버튼 누르기 전 임시 선택
+  const [pending, setPending] = useState({ sido: '서울특별시', gugun: '노원구' }); // 버튼 누르기 전 임시 선택
   const [loading, setLoading] = useState(false);
 
   const [region, setRegion] = useState('서울특별시 노원구');
@@ -163,6 +174,8 @@ const TodayWeather = () => {
   const [sunsettime, setSunsettime] = useState('-');
   const [humidity, setHumidity] = useState('-');
   const [speed, setSpeed] = useState('-');
+  const [condition, setCondition] = useState('-');
+  const [perceivedTemp, setPerceivedTemp] = useState('-');
 
   const regionTemperatures = {
     '서울특별시': 28, '부산광역시': 33, '대구광역시': 31, '인천광역시': 27,
@@ -222,6 +235,8 @@ const TodayWeather = () => {
       setTemperature(w.temperature);
       setHumidity(w.humidity);
       setSpeed(w.speed);
+      setCondition(w.condition);
+      setPerceivedTemp(w.perceived);
 
       setSunrisetime(s.success ? s.sunrise : '-');
       setSunsettime(s.success ? s.sunset : '-');
@@ -264,6 +279,19 @@ const TodayWeather = () => {
     return `${hour12}:${m.toString().padStart(2, '0')}${period}`;
   }
 
+  const goToLookRecommend = () => {
+    const payload = {
+      region,
+      temperature: Number(temperature),
+      humidity: Number(humidity),
+      perceivedTemp: Number(perceivedTemp || temperature),
+      condition,       // 필요 시 전달
+      // pop, pcp도 원하면 함께
+      sido, gugun, date,
+    };
+    try { localStorage.setItem('lookPayload', JSON.stringify(payload)); } catch { }
+    navigate('/lookrecommend', { state: payload });
+  };
 
   return (
     <div className="today-weather-page">
@@ -272,7 +300,7 @@ const TodayWeather = () => {
         <h2 className="today-weather-page-title">How's the weather?</h2>
         <div className="today-weather-region-selector">
           <RegionSelector
-            onRegionChange={handleRegionChange}
+            onRegionSelect={handleRegionChange} 
             initialSido="서울특별시"
             initialGugun="노원구"
           />
@@ -281,7 +309,7 @@ const TodayWeather = () => {
             onClick={applyRegion}
             disabled={!pending.sido || !pending.gugun || loading}
           >
-            RegionSelector
+            Select Region
           </button>
         </div>
 
@@ -326,7 +354,7 @@ const TodayWeather = () => {
           </div>
         </div>
 
-        <button className="go-to-look-recommend" onClick={() => navigate("/lookrecommend")}>
+        <button className="go-to-look-recommend" onClick={goToLookRecommend}>
           룩 추천 보러가기
           <img src={Chevronright} alt="chevronright" className="chevronright" />
         </button>

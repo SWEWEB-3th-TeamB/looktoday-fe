@@ -2,7 +2,6 @@ import React from 'react';
 import '../styles/SouthKoreaMap.css';
 
 const SouthKoreaMap = ({ selectedSido = "", regionTemperatures = {} }) => {
-  console.log("현재 selectedSido:", selectedSido);
   const isSel = (sido) => selectedSido === sido;
   const fillFor = (sido) => (isSel(sido) ? getColorByTemperature(sido) : '#DADADA');
   const clsFor = (sido) => (isSel(sido) ? 'region-path selected' : 'region-path');
@@ -22,6 +21,8 @@ const SouthKoreaMap = ({ selectedSido = "", regionTemperatures = {} }) => {
     if (temp >= -15) return '#5B72B8';
     return '#3A4C8F';
   };
+
+  console.log("현재 selectedSido:", selectedSido);
 
   return (
     <svg viewBox="0 0 524 631" xmlns="http://www.w3.org/2000/svg">
