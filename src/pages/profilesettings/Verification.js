@@ -22,7 +22,7 @@ const Verification = () => {
                     </div>
                     <div className='change-password-inputs'>
                         <Form type="email" value={email} placeholder='이메일' onChange={(e) => setEmail(e.target.value)} />
-                        <Form type="text" placeholder='생년월일' value={birth} onChange={(e) => setBirth(e.target.value)} />
+                        <Form type="text" placeholder='생년월일 (YYYY/MM/DD)' value={birth} onChange={(e) => setBirth(e.target.value)} />
                     </div>
                 </div>
                 <div className='change-password-btn'>

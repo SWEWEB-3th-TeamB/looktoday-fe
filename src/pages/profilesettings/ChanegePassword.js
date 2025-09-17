@@ -17,12 +17,10 @@ const ChangePassword = () => {
         <div className='change-password-title'>Change Password</div>
         <div className='change-password-form'>
           <div className='change-password-labels'>
-            <label>현재 비밀번호</label>
             <label>새 비밀번호</label>
             <label>새 비밀번호 확인</label>
           </div>
           <div className='change-password-inputs'>
-            <Form type='password' placeholder='비밀번호 (특수문자 포함, 8자 이상)' showEye={true} />
             <Form type='password' placeholder='비밀번호 (특수문자 포함, 8자 이상)' showEye={true} />
             <Form type='password' placeholder='비밀번호 (특수문자 포함, 8자 이상)' showEye={true} />
           </div>
