@@ -268,9 +268,9 @@ const SignUp = () => {
                                 setBirthDigits(e.target.value);
                             }} />
                         <RegionSelector
-                            onRegionChange={({ sido, gugun }) => {
+                            onRegionSelect={({ sido, gugun }) => {
                                 setSi(sido);
-                                setGungu(gugun || '');
+                                setGungu(gugun);
                             }}
                         />
                     </div>
