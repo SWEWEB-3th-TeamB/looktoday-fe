@@ -29,9 +29,11 @@ const Login = () => {
     const payload = { email, password };
 
     try {
-      const res = await fetch('http://43.203.195.97:3000/api/auth/login', {
+      const res = await fetch('/api/auth/login', {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify(payload),
       });
 
@@ -61,10 +63,6 @@ const Login = () => {
 
       // 2. 토큰 발급 시각도 함께 저장 (24시간 체크용)
       localStorage.setItem("token_issued_at", Date.now().toString());
-
-      console.log('저장된 token:', localStorage.getItem('token'));
-      console.log('저장된 token_issued_at:', localStorage.getItem('token_issued_at'));
-
       navigate("/");
 
     } catch (error) {
@@ -104,7 +102,7 @@ const Login = () => {
           </div>
         </form>
         <div className='login-links'>
-          <div className='login-link'><a href='/sign-up'>회원가입</a></div>ㅣ<div className='login-link'><a href='/change-password'>비밀번호 찾기</a></div>
+          <div className='login-link'><a href='/sign-up'>회원가입</a></div>ㅣ<div className='login-link'><a href='/verification'>비밀번호 찾기</a></div>
         </div>
       </div>
       <Footer />
