@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 
 async function deletePost(postId, token) {
   try {
-    const res = await fetch(`https://looktoday.kr/api/lookPost/${postId}`, {
+    const res = await fetch(`/api/lookPost/${postId}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`,

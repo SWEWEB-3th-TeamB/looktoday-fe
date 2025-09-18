@@ -41,7 +41,7 @@ const LookBook = () => {
 
     const handleBestLook = async () => {
         try {
-            const res = await fetch('http://43.203.195.97:3000/api/looks/best', {
+            const res = await fetch('/api/looks/best', {
                 method: "GET",
             });
 
@@ -77,7 +77,7 @@ const LookBook = () => {
 
     const fetchLookList = async () => {
         try {
-            const res = await fetch('http://43.203.195.97:3000/api/looks', {
+            const res = await fetch('/api/looks', {
                 method: "GET",
             });
 

@@ -73,7 +73,7 @@ async function uploadPost({
   form.append('apparent_humidity', apparent_humidity);
   form.append('comment', comment);
 
-  const res = await fetch('http://43.203.195.97:3000/api/lookPost', {
+  const res = await fetch('/api/lookPost', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}` },
     body: form
@@ -145,8 +145,6 @@ const LookToday = () => {
   const [review, setReview] = useState('');
   const [isReviewFocused, setIsReviewFocused] = useState(false);
 
-  const token = localStorage.getItem("token");
-
   const handleReviewChange = e => {
     let value = e.target.value;
     if (value.length > 40) value = value.slice(0, 40);
@@ -178,6 +176,8 @@ const LookToday = () => {
 
   // 완료 버튼 클릭 핸들러
   const handleCompleteClick = async () => {
+    const token = localStorage.getItem("token");
+    
     if (!isCompleteEnabled) return;
 
     // 선택된 key에 해당하는 한글 label 찾기
