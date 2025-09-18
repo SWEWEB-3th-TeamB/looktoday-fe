@@ -31,7 +31,7 @@ const MyFeed = () => {
       }
 
       // 서버에 GET 요청 보내기
-      const response = await fetch(`http://43.203.195.97:3000/api/looks?page=${page}&limit=8`, {
+      const response = await fetch(`/api/looks?page=${page}&limit=8`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`

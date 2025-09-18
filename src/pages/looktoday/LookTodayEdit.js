@@ -42,7 +42,7 @@ async function updatePost(postId, token, updatedData) {
     form.append(key, updatedData[key]);
   }
 
-  const res = await fetch(`http://43.203.195.97:3000/api/lookPost/${postId}`, {
+  const res = await fetch(`/api/lookPost/${postId}`, {
     method: 'PUT',
     headers: { 'Authorization': `Bearer ${token}` },
     body: form

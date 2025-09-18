@@ -5,7 +5,7 @@ import arrowUp from '../assets/images/arrow-up.png';
 
 import '../styles/Time.css';
 
-const TIME_OPTIONS = [2, 5, 8, 11, 14, 17, 20, 23];
+const TIME_OPTIONS = Array.from({ length: 24 }, (_, i) => i);
 
 const Time = ({ value, onChange }) => {
   const [open, setOpen] = useState(false);
