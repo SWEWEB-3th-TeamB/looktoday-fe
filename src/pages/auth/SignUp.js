@@ -9,8 +9,6 @@ import Footer from '../../components/Footer';
 
 import '../../styles/SignUp.css';
 
-const API_BASE = 'http://43.203.195.97:3000';
-
 const SignUp = () => {
     const [selectedRegion, setSelectedRegion] = useState('');
     const [email, setEmail] = useState('');
@@ -94,7 +92,7 @@ const SignUp = () => {
 
         try {
             const res = await fetch(
-                `${API_BASE}/api/auth/check-email?email=${encodeURIComponent(email)}`,
+                `/api/auth/check-email?email=${encodeURIComponent(email)}`,
                 { method: 'GET' }
             );
             const data = await res.json().catch(() => ({}));
@@ -134,7 +132,7 @@ const SignUp = () => {
 
         try {
             const res = await fetch(
-                `${API_BASE}/api/auth/check-username?nickname=${encodeURIComponent(nickname)}`,
+                `/api/auth/check-username?nickname=${encodeURIComponent(nickname)}`,
                 { method: 'GET' }
             );
             const data = await res.json().catch(() => ({}));
@@ -198,7 +196,7 @@ const SignUp = () => {
         console.log("회원가입 payload:", payload);
 
         try {
-            const res = await fetch(`${API_BASE}/api/auth/signup`, {
+            const res = await fetch(`/api/auth/signup`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),

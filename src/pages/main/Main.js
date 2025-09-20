@@ -1,11 +1,15 @@
-import React from 'react';
 import Menu from '../../components/Menu';
+import Footer from '../../components/Footer';
 
 import weatherRainy from '../../assets/images/MainPhoto/weather-rainy.png';
 import weatherUmbrella from '../../assets/images/MainPhoto/weather-umbrella.png';
 import recordSummer from '../../assets/images/MainPhoto/record-summer.png';
 import recordAutumn from '../../assets/images/MainPhoto/record-autumn.png';
 import recordWinter from '../../assets/images/MainPhoto/record-winter.png';
+import styleLook from '../../assets/images/MainPhoto/style-look.png';
+import communityBeach from '../../assets/images/MainPhoto/community-beach.png';
+import communitySight from '../../assets/images/MainPhoto/community-sight.png';
+import communityPerson from '../../assets/images/MainPhoto/community-person.png';
 
 import '../../styles/Main.css';
 
@@ -70,9 +74,55 @@ const Login = () => {
           </div>
         </section>
 
-        <section className='main-style'></section>
-        <section className='main-community'></section>
+        <section className='main-style'>
+          <div className='main-style-background'></div>
+          <div className='main-style-content'>
+            <div className='main-style-title'>Find Your Style</div>
+            <div className='main-style-text'>
+              <span>LOOK BOOK에서 다양한 스타일을 구경하고</span>
+              <span>나만의 개성을 찾아보세요.</span>
+              <br />
+              <span>데일리룩부터 특별한 날의 코디까지,</span>
+              <span>새로운 스타일에 도전할 수 있습니다.</span>
+              <br />
+              <span>지역, 날씨, 날짜 필터로 오늘의 기온과</span>
+              <span>분위기에 맞는 스타일을 빠르게 찾아보세요.</span>
+              <br />
+              <span>마음에 드는 룩북에는 좋아요를 눌러 취향을 기록하고,</span>
+              <span>나만의 스타일 북을 완성해보세요.</span>
+            </div>
+            <div className='main-style-img'>
+              <img src={styleLook} alt='style-look' className='main-style-look' />
+            </div>
+            <div className='main-style-bubble1' />
+            <div className='main-style-bubble2' />
+            <div className='main-style-block' />
+          </div>
+        </section>
+
+        <section className='main-community'>
+          <div className='main-community-content'>
+            <div className="main-community-title">LOOK TODAY<br/>LOOK TODAY<br/>LOOK TODAY</div>
+            <div className='main-community-text'>
+              <span>지금 바로 회원가입하고 LOOK TODAY와 함께해요.</span>
+              <br />
+              <span>룩투데이는 당신의 일상을 스타일로 기록하고</span>
+              <span>개성을 표현할 수 있도록 돕습니다.</span>
+              <br />
+              <span>매일의 룩이 특별한 이야기가</span>
+              <span>되도록 함께하며,</span>
+              <span>새로운 영감을 찾아보세요.</span>
+            </div>
+            <div className='main-community-join'>룩투데이에 감성을 더해봐요!</div>
+            <div className='main-community-img'>
+              <img src={communityBeach} alt='community-beach' className='main-community-beach' />
+              <img src={communitySight} alt='community-sight' className='main-community-sight' />
+              <img src={communityPerson} alt='community-person' className='main-community-person' />
+            </div>
+          </div>
+        </section>
       </div>
+      <Footer />
     </div>
   );
 };
