@@ -26,7 +26,7 @@ async function getWeather(si, gungu) {
   if (!si || !gungu) throw new Error('getWeather: si/gungu는 필수입니다.');
 
   const qs = new URLSearchParams({ si, gungu });
-  const url = `${API_BASE}/api/weather?${qs.toString()}`;
+  const url = `/api/weather?${qs.toString()}`;
 
   const res = await fetch(url, { method: 'GET', headers: { Accept: 'application/json' } });
   const text = await res.text();
@@ -60,7 +60,7 @@ async function getSun(si, gungu) {
   if (!si || !gungu) throw new Error('getSun: si/gungu는 필수입니다.');
 
   const qs = new URLSearchParams({ si, gungu });
-  const url = `${API_BASE}/api/sun?${qs.toString()}`;
+  const url = `/api/sun?${qs.toString()}`;
 
   const res = await fetch(url, { method: 'GET', headers: { Accept: 'application/json' } });
   const text = await res.text();

@@ -9,8 +9,6 @@ import RegionSelector from '../../components/RegionSelector';
 import Completeicon from '../../assets/images/complete.png';
 import '../../styles/Profile.css';
 
-const API_BASE = 'http://43.203.195.97:3000';
-
 /** localStorage에 따옴표가 섞여 저장된 경우까지 방어적으로 읽기 */
 const getToken = () => {
   const raw = localStorage.getItem('token');
@@ -123,7 +121,7 @@ const Profile = () => {
     console.log('token:', token);
     debugJwt(token);
 
-    fetch(`${API_BASE}/api/auth/me`, {
+    fetch(`/api/auth/me`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -191,7 +189,7 @@ const Profile = () => {
 
     try {
       const res = await fetch(
-        `${API_BASE}/api/auth/check-email?email=${encodeURIComponent(email)}`,
+        `/api/auth/check-email?email=${encodeURIComponent(email)}`,
         { method: 'GET' }
       );
       const data = await res.json().catch(() => ({}));
@@ -237,7 +235,7 @@ const Profile = () => {
 
     try {
       const res = await fetch(
-        `${API_BASE}/api/auth/check-username?nickname=${encodeURIComponent(nickname)}`,
+        `/api/auth/check-username?nickname=${encodeURIComponent(nickname)}`,
         { method: 'GET' }
       );
       const data = await res.json().catch(() => ({}));
@@ -331,7 +329,7 @@ const Profile = () => {
     console.groupEnd();
 
     try {
-      const res = await fetch(`${API_BASE}/api/users/me`, {
+      const res = await fetch(`/api/users/me`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
