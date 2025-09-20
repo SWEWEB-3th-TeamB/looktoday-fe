@@ -155,3 +155,12 @@
     transform: translateY(1px);
     vertical-align: middle;
 }
+
+.look-popup-heart-btn.disabled {
+  cursor: default;
+}
+
+.look-popup-heart-icon {
+  pointer-events: none;
+  user-select: none;
+}

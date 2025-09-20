@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../styles/LookPopup.css';
 
 import close from '../../assets/images/popup-close.png';
@@ -6,9 +6,17 @@ import heartFilled from '../../assets/images/heart-filled.png';
 import heartUnfilled from '../../assets/images/heart-unfilled.png';
 import heartCount from '../../assets/images/heart-empty.png';
 
-const LookPopup = ({ isOpen, onClose, look }) => {
+const LookPopup = ({ isOpen, onClose, look, isMyFeed = false }) => {
   const [liked, setLiked] = useState(false);
   const [count, setCount] = useState(look?.like_count || 0);
+
+  useEffect(() => {
+    if (look) {
+        setLiked(look.isLiked || false); // 서버에서 받은 좋아요 상태
+        setCount(look.like_count || 0);  // 서버에서 받은 좋아요 수
+    }
+  }, [look]); // look 데이터가 변경될 때마다 실행
+
   if (!isOpen || !look) return null;
 
   const handleLikeToggle = () => {
@@ -32,12 +40,14 @@ const LookPopup = ({ isOpen, onClose, look }) => {
           {/* 이미지 */}
           <div className="look-popup-image">
             {/* 하트 아이콘 */}
-            <img
-              src={liked ? heartFilled : heartUnfilled}
-              alt="heart"
-              onClick={handleLikeToggle}
-              className="look-popup-heart-btn"
-            />
+            {!isMyFeed && (
+              <img
+                src={liked ? heartFilled : heartUnfilled}
+                alt="heart"
+                onClick={handleLikeToggle}
+                className="look-popup-heart-btn"
+              />
+            )}
 
             {/* 룩 이미지 */}
             <img src={look.Image?.imageUrl} alt="룩 이미지" className="look-popup-main-img" />

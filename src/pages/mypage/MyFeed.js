@@ -6,6 +6,7 @@ import Calendar from '../../components/Calendar';
 import LookCard from '../../components/LookCard';
 import Pagination from '../../components/Pagination';
 import Footer from '../../components/Footer';
+import LookPopup from '../lookbook/LookPopup';
 import MyFeedCardOption from '../../components/MyFeedCardOption';
 
 import '../../styles/MyFeed.css';
@@ -19,6 +20,9 @@ const MyFeed = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedLook, setSelectedLook] = useState(null);
 
   const fetchMyPosts = useCallback(async (page) => {
     try {
@@ -59,6 +63,16 @@ const MyFeed = () => {
   useEffect(() => {
     fetchMyPosts(currentPage); // 컴포넌트가 마운트될 때 데이터 가져오기 실행
   }, [currentPage, fetchMyPosts]);
+
+  const handleOpenPopup = (post) => {
+    setSelectedLook(post);
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    setSelectedLook(null);
+  };
 
   const today = new Date();
   const currentYear = today.getFullYear();
@@ -191,19 +205,20 @@ const MyFeed = () => {
         <div className="myfeed-cards hide-nickname-heart">
           {posts.length > 0 ? (
             posts.map(post => (
-              <div key={post.looktoday_id} className="myfeed-card-with-option" style={{ position: "relative", width: "224.5px" }}>
+              <div key={post.looktoday_id} className="myfeed-card-with-option" style={{ position: "relative", width: "224.5px" }} onClick={() => handleOpenPopup(post)}>
                 <LookCard
                   lookId={post.looktoday_id}
                   image={post.Image?.imageUrl}
                   locationTemp={`${post.si} ${post.gungu} · ${post.temperature ?? '-'}℃`}
-                  // nickname={post.nickname}
                   likeCount={post.like_count}
-                  // initiallyLiked={post.initiallyLiked} 
                 />
-                <MyFeedCardOption
-                  postData={post}
-                  onDeleteSuccess={() => handleDeleteSuccess(post.looktoday_id)}
-                />
+                <div onClick={(e) => e.stopPropagation()}> 
+                  {/* ⭐️ 5. 옵션 버튼 클릭 시 팝업이 뜨지 않도록 이벤트 버블링 방지 */}
+                  <MyFeedCardOption
+                    postData={post}
+                    onDeleteSuccess={() => handleDeleteSuccess(post.looktoday_id)}
+                  />
+                </div>
               </div>
             ))
           ) : (
@@ -223,6 +238,13 @@ const MyFeed = () => {
       <div className="myfeed-footer">
         <Footer />
       </div>
+
+      <LookPopup
+        isOpen={isPopupOpen}
+        onClose={handleClosePopup}
+        look={selectedLook}
+        isMyFeed={true}
+      />
     </>
   );
 };

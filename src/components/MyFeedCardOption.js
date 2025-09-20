@@ -72,7 +72,6 @@ const MyFeedCardOption = ({ postData, onDeleteSuccess }) => {
 
     const res = await deletePost(postId, userToken);
     if (res.success) {
-      alert("게시물이 성공적으로 삭제되었습니다.");
       onDeleteSuccess(postId); // 부모 컴포넌트(MyFeed)에 삭제 알림
     } else {
       alert(res.message || "삭제 중 오류가 발생했습니다.");
