@@ -61,6 +61,12 @@ const LookTodayEdit = () => {
   const { postId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState(false);
+
+  const closeSuccessPopup = () => {
+    setIsSuccessPopupOpen(false);
+    navigate('/myfeed');
+  };
 
   // 이전 페이지에서 넘겨받은 원본 게시물 데이터
   const [initialData] = useState(location.state?.initialData || null);
@@ -157,22 +163,22 @@ const LookTodayEdit = () => {
     if (review !== initialData.comment) updatedData.comment = review;
     if (image) updatedData.image = image; // 새 이미지가 있으면 추가
 
-    // 변경사항이 있을 경우에만 API 호출
     if (Object.keys(updatedData).length > 0) {
       try {
         const result = await updatePost(postId, token, updatedData);
-        if (result.success) {
-          alert("게시물이 성공적으로 수정되었습니다.");
-          navigate('/mypage/myfeed'); // 수정 완료 후 내 피드로 이동
+
+        if (result.code === 'COMMON200') {
+          setIsSuccessPopupOpen(true);
         } else {
           alert(result.message || "수정에 실패했습니다.");
         }
+
       } catch (error) {
         console.error("수정 중 오류 발생:", error);
         alert("수정 요청 중 오류가 발생했습니다.");
       }
     } else {
-      alert("변경사항이 없습니다.");
+      setIsSuccessPopupOpen(true);
     }
   };
   
@@ -183,7 +189,6 @@ const LookTodayEdit = () => {
 
   return (
     <>
-      <Menu />
       <div className="looktoday-wrapper">
         <div className="looktoday-container">
           <h1 className="looktoday-title">Edit My Look</h1>
@@ -212,10 +217,14 @@ const LookTodayEdit = () => {
 
         <div className="calendar-btn-wrapper"><Calendar value={dateValue} onChange={setDateValue} /></div>
         <Time value={selectedTime} onChange={handleTimeChange} />
-        <div className="record-number">No. {initialData.id}</div>
+        <div className="record-number">No. {initialData.looktoday_id}</div>
         <hr className="looktoday-hr" />
         <div className="looktoday-location">
-          <RegionSelector onRegionChange={handleRegionChange} selectedSido={selectedSido} selectedGugun={selectedGugun} />
+          <RegionSelector
+            onRegionChange={handleRegionChange}
+            initialSido={selectedSido}
+            initialGugun={selectedGugun}
+          />
         </div>
         <div className="public-toggle-label">공개</div>
         <div className={`public-toggle-switch ${isPublic ? 'public' : 'private'}`} onClick={togglePublic}>
@@ -270,9 +279,30 @@ const LookTodayEdit = () => {
           수정 완료
         </button>
       </div>
+      <Menu />
       <div className="looktoday-footer">
         <Footer />
       </div>
+
+      {isSuccessPopupOpen && (
+        <>
+          <div className="complete-popup-overlay" onClick={closeSuccessPopup} />
+          <div className="complete-popup">
+            <h2 className="complete-popup-title">
+              <span>성공적으로 반영되었어요</span>
+            </h2>
+            <div className="complete-popup-desc">
+              게시물 정보가 수정되었습니다{'\n'}변경된 내용을 확인해보세요
+            </div>
+            <button
+              className="complete-popup-close-btn"
+              onClick={closeSuccessPopup}
+            >
+              확인
+            </button>
+          </div>
+        </>
+      )}
     </>
   );
 };

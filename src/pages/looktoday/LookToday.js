@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { useCallback } from "react";
+import { useNavigate } from 'react-router-dom';
 
 import Menu from '../../components/Menu';
 import Calendar from '../../components/Calendar';
@@ -90,6 +91,8 @@ async function uploadPost({
 }
 
 const LookToday = () => {
+  const navigate = useNavigate();
+
   const [temperature, setTemperature] = useState('warm');
   const [dateValue, setDateValue] = useState(null); // 선택된 날짜(예: 'YYYY-MM-DD')
   const [selectedTime, setSelectedTime] = useState(null); // 시간 선택 상태
@@ -177,7 +180,7 @@ const LookToday = () => {
   // 완료 버튼 클릭 핸들러
   const handleCompleteClick = async () => {
     const token = localStorage.getItem("token");
-    
+
     if (!isCompleteEnabled) return;
 
     // 선택된 key에 해당하는 한글 label 찾기
@@ -244,6 +247,7 @@ const LookToday = () => {
   // 팝업 닫기
   const closePopup = () => {
     setIsCompletePopupOpen(false);
+    navigate('/myfeed');
   };
 
   return (

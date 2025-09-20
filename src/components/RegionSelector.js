@@ -33,6 +33,16 @@ const RegionSelector = ({ onRegionChange, onRegionSelect, initialSido = '', init
   const containerRef = useRef(null);
 
   useEffect(() => {
+    // 부모로부터 받은 initialSido prop이 변경될 때마다 내부 sido 상태를 업데이트합니다.
+    setSido(initialSido || '');
+  }, [initialSido]);
+
+  useEffect(() => {
+    // 부모로부터 받은 initialGugun prop이 변경될 때마다 내부 gugun 상태를 업데이트합니다.
+    setGugun(initialGugun || '');
+  }, [initialGugun]);
+
+  useEffect(() => {
     function handleClickOutside(e) {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
         setSidoOpen(false);

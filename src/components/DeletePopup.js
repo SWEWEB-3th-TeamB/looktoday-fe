@@ -7,6 +7,7 @@ const DeletePopup = ({ onCancel, onDelete }) => {
       <div className="delete-popup">
         <h2 className="delete-popup-title">
           <span className="title-english">LOOK TODAY</span>
+          {' '}
           <span className="title-korean">게시물을 삭제합니다</span>
         </h2>
         <div className="delete-popup-desc">
