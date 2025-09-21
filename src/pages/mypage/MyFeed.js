@@ -12,34 +12,34 @@ import MyFeedCardOption from '../../components/MyFeedCardOption';
 import '../../styles/MyFeed.css';
 
 const MyFeed = () => {
-
-  const [activeFilter, setActiveFilter] = useState(null); // '12m', '1m', '2m', 'custom'
+  const [activeFilter, setActiveFilter] = useState(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [posts, setPosts] = useState([]);
-
+  const [totalPosts, setTotalPosts] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedLook, setSelectedLook] = useState(null);
+  const [loadingPopup, setLoadingPopup] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const fetchMyPosts = useCallback(async (page) => {
+  const fetchMyFeeds = useCallback(async (params = {}) => {
+    setLoading(true);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("로그인 토큰이 없습니다.");
+      setLoading(false);
+      return;
+    }
+
+    const query = new URLSearchParams(params).toString();
+    const url = `/api/users/me/feeds?${query}`;
+
     try {
-      // 로컬 스토리지에서 토큰 가져오기
-      const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("로그인 토큰이 없습니다.");
-        // 필요하다면 로그인 페이지로 보내는 처리
-        return;
-      }
-
-      // 서버에 GET 요청 보내기
-      const response = await fetch(`/api/looks?page=${page}&limit=8`, {
+      const response = await fetch(url, {
         method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (!response.ok) {
@@ -47,27 +47,115 @@ const MyFeed = () => {
       }
 
       const data = await response.json();
-
-      if (data.code === "COMMON200" && data.result?.looks) {
-        setPosts(data.result.looks);
+        
+      if (data.result) {
+        setPosts(data.result.myLooks || []);
+        setTotalPosts(data.result.pagination.totalPosts || 0);
+        setTotalPages(data.result.pagination.totalPages || 1);
+        setCurrentPage(data.result.pagination.page || 1);
       } else {
-        setPosts([]); // 데이터가 없는 경우 빈 배열로 초기화
+        setPosts([]); setTotalPosts(0); setTotalPages(1);
       }
-
     } catch (error) {
       console.error("피드 로딩 중 오류:", error);
-      setPosts([]); // 에러 발생 시 빈 배열로 초기화
+      setPosts([]); setTotalPosts(0);
+    } finally {
+      setLoading(false);
     }
-  }, []); // 의존성 배열이 비어있으므로 컴포넌트 마운트 시 한 번만 생성
+  }, []);
 
   useEffect(() => {
-    fetchMyPosts(currentPage); // 컴포넌트가 마운트될 때 데이터 가져오기 실행
-  }, [currentPage, fetchMyPosts]);
+    fetchMyFeeds({ page: 1 });
+  }, [fetchMyFeeds]);
 
-  const handleOpenPopup = (post) => {
-    setSelectedLook(post);
-    setIsPopupOpen(true);
+  const handlePresetFilterClick = (filter) => {
+    if (activeFilter === filter) {
+      setActiveFilter(null);
+      setStartDate(''); setEndDate('');
+      fetchMyFeeds({ page: 1 });
+    } else {
+      setActiveFilter(filter);
+      setStartDate(''); setEndDate('');
+      fetchMyFeeds({ period: filter, page: 1 });
+    }
   };
+
+  const handleSearch = () => {
+    if (!startDate || !endDate) {
+      alert("시작 날짜와 종료 날짜를 모두 선택해 주세요.");
+      return;
+    }
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    if (start > end) {
+      alert("시작 날짜가 종료 날짜보다 늦습니다.\n올바른 기간을 선택해 주세요.");
+      return;
+    }
+    setActiveFilter('custom');
+    fetchMyFeeds({ dateFrom: startDate, dateTo: endDate, page: 1 });
+  };                        
+
+  const handlePageChange = (page) => {
+    const params = { page };
+    if (activeFilter && activeFilter !== 'custom') {
+      params.period = activeFilter;
+    } else if (startDate && endDate) {
+      params.dateFrom = startDate;
+      params.dateTo = endDate;
+    }
+    fetchMyFeeds(params);
+  };
+
+  const handleDeleteSuccess = (deletedId) => {
+    setPosts(prevPosts => prevPosts.filter(post => post.looktoday_id !== deletedId));
+    setTotalPosts(prevTotal => prevTotal - 1);
+  };
+
+const handleOpenPopup = async (post) => {
+  setLoadingPopup(true);
+  setIsPopupOpen(true);
+
+  const token = localStorage.getItem("token");
+  try {
+    const response = await fetch(`/api/looks/${post.looktoday_id}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    
+    const data = await response.json();
+
+    if (data.result) {
+      const detailedData = data.result;
+
+      const transformedLook = {
+        User: { nickname: detailedData.nickname },
+        Image: { imageUrl: detailedData.imageUrl },
+        
+        si: post.si, 
+        gungu: detailedData.location,
+        
+        apparent_humidity: detailedData.apparent_humidity,
+        
+        apparent_temp: detailedData.feelsLikeTemp,
+        like_count: detailedData.likeCount,
+        date: detailedData.date,
+        comment: detailedData.comment,
+        temperature: detailedData.temperature,
+        isLiked: detailedData.isLiked,
+      };
+          
+        setSelectedLook(transformedLook);
+      } else {
+        throw new Error(data.message || '상세 정보를 불러오지 못했습니다.');
+      }
+    } catch (error) {
+      console.error("상세 정보 로딩 중 오류:", error);
+      alert("상세 정보를 불러오는 데 실패했습니다.");
+      setIsPopupOpen(false);
+    } finally {
+      setLoadingPopup(false);
+    }
+  };  
 
   const handleClosePopup = () => {
     setIsPopupOpen(false);
@@ -75,57 +163,16 @@ const MyFeed = () => {
   };
 
   const today = new Date();
-  const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth() + 1;
-
-  function getPrevMonth(offset=1) {
-    let year = currentYear;
-    let month = currentMonth - offset;
-    if (month <= 0) {
-      year--;
-      month += 12;
-    }
-    return { year, month }; // {year: 2025, month: 7} 등
-  }
-
-  const prev1 = getPrevMonth(1); // 한달 전
-  const prev2 = getPrevMonth(2); // 두달 전
-  const prev1Text = `${prev1.month}월`; // 예: '7월'
-  const prev2Text = `${prev2.month}월`; // 예: '6월'
-
-  const handleSearch = () => {
-    if (!startDate || !endDate) return;
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    if (start > end) {
-      alert("시작 날짜가 종료 날짜보다 늦습니다.\n올바른 기간을 선택해 주세요.");
-      return;
-    }
-    // 정상 조회 동작
-  };
-
-  const todayStr = new Date().toISOString().slice(0,10); // '2025-08-31'
-
+  const prev1Month = new Date(today.getFullYear(), today.getMonth() - 1).getMonth() + 1;
+  const prev2Month = new Date(today.getFullYear(), today.getMonth() - 2).getMonth() + 1;
+  const todayStr = new Date().toISOString().slice(0, 10);
   const handleStartDateChange = (date) => {
-    if (date > todayStr) {
-      alert("오늘 이후의 날짜는 선택할 수 없습니다.\n다시 선택해 주세요.");
-      return;
-    }
-    setActiveFilter('custom');
-    setStartDate(date);
+    if (date > todayStr) { alert("오늘 이후의 날짜는 선택할 수 없습니다.\n다시 선택해 주세요."); return; }
+    setActiveFilter('custom'); setStartDate(date);
   };
-
   const handleEndDateChange = (date) => {
-    if (date > todayStr) {
-      alert("오늘 이후의 날짜는 선택할 수 없습니다.\n다시 선택해 주세요.");
-      return;
-    }
-    setActiveFilter('custom');
-    setEndDate(date);
-  };
-
-  const handleDeleteSuccess = (deletedId) => {
-    setPosts(prevPosts => prevPosts.filter(post => post.looktoday_id !== deletedId));
+    if (date > todayStr) { alert("오늘 이후의 날짜는 선택할 수 없습니다.\n다시 선택해 주세요."); return; }
+    setActiveFilter('custom'); setEndDate(date);
   };
 
   return (
@@ -133,116 +180,46 @@ const MyFeed = () => {
       <Menu />
       <Sidebar />
       <div className="myfeed-wrapper">
-
-        <div className="myfeed-container">
-          <h1 className="myfeed-title">MY FEED</h1>
-        </div>
-
+        <div className="myfeed-container"><h1 className="myfeed-title">MY FEED</h1></div>
         <div className="myfeed-filter-bar">
-          {/* 최근 12개월 */}
-          <button
-            className={`filter-btn-12m${activeFilter === '12m' ? ' active' : ''}`}
-            onClick={() => {
-              setActiveFilter('12m');
-              // 기간 값 세팅 예시
-              setStartDate(/* ...최근 12개월 시작일자... */);
-              setEndDate(/* ...오늘 날짜... */);
-            }}
-          >최근 12개월</button>
-
-          {/* 한달 전 */}
-          <button
-            className={`filter-btn-1m${activeFilter === '1m' ? ' active' : ''}`}
-            onClick={() => {
-              setActiveFilter('1m');
-              setStartDate(/* ...한달 전 시작일자... */);
-              setEndDate(/* ...한달 전 마지막일자... */);
-            }}
-          >{prev1Text}</button>
-
-          {/* 두달 전 */}
-          <button
-            className={`filter-btn-2m${activeFilter === '2m' ? ' active' : ''}`}
-            onClick={() => {
-              setActiveFilter('2m');
-              setStartDate(/* ...두달 전 시작일자... */);
-              setEndDate(/* ...두달 전 마지막일자... */);
-            }}
-          >{prev2Text}</button>
-
-          {/* 직접 기간 선택 (캘린더) */}
-          <div className="filter-calendar-start">
-            <Calendar
-              value={startDate}
-              onChange={handleStartDateChange}
-            />
-          </div>
+          <button className={`filter-btn-12m${activeFilter === '12m' ? ' active' : ''}`} onClick={() => handlePresetFilterClick('12m')}>최근 12개월</button>
+          <button className={`filter-btn-1m${activeFilter === 'last-month' ? ' active' : ''}`} onClick={() => handlePresetFilterClick('last-month')}>{prev1Month}월</button>
+          <button className={`filter-btn-2m${activeFilter === 'this-month' ? ' active' : ''}`} onClick={() => handlePresetFilterClick('this-month')}>{prev2Month}월</button>
+          <div className="filter-calendar-start"><Calendar value={startDate} onChange={handleStartDateChange} /></div>
           <span className="filter-tilde">~</span>
-          <div className="filter-calendar-end">
-            <Calendar
-              value={endDate}
-              onChange={handleEndDateChange}
-            />
-          </div>
-
-          {/* 조회 버튼: 두 날짜 모두 선택해야 활성화 */}
-          <button
-            className={`filter-btn-search${(startDate && endDate) ? ' active' : ''}`}
-            disabled={!(startDate && endDate)}
-            onClick={handleSearch}
-          >조회</button>
+          <div className="filter-calendar-end"><Calendar value={endDate} onChange={handleEndDateChange} /></div>
+          <button className={`filter-btn-search${startDate && endDate ? ' active' : ''}`} disabled={!(startDate && endDate)} onClick={handleSearch}>조회</button>
         </div>
-
-        <div className="myfeed-guide-text">
-          최대 12개월 단위로 조회 가능하며, 최근 5년간의 게시물을 조회하실 수 있습니다.
-        </div>
-
-        <div className="myfeed-hr-container">
-          <hr className="myfeed-hr" />
-          <span className="myfeed-count-text">총 {posts.length}건</span>
-        </div>
-
+        <div className="myfeed-guide-text">최대 12개월 단위로 조회 가능하며, 최근 5년간의 게시물을 조회하실 수 있습니다.</div>
+        <div className="myfeed-hr-container"><hr className="myfeed-hr" /><span className="myfeed-count-text">총 {totalPosts}건</span></div>
         <div className="myfeed-cards hide-nickname-heart">
-          {posts.length > 0 ? (
+          {loading ? (<div>로딩 중...</div>) : posts.length > 0 ? (
             posts.map(post => (
               <div key={post.looktoday_id} className="myfeed-card-with-option" style={{ position: "relative", width: "224.5px" }} onClick={() => handleOpenPopup(post)}>
                 <LookCard
                   lookId={post.looktoday_id}
-                  image={post.Image?.imageUrl}
-                  locationTemp={`${post.si} ${post.gungu} · ${post.temperature ?? '-'}℃`}
-                  likeCount={post.like_count}
+                  image={post.imageUrl}
+                  locationTemp={`${post.si} ${post.gungu} · -℃`}
+                  likeCount={post.likeCount}
                 />
-                <div onClick={(e) => e.stopPropagation()}> 
-                  {/* ⭐️ 5. 옵션 버튼 클릭 시 팝업이 뜨지 않도록 이벤트 버블링 방지 */}
+                <div onClick={(e) => e.stopPropagation()}>
                   <MyFeedCardOption
                     postData={post}
                     onDeleteSuccess={() => handleDeleteSuccess(post.looktoday_id)}
-                  />
+                  />        
                 </div>
               </div>
             ))
-          ) : (
-            <div>작성한 게시물이 없습니다.</div> // 데이터가 없을 때 표시할 메시지
-          )}
+          ) : (<div>작성한 게시물이 없습니다.</div>)}
         </div>
-
-        <div className="myfeed-pagination">
-          <Pagination 
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage} // 페이지 번호를 클릭하면 currentPage 상태가 변경됨
-          />
-        </div>
+        <div className="myfeed-pagination"><Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} /></div>
       </div>
-
-      <div className="myfeed-footer">
-        <Footer />
-      </div>
-
+      <div className="myfeed-footer"><Footer /></div>
       <LookPopup
         isOpen={isPopupOpen}
         onClose={handleClosePopup}
         look={selectedLook}
+        isLoading={loadingPopup}
         isMyFeed={true}
       />
     </>
