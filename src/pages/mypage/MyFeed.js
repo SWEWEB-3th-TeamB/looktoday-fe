@@ -111,38 +111,38 @@ const MyFeed = () => {
     setTotalPosts(prevTotal => prevTotal - 1);
   };
 
-const handleOpenPopup = async (post) => {
-  setLoadingPopup(true);
-  setIsPopupOpen(true);
+  const handleOpenPopup = async (post) => {
+    setLoadingPopup(true);
+    setIsPopupOpen(true);
 
-  const token = localStorage.getItem("token");
-  try {
-    const response = await fetch(`/api/looks/${post.looktoday_id}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`/api/looks/${post.looktoday_id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     
-    const data = await response.json();
+      const data = await response.json();
 
-    if (data.result) {
-      const detailedData = data.result;
+      if (data.result) {
+        const detailedData = data.result;
 
-      const transformedLook = {
-        User: { nickname: detailedData.nickname },
-        Image: { imageUrl: detailedData.imageUrl },
-        
-        si: post.si, 
-        gungu: detailedData.location,
-        
-        apparent_humidity: detailedData.apparent_humidity,
-        
-        apparent_temp: detailedData.feelsLikeTemp,
-        like_count: detailedData.likeCount,
-        date: detailedData.date,
-        comment: detailedData.comment,
-        temperature: detailedData.temperature,
-        isLiked: detailedData.isLiked,
-      };
+        const transformedLook = {
+          User: { nickname: detailedData.nickname },
+          Image: { imageUrl: detailedData.imageUrl },
+          
+          si: post.si, 
+          gungu: detailedData.location,
+          
+          apparent_humidity: post.apparent_humidity,
+          apparent_temp: detailedData.feelsLikeTemp,
+          like_count: detailedData.likeCount,
+
+          date: detailedData.date,
+          comment: detailedData.comment,
+          temperature: detailedData.temperature,
+          isLiked: detailedData.isLiked,
+        };
           
         setSelectedLook(transformedLook);
       } else {

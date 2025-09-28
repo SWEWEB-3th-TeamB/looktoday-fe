@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import Menu from '../../components/Menu';
 import Calendar from '../../components/Calendar';
@@ -59,7 +59,6 @@ async function updatePost(postId, token, updatedData) {
 
 const LookTodayEdit = () => {
   const { postId } = useParams();
-  const location = useLocation();
   const navigate = useNavigate();
   const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState(false);
 
@@ -68,8 +67,8 @@ const LookTodayEdit = () => {
     navigate('/myfeed');
   };
 
-  // 이전 페이지에서 넘겨받은 원본 게시물 데이터
-  const [initialData] = useState(location.state?.initialData || null);
+  // 원본 데이터 상태 (API로부터 받은 상세 데이터)
+  const [initialData, setInitialData] = useState(null);
 
   // 폼 상태 관리
   const [temperature, setTemperature] = useState('');
@@ -87,29 +86,66 @@ const LookTodayEdit = () => {
   const [isReviewFocused, setIsReviewFocused] = useState(false);
   const token = localStorage.getItem("token");
 
-  // 컴포넌트 마운트 시, initialData로 폼 상태 초기화
+  useEffect(() => {
+    const fetchAndSetPostDetails = async () => {
+      if (!postId || !token) {
+        alert("게시물 정보를 불러올 수 없습니다.");
+        navigate('/myfeed');
+        return;
+      }
+      try {
+        const response = await fetch(`/api/looks/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error('내 룩 목록을 가져오는데 실패했습니다.');
+        
+        const data = await response.json();
+
+        if (data.result && data.result.looks) {
+          const currentPost = data.result.looks.find(
+            (look) => look.looktoday_id === Number(postId)
+          );
+
+          if (currentPost) {
+            console.log("API에서 찾은 현재 게시물 데이터:", currentPost);
+            setInitialData(currentPost);
+          } else {
+            throw new Error('목록에서 현재 게시물을 찾을 수 없습니다. MyFeed로 돌아갑니다.');
+          }
+        } else {
+          throw new Error(data.message || '게시물 정보를 찾을 수 없습니다.');
+        }
+      } catch (error) {
+        console.error("게시물 정보 로딩 중 오류:", error);
+        alert(error.message);
+        navigate('/myfeed');
+      }
+    };
+
+    fetchAndSetPostDetails();
+  }, [postId, token, navigate]);
+
+  // initialData로 폼 상태를 초기화합니다. (/api/looks/me 응답 구조에 맞게 수정)
   useEffect(() => {
     if (initialData) {
-      // label -> key 변환
-      const tempKey = temperatureOptions.find(o => o.label === initialData.apparent_temp)?.key;
-      const humidityKey = humidityOptions.find(o => o.label === initialData.apparent_humidity)?.key;
+      // 체감온도/습도는 '더워요' 같은 label 값이므로, UI 상태인 'hot' 같은 key 값으로 변환합니다.
+      const tempOption = temperatureOptions.find(o => o.label === initialData.apparent_temp);
+      const humidityOption = humidityOptions.find(o => o.label === initialData.apparent_humidity);
 
-      setTemperature(tempKey || 'warm');
-      setHumidity(humidityKey || 'comfortable');
+      setTemperature(tempOption ? tempOption.key : 'warm');
+      setHumidity(humidityOption ? humidityOption.key : 'comfortable');
       
-      setDateValue(initialData.date);
-      setSelectedTime(Number(initialData.hour)); // 문자열로 올 수 있으므로 숫자로 변환
-      setSelectedSido(initialData.si);
-      setSelectedGugun(initialData.gungu);
-      setIsPublic(initialData.isPublic);
-      setPreview(initialData.Image?.imageUrl);
-      setReview(initialData.comment);
-    } else {
-      alert("수정할 게시물 정보가 없습니다. 이전 페이지로 돌아갑니다.");
-      navigate('/mypage/myfeed');
+      // '/api/looks/me' 응답에 있는 필드들을 그대로 사용합니다.
+      setDateValue(initialData.date || '');
+      setSelectedTime(initialData.hour != null ? Number(initialData.hour) : null);
+      setSelectedSido(initialData.si || '');
+      setSelectedGugun(initialData.gungu || '');
+      setIsPublic(initialData.isPublic === undefined ? true : initialData.isPublic);
+      setPreview(initialData.Image?.imageUrl || '');
+      setReview(initialData.comment || ''); 
     }
-  }, [initialData, navigate]);
-  
+  }, [initialData]);
+
   const onChangeImage = e => {
     const file = e.target.files?.[0];
     if (file) {
@@ -139,29 +175,30 @@ const LookTodayEdit = () => {
   const handleUpdateClick = async () => {
     if (!initialData) return;
 
-    // 변경된 데이터만 담을 객체
     const updatedData = {};
 
-    // 1. 체감온도 (label로 변환하여 비교)
     const tempLabel = temperatureOptions.find(o => o.key === temperature)?.label;
     if (tempLabel && tempLabel !== initialData.apparent_temp) {
         updatedData.apparent_temp = tempLabel;
     }
     
-    // 2. 체감습도 (label로 변환하여 비교)
     const humidityLabel = humidityOptions.find(o => o.key === humidity)?.label;
     if (humidityLabel && humidityLabel !== initialData.apparent_humidity) {
         updatedData.apparent_humidity = humidityLabel;
     }
 
-    // 3. 나머지 필드 비교
     if (dateValue !== initialData.date) updatedData.date = dateValue;
-    if (selectedTime !== Number(initialData.hour)) updatedData.hour = selectedTime.toString();
+    
+    // [수정] hour 비교 로직 변경: 둘 다 문자열로 바꿔서 비교
+    if (String(selectedTime) !== String(initialData.hour)) {
+        updatedData.hour = selectedTime.toString();
+    }
+
     if (selectedSido !== initialData.si) updatedData.si = selectedSido;
     if (selectedGugun !== initialData.gungu) updatedData.gungu = selectedGugun;
     if (isPublic !== initialData.isPublic) updatedData.isPublic = isPublic;
     if (review !== initialData.comment) updatedData.comment = review;
-    if (image) updatedData.image = image; // 새 이미지가 있으면 추가
+    if (image) updatedData.image = image;
 
     if (Object.keys(updatedData).length > 0) {
       try {
