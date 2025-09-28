@@ -3,7 +3,7 @@ import '../styles/SearchFilter.css';
 import arrow from '../assets/images/pagination-arrow.png';
 import FilterPopup from '../pages/lookbook/FilterPopup';
 
-const SearchFilter = () => {
+const SearchFilter = ({ onApply }) => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState(null);
 
@@ -32,7 +32,13 @@ const SearchFilter = () => {
                 </div>
             </div>
 
-            {isPopupOpen && <FilterPopup onClose={closePopup} defaultItem={selectedFilter} />}
+            {isPopupOpen && (
+                <FilterPopup
+                    onClose={closePopup}
+                    onApply={onApply}
+                    defaultItem={selectedFilter}
+                />
+            )}
         </div>
     );
 };

@@ -45,15 +45,35 @@ const FilterPopup = ({ onClose, defaultItem, onApply }) => {
                 ? { type: 'custom', min: custom.min, max: custom.max }
                 : { type: 'preset', id: selected };
 
-        // 필요시 부모로 전달
-        onApply?.({
+        const appliedFilters = {
             tab: selectItem,
             region: selectedRegion,
             weather: weatherValue,
-        });
+            startDate: startDateValue,
+            endDate: endDateValue,
+        };
 
-        onClose();
+        console.log("[FilterPopup] handleApply 호출됨:", appliedFilters);
+
+        if (onApply) {
+            console.log("[FilterPopup] onApply 존재함, 호출 시작!");
+            onApply(appliedFilters);
+        } else {
+            console.error("[FilterPopup] onApply 없음!");
+        }
+
+        setTimeout(() => {
+            onClose();
+        }, 0);
     };
+
+    useEffect(() => {
+        console.log("[FilterPopup] 받은 props:", {
+            onApply,
+            onClose,
+            defaultItem
+        });
+    }, [])
 
     return ReactDOM.createPortal(
         <div className='filter-popup-overlay' onClick={onClose}>
@@ -77,7 +97,23 @@ const FilterPopup = ({ onClose, defaultItem, onApply }) => {
 
                 {selectItem === '지역' && (
                     <div className='filter-popup-region'>
-                        <RegionSelector onRegionChange={setSelectedRegion} />
+                        <RegionSelector
+                            onRegionChange={(value, type) => {
+                                if (type === 'sido') {
+                                    // 시/도 변경 시
+                                    setSelectedRegion({
+                                        si: value,
+                                        gungu: '' // 군/구 초기화
+                                    });
+                                } else if (type === 'gugun') {
+                                    // 군/구 변경 시
+                                    setSelectedRegion((prev) => ({
+                                        ...prev,
+                                        gungu: value
+                                    }));
+                                }
+                            }}
+                        />
                     </div>
                 )}
 
