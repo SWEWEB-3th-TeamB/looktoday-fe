@@ -9,7 +9,7 @@ import myHeart from '../assets/images/my-heart.png';
 import myLogout from '../assets/images/my-logout.png';
 
 const menus = [
-  { key: 'myfeed', name: '내 피드', icon: myFeed, boxTop: 81, imgTop: 95, textTop: 95 },
+  { key: 'myfeed', name: '내 피드', icon: myFeed, boxTop: 81,  imgTop: 95,  textTop: 95 },
   { key: 'myheart', name: '내 좋아요', icon: myHeart, boxTop: 146, imgTop: 160, textTop: 160 },
   { key: 'profile', name: '프로필 설정', icon: myProfile, boxTop: 211, imgTop: 225, textTop: 225 },
   { key: 'logout', name: '로그아웃', icon: myLogout, boxTop: 276, imgTop: 291, textTop: 290 },
@@ -19,18 +19,20 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [loggingOut, setLoggingOut] = React.useState(false);
-
+  const [hoverKey, setHoverKey] = React.useState(null); 
+  
   // 현재 경로에서 active key 파생
   const activeKey = React.useMemo(() => {
     const path = location.pathname.replace(/^\//, '');
     return path || 'myfeed';
   }, [location.pathname]);
+
   const handleLogout = async () => {
     if (loggingOut) return;
     setLoggingOut(true);
 
     const token = localStorage.getItem('token');
-    const userEmail = localStorage.getItem('user_email'); // 저장 안했다면 null이어도 괜찮음
+    const userEmail = localStorage.getItem('user_email');
 
     console.group('AUTH/LOGOUT (Sidebar)');
     console.log('로그아웃 시도', { userEmail, hasToken: !!token });
@@ -60,7 +62,6 @@ export default function Sidebar() {
     } catch (err) {
       console.error('로그아웃 API 에러:', err);
     } finally {
-      // 클라이언트 정리
       localStorage.removeItem('token');
       localStorage.removeItem('token_issued_at');
       localStorage.removeItem('user_id');
@@ -68,7 +69,7 @@ export default function Sidebar() {
       console.log('localStorage 정리 완료');
 
       console.groupEnd();
-      navigate('/', { replace: true }); // 메인으로
+      navigate('/', { replace: true });
       setLoggingOut(false);
     }
   };
@@ -83,20 +84,41 @@ export default function Sidebar() {
       {/*제목*/}
       <div className="sidebar-title">My Page</div>
 
-      {/* 메뉴 박스 (활성 메뉴 위치로 이동) */}
+      {/* 활성(선택) 메뉴 박스 - 항상 표시 */}
       {menus.map(menu =>
         activeKey === menu.key ? (
           <div
-            key={menu.key + '-box'}
-            className="sidebar-menu-box"
+            key={menu.key + '-active-box'}
+            className="sidebar-menu-box active"
             style={{ top: `${menu.boxTop}px`, left: '12px' }}
           />
         ) : null
       )}
 
-      {/* 메뉴 아이템 */}
+      {/* 호버 메뉴 박스 - hoverKey가 있고, active와 다르면 추가 표시 */}
+      {hoverKey && hoverKey !== activeKey && (() => {
+        const hovered = menus.find(m => m.key === hoverKey);
+        if (!hovered) return null;
+        return (
+          <div
+            key={hovered.key + '-hover-box'}
+            className="sidebar-menu-box hover"
+            style={{ top: `${hovered.boxTop}px`, left: '12px' }}
+          />
+        );
+      })()}
+
+      {/* 메뉴 아이템 + 히트에어리어 */}
       {menus.map(menu => (
         <React.Fragment key={menu.key}>
+          {/* 히트에어리어: 박스 크기와 동일, hover/click 캡처 */}
+          <div
+            className="sidebar-menu-hit"
+            style={{ top: `${menu.boxTop}px`, left: '12px' }}
+            onMouseEnter={() => setHoverKey(menu.key)}
+            onMouseLeave={() => setHoverKey(prev => (prev === menu.key ? null : prev))}
+            onClick={() => handleMenuClick(menu.key)}
+          />
           <img
             src={menu.icon}
             alt={menu.name}
