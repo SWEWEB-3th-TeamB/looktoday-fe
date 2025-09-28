@@ -1,14 +1,16 @@
-.profile-wrap{
+.profile-wrap {
     position: relative;
     height: 1256px;
     overflow: hidden;
 }
+
 .profile {
+    position: absolute;
     flex: 1;
     width: 767px;
-    transform: translateX(0);
+    transform: translateX(-50%);
     margin-top: 59.25px;
-    margin-left: 30%;
+    left: calc(246px + (100vw - 246px) / 2);
 }
 
 .profile-title {
