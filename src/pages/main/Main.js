@@ -12,10 +12,50 @@ import communitySight from '../../assets/images/MainPhoto/community-sight.png';
 import communityPerson from '../../assets/images/MainPhoto/community-person.png';
 
 import '../../styles/Main.css';
+import { useState, useEffect } from 'react';
 
 const Login = () => {
   const today = new Date();
   const date = today.toISOString().split('T')[0];
+  const [location, setLocation] = useState('');
+  const [weather, setWeather] = useState('');
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    setToken(storedToken);
+
+    if (storedToken) {
+      handleWeather(storedToken);
+    }
+  }, []);
+
+  const handleWeather = async (storedToken) => {
+    try {
+      console.log('storedToken:', storedToken); // 디버깅
+
+      const res = await fetch('/api/users/me/weather', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${storedToken}`,
+        },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.text();
+        console.error('Server Error Response:', errorData); // 서버 메시지 확인
+        throw new Error('날씨 데이터를 불러오는데 실패했습니다.');
+      }
+
+      const data = await res.json();
+      console.log('data', data);
+
+      setLocation(`${data.result.region.시} ${data.result.region.군구}`);
+      setWeather(data.result.data.온도);
+    } catch (error) {
+      console.error('error', error);
+    }
+  };
 
   return (
     <div>
@@ -27,9 +67,13 @@ const Login = () => {
             <div className="main-weather-title">
               <span>How's the <strong>weather</strong>?</span>
             </div>
-            <div className='main-weather-info'>
-              서울특별시 노원구 · <span>24°C</span>
-            </div>
+            {token ? (
+              <div className='main-weather-info'>
+                {location} · <span>{weather}°C</span>
+              </div>
+            ) : (
+              <></>
+            )}
             <div className='main-weather-date'>{date}</div>
 
             <div className='main-weather-text'>
@@ -102,7 +146,7 @@ const Login = () => {
 
         <section className='main-community'>
           <div className='main-community-content'>
-            <div className="main-community-title">LOOK TODAY<br/>LOOK TODAY<br/>LOOK TODAY</div>
+            <div className="main-community-title">LOOK TODAY<br />LOOK TODAY<br />LOOK TODAY</div>
             <div className='main-community-text'>
               <span>지금 바로 회원가입하고 LOOK TODAY와 함께해요.</span>
               <br />
