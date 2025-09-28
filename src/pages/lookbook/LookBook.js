@@ -15,6 +15,15 @@ import '../../styles/LookBook.css';
 import arrow from '../../assets/images/pagination-arrow.png';
 import lookbook from '../../assets/images/lookbook-empty.png';
 
+async function toggleLikeApi(lookId, token, isLiked) {
+    const method = isLiked ? 'POST' : 'DELETE';
+    const res = await fetch(`https://looktoday.kr/api/looks/${lookId}/like`, {
+        method: method,
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+    });
+    return await res.json();
+}
+
 const LookBook = () => {
     const [filters, setFilters] = useState([
         '서울시 노원구',
@@ -29,6 +38,52 @@ const LookBook = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedLook, setSelectedLook] = useState(null);
 
+    const handleLikeToggle = async (lookId, newLikedState) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert("로그인 후 이용 가능합니다.");
+            return;
+        }
+
+        const result = await toggleLikeApi(lookId, token, newLikedState);
+
+        if (result.code === "LIKE201" || result.code === "LIKE200") {
+            
+            const serverIsLiked = result.result.isLiked; // 서버가 보내준 최종 isLiked 상태
+
+            const updateStateWithServerData = (list) =>
+                list.map(look => {
+                    if (look.looktoday_id === lookId) {
+                        return {
+                            ...look,
+                            isLiked: serverIsLiked,
+                            like_count: newLikedState ? look.like_count + 1 : Math.max(0, look.like_count - 1),
+                        };
+                    }
+                    return look;
+                });
+
+            setLookList(prevList => updateStateWithServerData(prevList));
+            setBestLookList(prevList => updateStateWithServerData(prevList));
+
+            if (selectedLook && selectedLook.looktoday_id === lookId) {
+                setSelectedLook(prevLook => ({
+                    ...prevLook,
+                    isLiked: serverIsLiked,
+                    like_count: newLikedState ? prevLook.like_count + 1 : Math.max(0, prevLook.like_count - 1),
+                }));
+            }
+
+        } else if (result.code === "LIKE409" || result.code === "LIKE404") {
+            alert("데이터 상태가 일치하지 않아 목록을 새로고침합니다.");
+            fetchLookList(); 
+            handleBestLook();
+
+        } else {
+            alert(result.message || "요청에 실패했습니다.");
+        }
+    };
+
     // 적용된 필터 삭제
     const handleRemoveFilter = (indexToRemove) => {
         setFilters(filters.filter((_, idx) => idx !== indexToRemove));
@@ -40,14 +95,20 @@ const LookBook = () => {
     };
 
     const handleBestLook = async () => {
+        const token = localStorage.getItem('token');
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
         try {
             const res = await fetch('/api/looks/best', {
                 method: "GET",
+                headers: headers,
             });
 
             const data = await res.json();
-            console.log("data", data);
-            console.log("message", data.message);
+            console.log("best looks data", data); // 데이터 확인용 로그
 
             setBestLookList(data.result);
 
@@ -76,13 +137,20 @@ const LookBook = () => {
     const visibleItems = bestLookList.slice(currentIndex, currentIndex + 4);
 
     const fetchLookList = async () => {
+        const token = localStorage.getItem('token');
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
         try {
             const res = await fetch('/api/looks', {
                 method: "GET",
+                headers: headers,
             });
 
             const data = await res.json();
-            console.log("look data", data);
+            console.log("look list data", data); // 데이터 확인용 로그
 
             setLookList(data.result.looks);
         } catch (error) {
@@ -91,6 +159,7 @@ const LookBook = () => {
     };
 
     useEffect(() => {
+        handleBestLook();
         fetchLookList();
     }, []);
 
@@ -180,7 +249,8 @@ const LookBook = () => {
                                         locationTemp={`${item.si} ${item.gungu} · ${item.temperature ?? '-'}℃`}
                                         nickname={item.User.nickname}
                                         likeCount={item.like_count}
-                                        initiallyLiked={false}
+                                        isLiked={item.isLiked}
+                                        onLikeToggle={(newLikedState) => handleLikeToggle(item.looktoday_id, newLikedState)}
                                     />
                                 </div>
                             ))
@@ -198,6 +268,8 @@ const LookBook = () => {
                 isOpen={isPopupOpen}
                 onClose={handleClosePopup}
                 look={selectedLook}
+                isLiked={selectedLook?.isLiked}
+                onLikeToggle={handleLikeToggle}
             />
         </div>
     );
