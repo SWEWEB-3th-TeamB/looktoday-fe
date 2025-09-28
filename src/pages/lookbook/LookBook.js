@@ -48,7 +48,7 @@ const LookBook = () => {
         const result = await toggleLikeApi(lookId, token, newLikedState);
 
         if (result.code === "LIKE201" || result.code === "LIKE200") {
-            
+
             const serverIsLiked = result.result.isLiked; // 서버가 보내준 최종 isLiked 상태
 
             const updateStateWithServerData = (list) =>
@@ -76,7 +76,7 @@ const LookBook = () => {
 
         } else if (result.code === "LIKE409" || result.code === "LIKE404") {
             alert("데이터 상태가 일치하지 않아 목록을 새로고침합니다.");
-            fetchLookList(); 
+            fetchLookList();
             handleBestLook();
 
         } else {
@@ -109,7 +109,6 @@ const LookBook = () => {
         fetchLookList(region, startDate, endDate);
     };
 
-
     /** 정렬(최신순/인기순) 변경 */
     const handleSortChange = (value) => {
         setSelectedSort(value);
@@ -122,9 +121,6 @@ const LookBook = () => {
         if (!token) {
             console.error('토큰이 없습니다. Best Look 요청 중단');
             return;
-        const headers = { 'Content-Type': 'application/json' };
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
         }
 
         try {
@@ -138,14 +134,8 @@ const LookBook = () => {
 
             const data = await res.json();
             console.log('Best Look data:', data);
-                method: "GET",
-                headers: headers,
-            });
 
-            const data = await res.json();
-            console.log("best looks data", data); // 데이터 확인용 로그
-
-            // 서버에서 에러 응답이 오면 setBestLookList 실행하지 않음
+            // 서버에서 정상 응답일 때만 state 업데이트
             if (data.code === 'COMMON200') {
                 setBestLookList(data.result);
             } else {
@@ -217,23 +207,27 @@ const LookBook = () => {
             return;
         }
 
+        // 정렬 옵션 적용
         let url = selectedSort === '최신순'
             ? `/api/looks?sort=latest`
             : `/api/looks?sort=popular`;
 
+        // 페이지네이션
         url += `&page=${page}&limit=${limit}`;
 
-        // ✅ 필터 관련 파라미터 추가
+        // ✅ 지역 필터
         if (region?.si && region?.gungu) {
             url += `&si=${encodeURIComponent(region.si)}&gungu=${encodeURIComponent(region.gungu)}`;
         }
 
+        // ✅ 날짜 필터
         if (startDate && endDate) {
             const start = startDate.toISOString().slice(0, 10);
             const end = endDate.toISOString().slice(0, 10);
             url += `&startDate=${start}&endDate=${end}`;
         }
 
+        // ✅ 날씨 필터
         if (weather?.type === 'custom') {
             url += `&weather=custom&minTemp=${weather.min}&maxTemp=${weather.max}`;
         } else if (weather?.label) {
@@ -246,7 +240,7 @@ const LookBook = () => {
             const res = await fetch(url, {
                 method: 'GET',
                 headers: {
-                    Authorization: `Bearer ${token}`, // ✅ 토큰 추가
+                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             });
@@ -254,22 +248,7 @@ const LookBook = () => {
             const data = await res.json();
             console.log("서버 응답:", data);
 
-    const fetchLookList = async () => {
-        const token = localStorage.getItem('token');
-        const headers = { 'Content-Type': 'application/json' };
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-        }
-
-        try {
-            const res = await fetch('/api/looks', {
-                method: "GET",
-                headers: headers,
-            });
-
-            const data = await res.json();
-            console.log("look list data", data); // 데이터 확인용 로그
-
+            // 서버 응답 구조에 따라 lookList 업데이트
             setLookList(data?.result?.looks || []);
         } catch (error) {
             console.error('fetchLookList 요청 오류:', error);
