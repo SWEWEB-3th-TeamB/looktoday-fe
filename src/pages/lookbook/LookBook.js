@@ -18,7 +18,7 @@ import lookbook from '../../assets/images/lookbook-empty.png';
 
 async function toggleLikeApi(lookId, token, isLiked) {
     const method = isLiked ? 'POST' : 'DELETE';
-    const res = await fetch(`https://looktoday.kr/api/looks/${lookId}/like`, {
+    const res = await fetch(`/api/looks/${lookId}/like`, {
         method: method,
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
     });
