@@ -84,7 +84,10 @@ const Menu = () => {
     } else if (
       path === '/login' ||
       path === '/sign-up' ||
-      path === '/sign-up-complete'
+      path === '/sign-up-complete' ||
+      path ==='/verification' ||
+      path ==='/change-password' ||
+      path ==='/change-password-complete'
     ) {
       setActiveMenu('LOGIN');
     } else {
@@ -122,12 +125,12 @@ const Menu = () => {
             WEATHER
           </div>
 
-          {/* LOOK TODAY → 로그인 필수 */}
+          {/* LOOK TODAY */}
           <div
             onClick={() => {
               if (!isLogin) {
                 alert('로그인 후 이용 가능합니다.');
-                return; // 로그인 안 했으면 여기서 멈춤
+                return;
               }
               setActiveMenu('LOOKTODAY');
               navigate('/looktoday');
@@ -140,6 +143,10 @@ const Menu = () => {
           {/* LOOK BOOK */}
           <div
             onClick={() => {
+              if (!isLogin) {
+                alert('로그인 후 이용 가능합니다.');
+                return;
+              }
               setActiveMenu('LOOKBOOK');
               navigate('/lookbook');
             }}

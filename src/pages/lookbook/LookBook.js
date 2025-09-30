@@ -36,6 +36,12 @@ const LookBook = () => {
     const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
     const [selectedRegion, setSelectedRegion] = useState(null); // 필터에서 선택된 지역값 저장
     const [currentPage, setCurrentPage] = useState(1);
+    const [filterState, setFilterState] = useState({
+        region: null,
+        startDate: null,
+        endDate: null,
+        weather: null
+    });
 
     /** 필터 태그 삭제 */
     const handleLikeToggle = async (lookId, newLikedState) => {
@@ -89,29 +95,43 @@ const LookBook = () => {
         const updatedFilters = filters.filter((_, idx) => idx !== indexToRemove);
         setFilters(updatedFilters);
 
-        let region = null;
-        let startDate = null;
-        let endDate = null;
+        // 필터 상태도 같이 업데이트
+        const newFilterState = { ...filterState };
 
-        updatedFilters.forEach(filter => {
-            if (filter.includes('시') || filter.includes('구')) {
-                const parts = filter.split(' ');
-                region = { si: parts[0], gungu: parts[1] };
-            }
+        if (filters[indexToRemove].includes('시') || filters[indexToRemove].includes('구')) {
+            newFilterState.region = null;
+        }
+        if (filters[indexToRemove].includes('년') && filters[indexToRemove].includes('월')) {
+            newFilterState.startDate = null;
+            newFilterState.endDate = null;
+        }
+        if (filters[indexToRemove] === filterState.weather?.label) {
+            newFilterState.weather = null;
+        }
 
-            if (filter.includes('년') && filter.includes('월') && filter.includes('~')) {
-                const [start, end] = filter.split(' ~ ');
-                startDate = new Date(start);
-                endDate = new Date(end);
-            }
-        });
+        setFilterState(newFilterState);
 
-        fetchLookList(region, startDate, endDate);
+        fetchLookList(
+            newFilterState.region,
+            newFilterState.startDate,
+            newFilterState.endDate,
+            newFilterState.weather,
+            1
+        );
     };
 
     /** 정렬(최신순/인기순) 변경 */
     const handleSortChange = (value) => {
         setSelectedSort(value);
+        setCurrentPage(1);
+
+        fetchLookList(
+            filterState.region,
+            filterState.startDate,
+            filterState.endDate,
+            filterState.weather,
+            currentPage
+        );
     };
 
     /** Best 10 데이터 가져오기 */
@@ -265,44 +285,63 @@ const LookBook = () => {
 
     /** 정렬 변경 시 다시 fetch */
     useEffect(() => {
-        fetchLookList(selectedRegion);
+        setCurrentPage(1);
+        fetchLookList(
+            filterState.region,
+            filterState.startDate,
+            filterState.endDate,
+            filterState.weather,
+            currentPage
+        );
     }, [selectedSort]);
 
     useEffect(() => {
-        console.log("현재 lookList 상태:", lookList); // ✅ 상태 변화 감지
+        console.log("현재 lookList 상태:", lookList);
     }, [lookList]);
 
     /** 필터 적용 시 실행 */
     const handleFilterApply = (appliedFilters) => {
-        console.log("[LookBook] FilterPopup에서 받은 filters:", appliedFilters);
-
-        const newFilters = [];
-
-        // 날짜 값이 있을 때만 Date 객체 생성
         const startDate = appliedFilters.startDate ? new Date(appliedFilters.startDate) : null;
         const endDate = appliedFilters.endDate ? new Date(appliedFilters.endDate) : null;
 
-        const formatDate = (date) =>
-            date.toLocaleDateString('ko-KR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
+        setFilterState({
+            region: appliedFilters.region,
+            startDate,
+            endDate,
+            weather: appliedFilters.weather || null,
+        });
 
-        // 지역 필터
-        if (appliedFilters.region?.si && appliedFilters.region?.gungu) {
-            newFilters.push(`${appliedFilters.region.si} ${appliedFilters.region.gungu}`);
-        }
+        // ✅ UI에 보여줄 필터 태그 문자열 만들기
+        setFilters((prevFilters) => {
+            const updatedFilters = [...prevFilters];
 
-        // 날짜 필터 (값이 있을 때만 추가)
-        if (startDate && endDate) {
-            newFilters.push(`${formatDate(startDate)} ~ ${formatDate(endDate)}`);
-        }
+            if (appliedFilters.region?.si && appliedFilters.region?.gungu) {
+                const regionFilter = `${appliedFilters.region.si} ${appliedFilters.region.gungu}`;
+                if (!updatedFilters.includes(regionFilter)) {
+                    updatedFilters.push(regionFilter);
+                }
+            }
 
-        setFilters(newFilters);
+            if (startDate && endDate) {
+                const formatDate = (date) =>
+                    date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+                const dateFilter = `${formatDate(startDate)} ~ ${formatDate(endDate)}`;
+                if (!updatedFilters.includes(dateFilter)) {
+                    updatedFilters.push(dateFilter);
+                }
+            }
 
-        // 서버 데이터 갱신
-        fetchLookList(appliedFilters.region, startDate, endDate);
+            if (appliedFilters.weather?.label) {
+                const weatherFilter = appliedFilters.weather.label;
+                if (!updatedFilters.includes(weatherFilter)) {
+                    updatedFilters.push(weatherFilter);
+                }
+            }
+
+            return updatedFilters;
+        });
+
+        fetchLookList(appliedFilters.region, startDate, endDate, appliedFilters.weather, 1);
     };
 
     /** 팝업 열기/닫기 */
@@ -409,7 +448,13 @@ const LookBook = () => {
                         currentPage={currentPage}
                         onPageChange={(page) => {
                             setCurrentPage(page);
-                            fetchLookListWithToken(page); // ✅ 토큰이 필요한 페이지네이션 요청
+                            fetchLookList(
+                                filterState.region,
+                                filterState.startDate,
+                                filterState.endDate,
+                                filterState.weather,
+                                page
+                            );
                         }}
                     />
                 </div>
