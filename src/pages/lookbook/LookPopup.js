@@ -66,7 +66,7 @@ const LookPopup = ({ isOpen, onClose, look, isMyFeed = false, onLikeToggle, isLi
                     </div>
                     
                     <div className="look-popup-date">
-                        {look.date.replace(/-/g, '.')}
+                        {look.date?.replace(/-/g, '.')}
                     </div>
 
                     <div className="look-popup-like">
