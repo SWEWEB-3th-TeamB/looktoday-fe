@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Menu from '../../components/Menu';
 import SearchFilter from '../../components/SearchFilter';
 import SearchFiltered from '../../components/SearchFiltered';
@@ -27,14 +27,13 @@ async function toggleLikeApi(lookId, token, isLiked) {
 
 const LookBook = () => {
     const [filters, setFilters] = useState([]);
-    const [selectedSort, setSelectedSort] = useState('최신순'); // 최신순 or 인기순
-    const [currentIndex, setCurrentIndex] = useState(0); // Best 10 슬라이드
+    const [selectedSort, setSelectedSort] = useState('최신순');
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [bestLookList, setBestLookList] = useState([]);
     const [lookList, setLookList] = useState([]);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedLook, setSelectedLook] = useState(null);
     const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
-    const [selectedRegion, setSelectedRegion] = useState(null); // 필터에서 선택된 지역값 저장
     const [currentPage, setCurrentPage] = useState(1);
     const [filterState, setFilterState] = useState({
         region: null,
@@ -43,20 +42,83 @@ const LookBook = () => {
         weather: null
     });
 
-    /** 필터 태그 삭제 */
+    const fetchLookList = useCallback(async (page = 1) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error('토큰이 없습니다. 요청 중단');
+            return;
+        }
+
+        const currentFilters = filterState;
+        const sortOption = selectedSort;
+
+        let url = sortOption === '최신순'
+            ? `/api/looks?sort=latest`
+            : `/api/looks?sort=popular`;
+
+        url += `&page=${page}&limit=20`;
+
+        if (currentFilters.region?.si && currentFilters.region?.gungu) {
+            url += `&si=${encodeURIComponent(currentFilters.region.si)}&gungu=${encodeURIComponent(currentFilters.region.gungu)}`;
+        }
+        if (currentFilters.startDate && currentFilters.endDate) {
+            const start = new Date(currentFilters.startDate).toISOString().slice(0, 10);
+            const end = new Date(currentFilters.endDate).toISOString().slice(0, 10);
+            url += `&startDate=${start}&endDate=${end}`;
+        }
+        if (currentFilters.weather?.type === 'custom') {
+            url += `&weather=custom&minTemp=${currentFilters.weather.min}&maxTemp=${currentFilters.weather.max}`;
+        } else if (currentFilters.weather?.label) {
+            url += `&weather=${encodeURIComponent(currentFilters.weather.label)}`;
+        }
+
+        try {
+            const res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await res.json();
+            setLookList(data?.result?.looks || []);
+        } catch (error) {
+            console.error('fetchLookList 요청 오류:', error);
+        }
+    }, [filterState, selectedSort]); // 필터나 정렬 상태가 바뀌면 함수를 새로 만듭니다.
+
+    const handleBestLook = useCallback(async () => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        try {
+            const res = await fetch('/api/looks/best', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.code === 'COMMON200') {
+                setBestLookList(data.result);
+            } else {
+                setBestLookList([]);
+            }
+        } catch (error) {
+            console.error('Error fetching best looks:', error);
+        }
+    }, []);
+
+    useEffect(() => {
+        handleBestLook();
+        fetchLookList(currentPage);
+    }, [handleBestLook, fetchLookList, currentPage]);
+
     const handleLikeToggle = async (lookId, newLikedState) => {
         const token = localStorage.getItem('token');
         if (!token) {
             alert("로그인 후 이용 가능합니다.");
             return;
         }
-
         const result = await toggleLikeApi(lookId, token, newLikedState);
-
         if (result.code === "LIKE201" || result.code === "LIKE200") {
-
-            const serverIsLiked = result.result.isLiked; // 서버가 보내준 최종 isLiked 상태
-
+            const serverIsLiked = result.result.isLiked;
             const updateStateWithServerData = (list) =>
                 list.map(look => {
                     if (look.looktoday_id === lookId) {
@@ -68,10 +130,8 @@ const LookBook = () => {
                     }
                     return look;
                 });
-
             setLookList(prevList => updateStateWithServerData(prevList));
             setBestLookList(prevList => updateStateWithServerData(prevList));
-
             if (selectedLook && selectedLook.looktoday_id === lookId) {
                 setSelectedLook(prevLook => ({
                     ...prevLook,
@@ -79,231 +139,47 @@ const LookBook = () => {
                     like_count: newLikedState ? prevLook.like_count + 1 : Math.max(0, prevLook.like_count - 1),
                 }));
             }
-
         } else if (result.code === "LIKE409" || result.code === "LIKE404") {
             alert("데이터 상태가 일치하지 않아 목록을 새로고침합니다.");
             fetchLookList();
             handleBestLook();
-
         } else {
             alert(result.message || "요청에 실패했습니다.");
         }
     };
 
-    // 적용된 필터 삭제
     const handleRemoveFilter = (indexToRemove) => {
+        const removedFilterLabel = filters[indexToRemove];
         const updatedFilters = filters.filter((_, idx) => idx !== indexToRemove);
         setFilters(updatedFilters);
 
-        // 필터 상태도 같이 업데이트
         const newFilterState = { ...filterState };
-
-        if (filters[indexToRemove].includes('시') || filters[indexToRemove].includes('구')) {
+        if (removedFilterLabel.includes('시') || removedFilterLabel.includes('구')) {
             newFilterState.region = null;
         }
-        if (filters[indexToRemove].includes('년') && filters[indexToRemove].includes('월')) {
+        if (removedFilterLabel.includes('~')) { // 날짜 필터 식별
             newFilterState.startDate = null;
             newFilterState.endDate = null;
         }
-        if (filters[indexToRemove] === filterState.weather?.label) {
+        if (removedFilterLabel === filterState.weather?.label) {
             newFilterState.weather = null;
         }
-
         setFilterState(newFilterState);
-
-        fetchLookList(
-            newFilterState.region,
-            newFilterState.startDate,
-            newFilterState.endDate,
-            newFilterState.weather,
-            1
-        );
+        setCurrentPage(1); // 필터 변경 시 1페이지로
     };
 
-    /** 정렬(최신순/인기순) 변경 */
     const handleSortChange = (value) => {
         setSelectedSort(value);
-        setCurrentPage(1);
-
-        fetchLookList(
-            filterState.region,
-            filterState.startDate,
-            filterState.endDate,
-            filterState.weather,
-            currentPage
-        );
+        setCurrentPage(1); // 정렬 변경 시 1페이지로
     };
 
-    /** Best 10 데이터 가져오기 */
-    const handleBestLook = async () => {
-        const token = localStorage.getItem('token');
-
-        if (!token) {
-            console.error('토큰이 없습니다. Best Look 요청 중단');
-            return;
-        }
-
-        try {
-            const res = await fetch('/api/looks/best', {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`, // ✅ 토큰 추가
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            const data = await res.json();
-            console.log('Best Look data:', data);
-
-            // 서버에서 정상 응답일 때만 state 업데이트
-            if (data.code === 'COMMON200') {
-                setBestLookList(data.result);
-            } else {
-                console.error('Best Look 요청 실패:', data.message);
-                setBestLookList([]); // 안전하게 초기화
-            }
-        } catch (error) {
-            console.error('Error fetching best looks:', error);
-        }
-    };
-
-    const fetchLookListWithToken = async (page = 1) => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            console.error('토큰이 없습니다. 요청 중단');
-            return;
-        }
-
-        try {
-            const url = `/api/looks?page=${page}&limit=20`;
-            console.log("페이지네이션 요청 URL:", url);
-
-            const res = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            const data = await res.json();
-            console.log('페이지네이션 응답:', data);
-
-            // 데이터 구조에 따라 lookList 업데이트
-            setLookList(data?.result?.looks || []);
-        } catch (error) {
-            console.error('페이지네이션 요청 오류:', error);
-        }
-    };
-
-    useEffect(() => {
-        handleBestLook();
-    }, []);
-
-    /** Best 10 화살표 */
-    const handlePrev = () => {
-        setCurrentIndex((prev) => Math.max(prev - 4, 0));
-    };
-    const handleNext = () => {
-        setCurrentIndex((prev) =>
-            Math.min(prev + 4, bestLookList.length - 4)
-        );
-    };
-
+    const handlePrev = () => setCurrentIndex((prev) => Math.max(prev - 4, 0));
+    const handleNext = () => setCurrentIndex((prev) => Math.min(prev + 4, bestLookList.length - 4));
     const visibleItems = bestLookList.slice(currentIndex, currentIndex + 4);
 
-    /** 메인 룩 리스트 가져오기 (정렬 + 지역 필터) */
-    const fetchLookList = async (
-        region = null,
-        startDate = null,
-        endDate = null,
-        weather = null,
-        page = 1,
-        limit = 20
-    ) => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            console.error('토큰이 없습니다. 요청 중단');
-            return;
-        }
-
-        // 정렬 옵션 적용
-        let url = selectedSort === '최신순'
-            ? `/api/looks?sort=latest`
-            : `/api/looks?sort=popular`;
-
-        // 페이지네이션
-        url += `&page=${page}&limit=${limit}`;
-
-        // ✅ 지역 필터
-        if (region?.si && region?.gungu) {
-            url += `&si=${encodeURIComponent(region.si)}&gungu=${encodeURIComponent(region.gungu)}`;
-        }
-
-        // ✅ 날짜 필터
-        if (startDate && endDate) {
-            const start = startDate.toISOString().slice(0, 10);
-            const end = endDate.toISOString().slice(0, 10);
-            url += `&startDate=${start}&endDate=${end}`;
-        }
-
-        // ✅ 날씨 필터
-        if (weather?.type === 'custom') {
-            url += `&weather=custom&minTemp=${weather.min}&maxTemp=${weather.max}`;
-        } else if (weather?.label) {
-            url += `&weather=${encodeURIComponent(weather.label)}`;
-        }
-
-        console.log("최종 요청 URL:", url);
-
-        try {
-            const res = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            const data = await res.json();
-            console.log("서버 응답:", data);
-
-            // 서버 응답 구조에 따라 lookList 업데이트
-            setLookList(data?.result?.looks || []);
-        } catch (error) {
-            console.error('fetchLookList 요청 오류:', error);
-        }
-    };
-
-    /** 첫 렌더링 시 기본 리스트 가져오기 */
-    useEffect(() => {
-        fetchLookList(selectedRegion);
-
-        handleBestLook();
-        fetchLookList();
-    }, []);
-
-    /** 정렬 변경 시 다시 fetch */
-    useEffect(() => {
-        setCurrentPage(1);
-        fetchLookList(
-            filterState.region,
-            filterState.startDate,
-            filterState.endDate,
-            filterState.weather,
-            currentPage
-        );
-    }, [selectedSort]);
-
-    useEffect(() => {
-        console.log("현재 lookList 상태:", lookList);
-    }, [lookList]);
-
-    /** 필터 적용 시 실행 */
     const handleFilterApply = (appliedFilters) => {
         const startDate = appliedFilters.startDate ? new Date(appliedFilters.startDate) : null;
         const endDate = appliedFilters.endDate ? new Date(appliedFilters.endDate) : null;
-
         setFilterState({
             region: appliedFilters.region,
             startDate,
@@ -311,40 +187,21 @@ const LookBook = () => {
             weather: appliedFilters.weather || null,
         });
 
-        // ✅ UI에 보여줄 필터 태그 문자열 만들기
-        setFilters((prevFilters) => {
-            const updatedFilters = [...prevFilters];
-
-            if (appliedFilters.region?.si && appliedFilters.region?.gungu) {
-                const regionFilter = `${appliedFilters.region.si} ${appliedFilters.region.gungu}`;
-                if (!updatedFilters.includes(regionFilter)) {
-                    updatedFilters.push(regionFilter);
-                }
-            }
-
-            if (startDate && endDate) {
-                const formatDate = (date) =>
-                    date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
-                const dateFilter = `${formatDate(startDate)} ~ ${formatDate(endDate)}`;
-                if (!updatedFilters.includes(dateFilter)) {
-                    updatedFilters.push(dateFilter);
-                }
-            }
-
-            if (appliedFilters.weather?.label) {
-                const weatherFilter = appliedFilters.weather.label;
-                if (!updatedFilters.includes(weatherFilter)) {
-                    updatedFilters.push(weatherFilter);
-                }
-            }
-
-            return updatedFilters;
-        });
-
-        fetchLookList(appliedFilters.region, startDate, endDate, appliedFilters.weather, 1);
+        const newUiFilters = [];
+        if (appliedFilters.region?.si && appliedFilters.region?.gungu) {
+            newUiFilters.push(`${appliedFilters.region.si} ${appliedFilters.region.gungu}`);
+        }
+        if (startDate && endDate) {
+            const formatDate = (date) => date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+            newUiFilters.push(`${formatDate(startDate)} ~ ${formatDate(endDate)}`);
+        }
+        if (appliedFilters.weather?.label) {
+            newUiFilters.push(appliedFilters.weather.label);
+        }
+        setFilters(newUiFilters);
+        setCurrentPage(1); // 필터 적용 시 1페이지로
     };
-
-    /** 팝업 열기/닫기 */
+    
     const handleOpenPopup = (look) => {
         setSelectedLook(look);
         setIsPopupOpen(true);
@@ -354,22 +211,20 @@ const LookBook = () => {
         setSelectedLook(null);
     };
 
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
     return (
         <div className="lookbook-wrap">
             <Menu />
             <div className="lookbook">
                 <div className="lookbook-title">Find Your Style</div>
 
-                {/* Best 10 영역 */}
                 <div className="lookbook-best">
                     <div className="lookbook-name">Best 10</div>
                     <div className="lookbook-best-looks">
-                        <img
-                            src={arrow}
-                            alt="왼쪽 화살표"
-                            className={`lookbook-left-arrow ${currentIndex === 0 ? 'disabled' : ''}`}
-                            onClick={handlePrev}
-                        />
+                        <img src={arrow} alt="왼쪽 화살표" className={`lookbook-left-arrow ${currentIndex === 0 ? 'disabled' : ''}`} onClick={handlePrev} />
                         <div className="best-look-cards">
                             {visibleItems.map((item, index) => (
                                 <div key={item.looktoday_id} onClick={() => handleOpenPopup(item)}>
@@ -384,42 +239,27 @@ const LookBook = () => {
                                 </div>
                             ))}
                         </div>
-                        <img
-                            src={arrow}
-                            alt="오른쪽 화살표"
-                            className={`lookbook-right-arrow ${currentIndex + 4 >= bestLookList.length ? 'disabled' : ''}`}
-                            onClick={handleNext}
-                        />
+                        <img src={arrow} alt="오른쪽 화살표" className={`lookbook-right-arrow ${currentIndex + 4 >= bestLookList.length ? 'disabled' : ''}`} onClick={handleNext} />
                     </div>
                 </div>
 
-                {/* 필터 */}
                 <div className='lookbook-filter'>
                     <SearchFilter onApply={handleFilterApply} />
                 </div>
                 {isFilterPopupOpen && (
-                    <FilterPopup
-                        onApply={(filters) => {
-                            console.log("[LookBook] FilterPopup에서 받은 filters:", filters);
-                            fetchLookList(filters.region);
-                        }}
-                        onClose={() => setIsFilterPopupOpen(false)}
-                    />
+                    <FilterPopup onApply={handleFilterApply} onClose={() => setIsFilterPopupOpen(false)} />
                 )}
 
-                {/* 적용된 필터 표시 */}
                 <div className="lookbook-filtered">
                     <SearchFiltered filters={filters} onRemove={handleRemoveFilter} />
                 </div>
 
                 <hr />
 
-                {/* 정렬 옵션 */}
                 <div className="lookbook-sort">
                     <SortOptions selectedSort={selectedSort} onChange={handleSortChange} />
                 </div>
 
-                {/* 룩 리스트 */}
                 <div className="lookbook-outfits">
                     <div className="look-cards">
                         {lookList.length === 0 ? (
@@ -442,20 +282,10 @@ const LookBook = () => {
                     </div>
                 </div>
 
-                {/* 페이지네이션 */}
                 <div className="lookbook-pagination">
                     <Pagination
                         currentPage={currentPage}
-                        onPageChange={(page) => {
-                            setCurrentPage(page);
-                            fetchLookList(
-                                filterState.region,
-                                filterState.startDate,
-                                filterState.endDate,
-                                filterState.weather,
-                                page
-                            );
-                        }}
+                        onPageChange={handlePageChange}
                     />
                 </div>
             </div>
@@ -463,7 +293,6 @@ const LookBook = () => {
             <ScrollButton />
             <Footer />
 
-            {/* 상세 팝업 */}
             <LookPopup
                 isOpen={isPopupOpen}
                 onClose={handleClosePopup}
