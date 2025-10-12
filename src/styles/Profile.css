@@ -9,7 +9,7 @@
     flex: 1;
     width: 767px;
     transform: translateX(-50%);
-    margin-top: 59.25px;
+    margin-top: 108px;
     left: calc(246px + (100vw - 246px) / 2);
 }
 
@@ -188,4 +188,9 @@
     min-width: 320px;
     background: #94C8E6;
     z-index: 150;
+}
+
+.region-selector {
+  display: flex;
+  gap: 25px;
 }

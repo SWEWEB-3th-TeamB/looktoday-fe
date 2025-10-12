@@ -15,3 +15,11 @@
 .authButton:hover {
     background: #3B3B3B;
 }
+
+.authButton:disabled,
+.authButton.is-disabled {
+  background-color: #EBEBEB;
+  color: #959595;
+  cursor: not-allowed;
+  pointer-events: none;
+}
