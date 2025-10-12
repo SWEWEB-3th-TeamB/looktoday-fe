@@ -69,3 +69,61 @@
     line-height: 46px;
     cursor: pointer;
 }
+
+.region-selector {
+  display: flex;
+  gap: 25px;
+}
+
+.sign-up-setting-btn {
+  width: 333px;
+  margin-left: 235px;
+}
+
+.sign-up-complete-btn {
+  width: 333px;
+  height: 46px;
+  border-radius: 9px;
+  color: #FFF;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: center;
+  line-height: 46px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.sign-up-complete-btn.disabled,
+.sign-up-complete-btn:disabled {
+  background-color: #EBEBEB;
+  color: #959595;
+  stroke: #FFF;
+  stroke-width: 1px;
+  cursor: not-allowed;
+  pointer-events: none; 
+}
+
+.sign-up-complete-btn.active {
+  background-color: #2C2C2C;
+  color: #FFF;
+  stroke: #FFF;
+  stroke-width: 1px;
+  cursor: pointer;
+}
+
+.sign-up-complete-popup-close-btn {
+  margin-top: 20px;
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  background: #0C82C6;
+  color: #FFF;
+  font-family: Inter;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  border: none;
+}

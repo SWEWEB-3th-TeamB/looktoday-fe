@@ -10,6 +10,8 @@ import Footer from '../../components/Footer';
 import '../../styles/SignUp.css';
 
 const SignUp = () => {
+    const [birthDigits, setBirthDigits] = useState("");
+    const onlyDigits = (v = "") => (v || "").replace(/\D/g, "");
     const [selectedRegion, setSelectedRegion] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -34,9 +36,32 @@ const SignUp = () => {
 
     const isValidEmail = (v) => /^\S+@\S+\.\S+$/.test(v);
 
-    // 생년월일
-    const [birthDigits, setBirthDigits] = useState("");
-    const onlyDigits = (v = "") => (v || "").replace(/\D/g, "");
+    // 🔁 Profile과 동일한 "변경 여부" 플래그 추가 (사인업은 초기값이 빈 문자열)
+    const [initialEmail] = useState('');
+    const [initialNickname] = useState('');
+    const emailChanged = email.trim() !== initialEmail;
+    const nicknameChanged = nickname.trim() !== initialNickname;
+
+    // --- 활성/비활성 로직
+    const emailValid = isValidEmail(email);
+    const passwordsOk = password.trim().length >= 8 && password === confirmPassword;
+    const hasAllRequired =
+        emailValid &&
+        passwordsOk &&
+        nickname.trim() &&
+        birthDigits.trim() &&   // 이제 안전하게 참조
+        si.trim() &&
+        gungu.trim();
+
+    // ✅ Profile과 동일: "변경되었을 때만" 체크 버튼 활성
+    const canCheckEmail = emailChanged && emailValid && !emailLoading && emailCheckOk !== true;
+    const canCheckNickname = nicknameChanged && !!nickname.trim() && !nickLoading && nicknameCheckOk !== true;
+
+    // ✅ Profile과 동일: 최종 제출 버튼은 "변경된 필드만" 중복확인 통과 요구
+    const isCompleteEnabled =
+        hasAllRequired &&
+        (!emailChanged || emailCheckOk === true) &&
+        (!nicknameChanged || nicknameCheckOk === true);
 
     const formatBirthForInput = (digits = "") => {
         const d = onlyDigits(digits).slice(0, 8);
@@ -61,8 +86,6 @@ const SignUp = () => {
         return `${String(y)}/${String(m).padStart(2, "0")}/${String(day).padStart(2, "0")}`; // 서버용
     };
 
-
-    // 최종 전송 전 검증/정규화: 잘못된 월/일이면 null 반환
     const normalizeBirthForSubmit = (v = "") => {
         const d = onlyDigits(v);
         if (d.length !== 8) return null;
@@ -70,7 +93,6 @@ const SignUp = () => {
         const m = parseInt(d.slice(4, 6), 10);
         const day = parseInt(d.slice(6, 8), 10);
 
-        // 간단 검증 (필요하면 윤년/각 달 일수까지 더 엄밀하게 체크 가능)
         if (y < 1900 || y > 2100) return null;
         if (m < 1 || m > 12) return null;
         if (day < 1 || day > 31) return null;
@@ -107,11 +129,14 @@ const SignUp = () => {
                 return;
             }
 
-            const ok = !!data?.isAvailable;
+            const ok =
+                (typeof data?.isAvailable === 'boolean' && data.isAvailable) ||
+                (typeof data?.result?.isAvailable === 'boolean' && data.result.isAvailable) ||
+                false;
             const msg = data?.message ?? (ok ? '사용 가능한 이메일입니다.' : '이미 사용 중인 이메일입니다.');
             setEmailCheckOk(ok);
             setEmailCheckMsg(msg);
-            alert(msg);
+            setTimeout(() => alert(msg), 0);
         } catch (e) {
             const msg = '네트워크 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
             setEmailCheckMsg(msg);
@@ -145,7 +170,10 @@ const SignUp = () => {
                 return;
             }
 
-            const ok = !!data?.isAvailable;
+            const ok =
+                (typeof data?.isAvailable === 'boolean' && data.isAvailable) ||
+                (typeof data?.result?.isAvailable === 'boolean' && data.result.isAvailable) ||
+                false;
             const msg = data?.message ?? (ok ? '사용 가능한 닉네임입니다.' : '이미 사용 중인 닉네임입니다.');
             setNicknameCheckOk(ok);
             setNicknameCheckMsg(msg);
@@ -210,13 +238,11 @@ const SignUp = () => {
             }
             console.log("signup response", res.status, data);
 
-            // 서버 응답이 실패일 경우
             if (!res.ok) {
                 alert(data?.message || "회원가입 실패");
                 return;
             }
 
-            // 회원가입 성공 시
             navigate("/sign-up-complete");
         } catch (error) {
             console.error(error);
@@ -247,24 +273,57 @@ const SignUp = () => {
                             placeholder='이메일'
                             required
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                setEmailCheckOk(null);
+                            }}
                             onValidChange={(ok) => setIsEmailValid(ok)}
                         />
-                        <Form type='password' name='password' placeholder='비밀번호 (특수문자 포함, 8자 이상)' showEye required
-                            value={password} onChange={(e) => setPassword(e.target.value)} />
+                        <Form
+                            type='password'
+                            name='password'
+                            placeholder='비밀번호 (특수문자 포함, 8자 이상)'
+                            showEye
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
 
-                        <Form type='password' name='confirmPassword' placeholder='비밀번호 확인' showEye required
-                            value={confirmPassword} compareWith={password} onChange={(e) => setConfirmPassword(e.target.value)} />
+                        <Form
+                            type='password'
+                            name='confirmPassword'
+                            placeholder='비밀번호 확인'
+                            showEye
+                            required
+                            value={confirmPassword}
+                            compareWith={password}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
 
-                        <Form type='text' name='nickname' placeholder='닉네임' required
-                            value={nickname} onChange={(e) => setNickname(e.target.value)} />
+                        <Form
+                            type='text'
+                            name='nickname'
+                            placeholder='닉네임'
+                            required
+                            value={nickname}
+                            onChange={(e) => {
+                                setNickname(e.target.value);
+                                setNicknameCheckOk(null);
+                            }}
+                        />
 
-                        <Form type='text' name='birth' placeholder='생년월일 (YYYY/MM/DD)' required
-                            value={birth} onChange={(e) => {
+                        <Form
+                            type='text'
+                            name='birth'
+                            placeholder='생년월일 (YYYY/MM/DD)'
+                            required
+                            value={birth}
+                            onChange={(e) => {
                                 const formatted = formatBirthForInput(e.target.value);
                                 setBirth(formatted);
                                 setBirthDigits(e.target.value);
-                            }} />
+                            }}
+                        />
                         <RegionSelector
                             onRegionSelect={({ sido, gugun }) => {
                                 setSi(sido);
@@ -272,35 +331,52 @@ const SignUp = () => {
                             }}
                         />
                     </div>
+
                     <div className='sign-up-check-btn'>
-                        {/* 이메일 */}
+                        {/* 이메일 체크 버튼 - Profile과 동일한 라벨/활성 로직 */}
                         <div
                             className="check-btn"
-                            onClick={(!emailLoading && emailCheckOk !== true) ? handleCheckEmail : undefined}
                             role="button"
-                            style={{ cursor: (emailLoading || emailCheckOk === true) ? 'not-allowed' : 'pointer', opacity: (emailLoading || emailCheckOk === true) ? 0.7 : 1 }}
-                            aria-disabled={emailLoading || emailCheckOk === true}
+                            onClick={canCheckEmail ? handleCheckEmail : undefined}
+                            aria-disabled={!canCheckEmail}
+                            style={{
+                                cursor: canCheckEmail ? 'pointer' : 'not-allowed',
+                                background: canCheckEmail ? '#2C2C2C' : '#959595',
+                            }}
                             aria-label="이메일 중복확인"
                         >
-                            {emailCheckOk === true ? '확인완료' : (emailLoading ? '확인중...' : '중복확인')}
+                            {emailChanged
+                                ? (emailCheckOk === true ? '확인완료' : (emailLoading ? ' ' : '중복확인'))
+                                : '중복확인'}
                         </div>
 
-                        {/* 닉네임 */}
+                        {/* 닉네임 체크 버튼 - Profile과 동일한 라벨/활성 로직 */}
                         <div
                             className="check-btn"
-                            onClick={(!nickLoading && nicknameCheckOk !== true) ? handleCheckNickname : undefined}
                             role="button"
-                            style={{ cursor: (nickLoading || nicknameCheckOk === true) ? 'not-allowed' : 'pointer', opacity: (nickLoading || nicknameCheckOk === true) ? 0.7 : 1 }}
-                            aria-disabled={nickLoading || nicknameCheckOk === true}
                             aria-label="닉네임 중복확인"
+                            onClick={canCheckNickname ? handleCheckNickname : undefined}
+                            aria-disabled={!canCheckNickname}
+                            style={{
+                                cursor: canCheckNickname ? 'pointer' : 'not-allowed',
+                                background: canCheckNickname ? '#2C2C2C' : '#959595',
+                            }}
                         >
-                            {nicknameCheckOk === true ? '확인완료' : (nickLoading ? '확인중...' : '중복확인')}
+                            {nicknameChanged
+                                ? (nicknameCheckOk === true ? '확인완료' : (nickLoading ? ' ' : '중복확인'))
+                                : '중복확인'}
                         </div>
                     </div>
 
                 </div>
+
                 <div className='sign-up-btn'>
-                    <AuthButton text='회원가입' onClick={handleSubmit} />
+                    <AuthButton
+                        text="회원가입"
+                        onClick={handleSubmit}
+                        className={`sign-up-complete-btn ${isCompleteEnabled ? 'active' : 'disabled'}`}
+                        disabled={!isCompleteEnabled}
+                    />
                 </div>
             </div>
             <Footer />
