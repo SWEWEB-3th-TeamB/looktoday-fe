@@ -3,11 +3,35 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 import Menu from '../../components/Menu';
 import Footer from '../../components/Footer';
-import Weather from '../../assets/images/rainstorm.png';
 
 import lookRecommendData from './LookRecommendData';
 
+import IconNone from '../../assets/images/WeatherIcon/IconNone.png';
+import IconRain from '../../assets/images/WeatherIcon/IconRain.png';
+import IconRainSnow from '../../assets/images/WeatherIcon/IconRainSnow.png';
+import IconSnow from '../../assets/images/WeatherIcon/IconSnow.png';
+import IconShower from '../../assets/images/WeatherIcon/IconShower.png';
+import IconDrizzle from '../../assets/images/WeatherIcon/IconDrizzle.png';
+import IconDrizzleSleet from '../../assets/images/WeatherIcon/IconDrizzleSleet.png';
+import IconFlurries from '../../assets/images/WeatherIcon/IconFlurries.png';
+
 import '../../styles/LookRecommend.css';
+
+const WEATHER_ICON_MAP = {
+  '강수 없음': { src: IconNone, alt: '강수 없음' },
+  '비': { src: IconRain, alt: '비' },
+  '비/눈': { src: IconRainSnow, alt: '비/눈' },
+  '눈': { src: IconSnow, alt: '눈' },
+  '소나기': { src: IconShower, alt: '소나기' },
+  '빗방울': { src: IconDrizzle, alt: '빗방울' },
+  '빗방울/눈날림': { src: IconDrizzleSleet, alt: '빗방울/눈날림' },
+  '눈날림': { src: IconFlurries, alt: '눈날림' },
+};
+
+function getWeatherIconExact(label) {
+  const key = typeof label === 'string' ? label.trim() : '';
+  return WEATHER_ICON_MAP[key] || { src: IconNone, alt: '강수 없음' };
+}
 
 // 안전 숫자 변환
 const toNum = (v, fallback) => {
@@ -50,6 +74,7 @@ function LookRecommend() {
   const humidity      = toNum(src?.humidity, 60);
   const perceivedTemp = toNum(src?.perceivedTemp, temperature);
   const conditionStr  = src?.condition ?? ''; // "소나기" 등
+  const { src: weatherIcon, alt: weatherAlt } = getWeatherIconExact(conditionStr);
 
   // 강수여부: 조건문자열로 추정
   const isRaining = decideIsRainingByCondition(conditionStr);
@@ -85,16 +110,12 @@ function LookRecommend() {
           <div className='look-recommend-weather-wrapper'>
             <p className='look-recommend-weather-title'>WAETHER</p>
             <div className='look-recommend-weather-card'>
-              <img className='look-recommend-icon' src={Weather} alt='weather' />
+              <img className='look-recommend-icon' src={weatherIcon} alt={weatherAlt} />
               <p className='look-recommend-temparature'>{temperature}°C</p>
               <p className='look-recommend-region'>{region}</p>
               <p className='look-recommend-humidityperceivedtemperature'>
                 습도 {humidity}% 체감온도 {perceivedTemp} °C
               </p>
-              {/* 필요하면 현재 날씨 텍스트도 표시 */}
-              {conditionStr && (
-                <p className='look-recommend-condition'>현재 날씨: {conditionStr}</p>
-              )}
               <button
                 className='look-recommend-region-select'
                 onClick={() => navigate('/today-weather')}
