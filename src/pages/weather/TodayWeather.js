@@ -79,6 +79,33 @@ async function getMyWeather() {
 
   try {
     const json = JSON.parse(text);
+
+    // 🛠️ 스크린샷 구조( code: "WEATHER200", result: {...} )에 맞춰 정규화
+    //     - 정상 응답: 항상 { result: {...} } 형태를 보장
+    //     - region 키는 시/군구 OR sido/gungu 어느 쪽이 와도 호환되도록 보강
+    if (json && typeof json === 'object') {                                              // 🛠️
+      const resultNode = json.result ?? json.data ?? json;                                // 🛠️
+      const region = resultNode.region || {};                                             // 🛠️
+      const normalizedRegion = {                                                          // 🛠️
+        시: region.시 ?? region.sido ?? region.si ?? null,                                // 🛠️
+        군구: region.군구 ?? region.gungu ?? region.gu ?? null,                           // 🛠️
+        sido: region.sido ?? region.시 ?? region.si ?? null,                               // 🛠️
+        gungu: region.gungu ?? region.군구 ?? region.gu ?? null,                           // 🛠️
+      };                                                                                  // 🛠️
+
+      const normalized = {                                                                // 🛠️
+        code: json.code ?? 'OK',                                                          // 🛠️
+        message: json.message ?? '',                                                      // 🛠️
+        result: {                                                                         // 🛠️
+          ...(resultNode || {}),                                                          // 🛠️
+          region: normalizedRegion,                                                       // 🛠️
+        },                                                                                // 🛠️
+      };                                                                                  // 🛠️
+
+      console.log('[getMyWeather] parsed(normalized):', normalized);                      // 🛠️
+      return normalized;                                                                  // 🛠️
+    }                                                                                     // 🛠️
+
     console.log('[getMyWeather] parsed:', json);
     return json;
   } catch (e) {
@@ -173,15 +200,17 @@ function isSunSuccess(json) {
 }
 
 const parseWeather = (json) => {
-  const base = json?.data ?? json ?? {};
+  // data.summary가 실제 값이면 summary를 우선 사용
+  const dataNode = json?.data ?? json ?? {};
+  const base = dataNode?.summary ?? dataNode;
 
   const timeRaw =
     json?.기준시각?.시간 ??
-    base?.기준시각?.시간 ??
+    dataNode?.기준시각?.시간 ??
     '';
   const day =
     json?.기준시각?.날짜 ??
-    base?.기준시각?.날짜 ??
+    dataNode?.기준시각?.날짜 ??
     '';
 
   const t = base?.온도 ?? base?.temp ?? base?.temperature;
@@ -201,8 +230,6 @@ const parseWeather = (json) => {
     temperature: typeof t === 'number' ? Math.round(t) : (typeof t === 'string' ? t : '-'),
     humidity: (typeof h === 'number' || typeof h === 'string') ? h : '-',
     speed: (typeof s === 'number' || typeof s === 'string') ? s : '-',
-
-    // 추가 반환
     condition: typeof cond === 'string' ? cond : '-',
     perceived: typeof feels === 'number' ? Math.round(feels) : feels ?? '-',
     pop, pcp,
@@ -268,60 +295,62 @@ const TodayWeather = () => {
   };
 
   // === 추가: 로그인 유저용 로더 (성공 시 SUN도 함께 조회)
-const loadMyWeather = async () => {
-  console.log('[loadMyWeather] start');
-  setLoading(true);
-  try {
-    const meJson = await getMyWeather();
-    console.log('[loadMyWeather] meJson:', meJson);
+  const loadMyWeather = async () => {
+    console.log('[loadMyWeather] start');
+    setLoading(true);
+    try {
+      const meJson = await getMyWeather();
+      console.log('[loadMyWeather] meJson:', meJson);
 
-    if (!meJson) throw new Error('no me weather');
+      if (!meJson) throw new Error('no me weather');
 
-    if (meJson.__error__ === 'NO_REGION') {
-      console.warn('[loadMyWeather] NO_REGION -> fallback');
+      if (meJson.__error__ === 'NO_REGION') {
+        console.warn('[loadMyWeather] NO_REGION -> fallback');
+        await loadWeather(sido, gugun, { withSpinner: false });
+        return;
+      }
+
+      const wPayload = meJson?.result ?? meJson ?? {};
+      const dataNode = wPayload?.data ?? wPayload ?? {};
+      const core = dataNode?.summary ?? dataNode;
+
+      const si = wPayload?.region?.시 ?? wPayload?.region?.sido ?? sido;
+      const gungu = wPayload?.region?.군구 ?? wPayload?.region?.gungu ?? gugun;
+      console.log('[loadMyWeather] region from profile:', { si, gungu });
+
+      const timeRaw = wPayload?.기준시각?.시간 ?? dataNode?.기준시각?.시간 ?? '';
+      const day     = wPayload?.기준시각?.날짜 ?? dataNode?.기준시각?.날짜 ?? '';
+      const tempVal  = core?.온도 ?? core?.temp ?? core?.temperature;
+      const humidVal = core?.습도 ?? core?.humidity;
+      const speedVal = core?.풍속 ?? core?.wind ?? core?.windSpeed;
+      const feelsVal = core?.체감온도 ?? core?.feels_like ?? core?.apparentTemperature;
+      const condVal  = core?.날씨 ?? core?.weather ?? core?.condition ?? core?.sky;
+
+      const hhmm = typeof timeRaw === 'string' ? timeRaw.slice(0,5) : '-';
+      const dateLabel = (hhmm !== '-' || day) ? `${hhmm} • ${day}` : '-';
+
+      const sJson = await getSun(si, gungu);
+      console.log('[loadMyWeather] sun raw:', sJson);
+      const sun = parseSun(sJson);
+
+      setSido(si); setGugun(gungu); setRegion(`${si} ${gungu}`);
+      setDate(dateLabel || '-');
+      setTemperature(typeof tempVal === 'number' ? Math.round(tempVal) : (typeof tempVal === 'string' ? tempVal : '-'));
+      setHumidity((typeof humidVal === 'number' || typeof humidVal === 'string') ? humidVal : '-');
+      setSpeed((typeof speedVal === 'number' || typeof speedVal === 'string') ? speedVal : '-');
+      setCondition(typeof condVal === 'string' ? condVal : '-');
+      setPerceivedTemp(typeof feelsVal === 'number' ? Math.round(feelsVal) : (feelsVal ?? '-'));
+      setSunrisetime(sun.success ? sun.sunrise : '-');
+      setSunsettime(sun.success ? sun.sunset : '-');
+
+      console.log('[loadMyWeather] done');
+    } catch (e) {
+      console.warn('[loadMyWeather] error -> fallback', e);
       await loadWeather(sido, gugun, { withSpinner: false });
-      return;
+    } finally {
+      setLoading(false);
     }
-
-    const wPayload = meJson?.result ?? meJson ?? {};
-    const weatherData = wPayload?.data ?? wPayload ?? {};
-    const si = wPayload?.region?.시 ?? wPayload?.region?.sido ?? sido;
-    const gungu = wPayload?.region?.군구 ?? wPayload?.region?.gungu ?? gugun;
-    console.log('[loadMyWeather] region from profile:', { si, gungu });
-
-    const timeRaw = wPayload?.기준시각?.시간 ?? weatherData?.기준시각?.시간 ?? '';
-    const day     = wPayload?.기준시각?.날짜 ?? weatherData?.기준시각?.날짜 ?? '';
-    const tempVal  = weatherData?.온도 ?? weatherData?.temp ?? weatherData?.temperature;
-    const humidVal = weatherData?.습도 ?? weatherData?.humidity;
-    const speedVal = weatherData?.풍속 ?? weatherData?.wind ?? weatherData?.windSpeed;
-    const feelsVal = weatherData?.체감온도 ?? weatherData?.feels_like ?? weatherData?.apparentTemperature;
-    const condVal  = weatherData?.날씨 ?? weatherData?.weather ?? weatherData?.condition ?? weatherData?.sky;
-
-    const hhmm = typeof timeRaw === 'string' ? timeRaw.slice(0,5) : '-';
-    const dateLabel = (hhmm !== '-' || day) ? `${hhmm} • ${day}` : '-';
-
-    const sJson = await getSun(si, gungu);
-    console.log('[loadMyWeather] sun raw:', sJson);
-    const sun = parseSun(sJson);
-
-    setSido(si); setGugun(gungu); setRegion(`${si} ${gungu}`);
-    setDate(dateLabel || '-');
-    setTemperature(typeof tempVal === 'number' ? Math.round(tempVal) : (typeof tempVal === 'string' ? tempVal : '-'));
-    setHumidity((typeof humidVal === 'number' || typeof humidVal === 'string') ? humidVal : '-');
-    setSpeed((typeof speedVal === 'number' || typeof speedVal === 'string') ? speedVal : '-');
-    setCondition(typeof condVal === 'string' ? condVal : '-');
-    setPerceivedTemp(typeof feelsVal === 'number' ? Math.round(feelsVal) : (feelsVal ?? '-'));
-    setSunrisetime(sun.success ? sun.sunrise : '-');
-    setSunsettime(sun.success ? sun.sunset : '-');
-
-    console.log('[loadMyWeather] done');
-  } catch (e) {
-    console.warn('[loadMyWeather] error -> fallback', e);
-    await loadWeather(sido, gugun, { withSpinner: false });
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   // 공용 로더 (weather만 수동 파싱: result → data)
   const loadWeather = async (si, gungu) => {
@@ -337,29 +366,30 @@ const loadMyWeather = async () => {
       if (wRes.status === 'rejected') console.error('[weather fail]', wRes.reason);
 
       const wPayload = wJson?.result ?? wJson ?? null;
-      const weatherData = wPayload?.data ?? wPayload ?? {};
+      const dataNode = wPayload?.data ?? wPayload ?? {};
+      const core = dataNode?.summary ?? dataNode;
 
       const timeRaw =
         wPayload?.기준시각?.시간 ??
-        weatherData?.기준시각?.시간 ?? '';
+        dataNode?.기준시각?.시간 ?? '';
       const day =
         wPayload?.기준시각?.날짜 ??
-        weatherData?.기준시각?.날짜 ?? '';
+        dataNode?.기준시각?.날짜 ?? '';
 
-      const tempVal = weatherData?.온도 ?? weatherData?.temp ?? weatherData?.temperature;
-      const humidVal = weatherData?.습도 ?? weatherData?.humidity;
-      const speedVal = weatherData?.풍속 ?? weatherData?.wind ?? weatherData?.windSpeed;
+      const tempVal = core?.온도 ?? core?.temp ?? core?.temperature;
+      const humidVal = core?.습도 ?? core?.humidity;
+      const speedVal = core?.풍속 ?? core?.wind ?? core?.windSpeed;
 
       const feelsVal =
-        weatherData?.체감온도 ??
-        weatherData?.feels_like ??
-        weatherData?.apparentTemperature;
+        core?.체감온도 ??
+        core?.feels_like ??
+        core?.apparentTemperature;
 
       const condVal =
-        weatherData?.날씨 ??
-        weatherData?.weather ??
-        weatherData?.condition ??
-        weatherData?.sky;
+        core?.날씨 ??
+        core?.weather ??
+        core?.condition ??
+        core?.sky;
 
       const hhmm = typeof timeRaw === 'string' ? timeRaw.slice(0, 5) : '-';
       const dateLabel = (hhmm !== '-' || day) ? `${hhmm} • ${day}` : '-';
