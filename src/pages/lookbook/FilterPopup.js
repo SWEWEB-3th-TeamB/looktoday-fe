@@ -40,31 +40,56 @@ const FilterPopup = ({ onClose, defaultItem, onApply }) => {
     const handleCustomRadio = () => setSelected('custom');
 
     const handleApply = () => {
-        const weatherValue =
-            selected === 'custom'
-                ? { type: 'custom', min: custom.min, max: custom.max }
-                : { type: 'preset', id: selected };
+        const payload = {};
 
-        const appliedFilters = {
-            tab: selectItem,
-            region: selectedRegion,
-            weather: weatherValue,
-            startDate: startDateValue,
-            endDate: endDateValue,
-        };
-
-        console.log("[FilterPopup] handleApply 호출됨:", appliedFilters);
-
-        if (onApply) {
-            console.log("[FilterPopup] onApply 존재함, 호출 시작!");
-            onApply(appliedFilters);
-        } else {
-            console.error("[FilterPopup] onApply 없음!");
+        if (selectItem === '지역') {
+            payload.region = (selectedRegion?.si && selectedRegion?.gungu)
+                ? selectedRegion
+                : null;
         }
 
-        setTimeout(() => {
-            onClose();
-        }, 0);
+        if (selectItem === '날씨') {
+            if (selected === 'custom') {
+                const minT = Number(custom.min);
+                const maxT = Number(custom.max);
+                if (
+                    Number.isFinite(minT) &&
+                    Number.isFinite(maxT) &&
+                    `${custom.min}` !== '' &&
+                    `${custom.max}` !== '' &&
+                    minT <= maxT
+                ) {
+                    payload.weather = { type: 'custom', min: minT, max: maxT };
+                } else {
+
+                }
+            } else {
+                const label = PRESETS.find(p => p.id === selected)?.label;
+
+                if (selected === 'all' || label === '전체') {
+                    payload.weather = null;
+                } else {
+                    payload.weather = { type: 'preset', id: selected, label };
+                }
+            }
+        }
+
+        if (selectItem === '날짜') {
+            // 둘 다 있을 때만 적용
+            if (startDateValue && endDateValue) {
+                payload.startDate = startDateValue;
+                payload.endDate = endDateValue;
+            }
+            // 둘 다 비었으면 명시적 초기화
+            else if (startDateValue === null && endDateValue === null) {
+                payload.startDate = null;
+                payload.endDate = null;
+            }
+            // 하나만 있으면 아무 것도 안 보냄(부분 입력으로 기존 값 훼손 방지)
+        }
+
+        onApply?.(payload);
+        setTimeout(() => onClose(), 0);
     };
 
     useEffect(() => {
@@ -100,13 +125,11 @@ const FilterPopup = ({ onClose, defaultItem, onApply }) => {
                         <RegionSelector
                             onRegionChange={(value, type) => {
                                 if (type === 'sido') {
-                                    // 시/도 변경 시
                                     setSelectedRegion({
                                         si: value,
-                                        gungu: '' // 군/구 초기화
+                                        gungu: ''
                                     });
                                 } else if (type === 'gugun') {
-                                    // 군/구 변경 시
                                     setSelectedRegion((prev) => ({
                                         ...prev,
                                         gungu: value
