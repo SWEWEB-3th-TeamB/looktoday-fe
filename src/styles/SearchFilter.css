@@ -27,12 +27,12 @@
     margin-top: 3px;
 }
 
-.search-filterd {
+.search-filtered {
     display: flex;
     gap: 14px;
 }
 
-.search-filterd-item {
+.search-filtered-item {
     width: fit-content;
     height: 38px;
     border-radius: 19px;
@@ -43,6 +43,6 @@
     padding: 0 18px;
 }
 
-.search-filterd-closed {
+.search-filtered-closed {
     cursor: pointer;
 }

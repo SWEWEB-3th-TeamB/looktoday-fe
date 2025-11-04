@@ -2,12 +2,12 @@ import '../styles/SearchFilter.css';
 
 const SearchFiltered = ({ filters, onRemove }) => {
   return (
-    <div className='search-filterd'>
+    <div className='search-filtered'>
       {filters.map((filter, index) => (
-        <div key={index} className='search-filterd-item'>
+        <div key={index} className='search-filtered-item'>
           {filter}
           <div
-            className='search-filterd-closed'
+            className='search-filtered-closed'
             onClick={() => onRemove(index)}
           >
             X

@@ -20,6 +20,8 @@ const Login = () => {
   const [location, setLocation] = useState('');
   const [weather, setWeather] = useState('');
   const [token, setToken] = useState(null);
+  const [hasWeather, setHasWeather] = useState(false);
+  const [weatherError, setWeatherError] = useState('해당 지역의 최신 관측값이 없습니다.');
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -32,18 +34,19 @@ const Login = () => {
 
   const handleWeather = async (storedToken) => {
     try {
-      console.log('storedToken:', storedToken); // 디버깅
-
       const res = await fetch('/api/users/me/weather', {
         method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${storedToken}`,
-        },
+        headers: { Authorization: `Bearer ${storedToken}` },
       });
+
+      if (res.status === 404) {
+        setHasWeather(false);
+        return;
+      }
 
       if (!res.ok) {
         const errorData = await res.text();
-        console.error('Server Error Response:', errorData); // 서버 메시지 확인
+        console.error('Server Error Response:', errorData);
         throw new Error('날씨 데이터를 불러오는데 실패했습니다.');
       }
 
@@ -51,7 +54,9 @@ const Login = () => {
       console.log('data', data);
 
       setLocation(`${data.result.region.시} ${data.result.region.군구}`);
-      setWeather(data.result.data.온도);
+      setWeather(data.result.data.summary.온도);
+      setHasWeather(true)
+
     } catch (error) {
       console.error('error', error);
     }
@@ -68,12 +73,14 @@ const Login = () => {
               <span>How's the <strong>weather</strong>?</span>
             </div>
             {token ? (
-              <div className='main-weather-info'>
-                {location} · <span>{weather}°C</span>
-              </div>
-            ) : (
-              <></>
-            )}
+              hasWeather ? (
+                <div className='main-weather-info'>
+                  {location} · <span>{weather}°C</span>
+                </div>
+              ) : weatherError ? (
+                <div className='main-weather-info'>{weatherError}</div>
+              ) : null
+            ) : null}
             <div className='main-weather-date'>{date}</div>
 
             <div className='main-weather-text'>

@@ -39,7 +39,9 @@ const LookBook = () => {
         region: null,
         startDate: null,
         endDate: null,
-        weather: null
+        weather: null,
+        minTemp: null,
+        maxTemp: null,
     });
 
     const fetchLookList = useCallback(async (page = 1) => {
@@ -58,16 +60,34 @@ const LookBook = () => {
 
         url += `&page=${page}&limit=20`;
 
+        // 지역
         if (currentFilters.region?.si && currentFilters.region?.gungu) {
             url += `&si=${encodeURIComponent(currentFilters.region.si)}&gungu=${encodeURIComponent(currentFilters.region.gungu)}`;
         }
+
+        // 날짜
         if (currentFilters.startDate && currentFilters.endDate) {
             const start = new Date(currentFilters.startDate).toISOString().slice(0, 10);
             const end = new Date(currentFilters.endDate).toISOString().slice(0, 10);
             url += `&startDate=${start}&endDate=${end}`;
         }
+
+        // 날씨
         if (currentFilters.weather?.type === 'custom') {
-            url += `&weather=custom&minTemp=${currentFilters.weather.min}&maxTemp=${currentFilters.weather.max}`;
+            const minT = Number(currentFilters.weather.min);
+            const maxT = Number(currentFilters.weather.max);
+
+            if (
+                Number.isFinite(minT) &&
+                Number.isFinite(maxT) &&
+                `${currentFilters.weather.min}` !== '' &&
+                `${currentFilters.weather.max}` !== '' &&
+                minT <= maxT
+            ) {
+                url += `&weather=custom&minTemp=${minT}&maxTemp=${maxT}`;
+            } else {
+                console.warn('커스텀 온도 유효성 실패(min<=max, 숫자 확인). 파라미터 생략됨.');
+            }
         } else if (currentFilters.weather?.label) {
             url += `&weather=${encodeURIComponent(currentFilters.weather.label)}`;
         }
@@ -85,7 +105,8 @@ const LookBook = () => {
         } catch (error) {
             console.error('fetchLookList 요청 오류:', error);
         }
-    }, [filterState, selectedSort]); // 필터나 정렬 상태가 바뀌면 함수를 새로 만듭니다.
+    }, [filterState, selectedSort]);
+
 
     const handleBestLook = useCallback(async () => {
         const token = localStorage.getItem('token');
@@ -148,25 +169,45 @@ const LookBook = () => {
         }
     };
 
-    const handleRemoveFilter = (indexToRemove) => {
-        const removedFilterLabel = filters[indexToRemove];
-        const updatedFilters = filters.filter((_, idx) => idx !== indexToRemove);
+    const handleRemoveFilter = (target) => {
+        let removedFilterLabel = '';
+        let updatedFilters = [];
+
+        if (typeof target === 'number') {
+            removedFilterLabel = filters[target];
+            updatedFilters = filters.filter((_, idx) => idx !== target);
+        } else {
+            removedFilterLabel = target;
+            updatedFilters = filters.filter((label) => label !== target);
+        }
+
         setFilters(updatedFilters);
 
+        // filterState 해제 로직
         const newFilterState = { ...filterState };
+
+        // 지역 제거(문자열 매칭은 취약하므로 임시로 유지, 추후 type별로 개선 권장)
         if (removedFilterLabel.includes('시') || removedFilterLabel.includes('구')) {
             newFilterState.region = null;
         }
-        if (removedFilterLabel.includes('~')) { // 날짜 필터 식별
+
+        // 날짜 제거
+        if (removedFilterLabel.includes('~')) {
             newFilterState.startDate = null;
             newFilterState.endDate = null;
         }
-        if (removedFilterLabel === filterState.weather?.label) {
+
+        if (
+            removedFilterLabel === filterState.weather?.label ||
+            removedFilterLabel.startsWith('커스텀 ')
+        ) {
             newFilterState.weather = null;
         }
+
         setFilterState(newFilterState);
-        setCurrentPage(1); // 필터 변경 시 1페이지로
+        setCurrentPage(1);
     };
+
 
     const handleSortChange = (value) => {
         setSelectedSort(value);
@@ -180,28 +221,74 @@ const LookBook = () => {
     const handleFilterApply = (appliedFilters) => {
         const startDate = appliedFilters.startDate ? new Date(appliedFilters.startDate) : null;
         const endDate = appliedFilters.endDate ? new Date(appliedFilters.endDate) : null;
-        setFilterState({
-            region: appliedFilters.region,
-            startDate,
-            endDate,
-            weather: appliedFilters.weather || null,
-        });
 
-        const newUiFilters = [];
-        if (appliedFilters.region?.si && appliedFilters.region?.gungu) {
-            newUiFilters.push(`${appliedFilters.region.si} ${appliedFilters.region.gungu}`);
-        }
-        if (startDate && endDate) {
-            const formatDate = (date) => date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
-            newUiFilters.push(`${formatDate(startDate)} ~ ${formatDate(endDate)}`);
-        }
-        if (appliedFilters.weather?.label) {
-            newUiFilters.push(appliedFilters.weather.label);
-        }
-        setFilters(newUiFilters);
-        setCurrentPage(1); // 필터 적용 시 1페이지로
+        setFilterState((prev) => {
+            const next = { ...prev };
+
+            // 1) 지역: 값이 온 경우에만 갱신
+            if (appliedFilters.region?.si && appliedFilters.region?.gungu) {
+                next.region = appliedFilters.region;
+            }
+            // (선택) 지역 탭에서 '지역 초기화'를 명시적으로 보낼 때만 null로
+            if (appliedFilters.region === null) {
+                next.region = null;
+            }
+
+            // 2) 날짜: start+end 둘 다 있을 때만 갱신
+            if (startDate && endDate) {
+                next.startDate = startDate;
+                next.endDate = endDate;
+            }
+            // (선택) 날짜 초기화 신호가 오면 지움
+            if (appliedFilters.startDate === null && appliedFilters.endDate === null) {
+                next.startDate = null;
+                next.endDate = null;
+            }
+
+            // 3) 날씨:
+            if (appliedFilters.weather) {
+                // 프리셋 '전체'는 날씨 필터 해제
+                if (appliedFilters.weather.type === 'preset' &&
+                    (appliedFilters.weather.id === 'all' || appliedFilters.weather.label === '전체')) {
+                    next.weather = null;
+                } else {
+                    next.weather = appliedFilters.weather;
+                }
+            }
+            // (선택) 날씨 초기화 신호가 오면 지움
+            if (appliedFilters.weather === null) {
+                next.weather = null;
+            }
+
+            // ★ 여기서 칩도 next로 다시 생성
+            const newUiFilters = [];
+
+            if (next.region?.si && next.region?.gungu) {
+                newUiFilters.push(`${next.region.si} ${next.region.gungu}`);
+            }
+
+            if (next.startDate && next.endDate) {
+                const fmt = (d) => d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+                newUiFilters.push(`${fmt(next.startDate)} ~ ${fmt(next.endDate)}`);
+            }
+
+            if (next.weather?.type === 'custom') {
+                const minT = Number(next.weather.min);
+                const maxT = Number(next.weather.max);
+                if (Number.isFinite(minT) && Number.isFinite(maxT)) {
+                    newUiFilters.push(`${minT} ~ ${maxT}℃`);
+                }
+            } else if (next.weather?.label && next.weather.label !== '전체') {
+                newUiFilters.push(next.weather.label);
+            }
+
+            setFilters(newUiFilters);
+            setCurrentPage(1);
+
+            return next;
+        });
     };
-    
+
     const handleOpenPopup = (look) => {
         setSelectedLook(look);
         setIsPopupOpen(true);
