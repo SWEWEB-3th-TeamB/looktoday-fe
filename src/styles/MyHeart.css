@@ -250,3 +250,9 @@
   left: 0;
   width: 100%;
 }
+
+.myheart-empty-message {
+    white-space: nowrap;
+    width: 100%;
+    text-align: center;
+}

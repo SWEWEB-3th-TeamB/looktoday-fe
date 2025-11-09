@@ -41,7 +41,7 @@ const MyFeed = () => {
             return;
         }
 
-        const originalPosts = [...posts]; // 롤백을 위한 원본 데이터 저장
+        const originalPosts = [...posts];
 
         setPosts(prevPosts =>
             prevPosts.map(post => {
@@ -49,26 +49,31 @@ const MyFeed = () => {
                     return {
                         ...post,
                         isLiked: newLikedState,
-                        likeCount: newLikedState ? post.likeCount + 1 : post.likeCount - 1,
+                        likeCount: newLikedState
+                            ? post.likeCount + 1
+                            : Math.max(0, post.likeCount - 1),
                     };
                 }
                 return post;
             })
         );
-        // 팝업이 열려있다면 팝업 내부 데이터도 업데이트
+
         if (selectedLook && selectedLook.looktoday_id === lookId) {
             setSelectedLook(prevLook => ({
                 ...prevLook,
                 isLiked: newLikedState,
-                // 팝업은 like_count를 사용하므로 둘 다 업데이트
-                like_count: newLikedState ? prevLook.like_count + 1 : prevLook.like_count - 1, 
-                likeCount: newLikedState ? prevLook.likeCount + 1 : prevLook.likeCount - 1,
+                like_count: newLikedState
+                    ? (prevLook.like_count || 0) + 1
+                    : Math.max(0, (prevLook.like_count || 0) - 1),
+                likeCount: newLikedState
+                    ? (prevLook.likeCount || 0) + 1
+                    : Math.max(0, (prevLook.likeCount || 0) - 1),
             }));
         }
-        
+
         // 서버에 API 요청
         const result = await toggleLikeApi(lookId, token, newLikedState);
-        if (!result.success && result.code !== 'LIKE200') { 
+        if (!result.success && result.code !== 'LIKE200') {
             alert(result.message || "요청에 실패했습니다.");
             setPosts(originalPosts); // 서버 실패 시 원래 상태로 복구
             // 팝업 상태도 롤백
@@ -96,7 +101,7 @@ const MyFeed = () => {
             if (!response.ok) throw new Error('서버에서 데이터를 가져오는 데 실패했습니다.');
 
             const data = await response.json();
-            
+
             if (data.result && data.result.myLooks) {
                 // 데이터 형식을 내부에서 사용하는 camelCase로 통일
                 const normalizedPosts = data.result.myLooks.map(post => ({
@@ -168,7 +173,7 @@ const MyFeed = () => {
 
     const handleOpenPopup = async (post) => {
         // 팝업을 즉시 열고 로딩 상태로 설정
-        setSelectedLook(post); 
+        setSelectedLook(post);
         setIsPopupOpen(true);
         setLoadingPopup(true);
 
@@ -179,12 +184,12 @@ const MyFeed = () => {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!response.ok) throw new Error('상세 정보 로딩 실패');
-            
+
             const data = await response.json();
-            
+
             if (data.result) {
                 const detailedData = data.result;
-                
+
                 // (기존 list의 isLiked, likeCount와 상세 API의 닉네임/날짜를 조합)
                 setSelectedLook(prevState => ({
                     ...prevState, // 'posts' 배열의 post 객체 (isLiked, likeCount 포함)
@@ -196,8 +201,8 @@ const MyFeed = () => {
                     apparent_temp: detailedData.feelsLikeTemp,
                     gungu: detailedData.location,
                     si: '', // 팝업은 gungu만 사용
-                    
-                    like_count: prevState.likeCount 
+
+                    like_count: prevState.likeCount
                 }));
             } else {
                 throw new Error(data.message);
