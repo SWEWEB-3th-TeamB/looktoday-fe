@@ -47,13 +47,8 @@ const MyHeart = () => {
       return;
     }
 
-    // [수정]
-    // 1. params를 복사하여 'page' 기본값을 1로 설정
     const queryParams = { page: 1, ...params };
 
-    // 2. [핵심 수정]
-    // 'period'나 'dateFrom' 파라미터가 없는 경우 (e.g., 최초 로드 시 {page: 1}만 있을 때)
-    // API 명세의 기본값인 'period=5y'를 명시적으로 추가합니다.
     if (!queryParams.period && !queryParams.dateFrom) {
       queryParams.period = '5y';
     }

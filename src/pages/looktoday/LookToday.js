@@ -167,12 +167,12 @@ const LookToday = () => {
 
   // 완료 버튼 활성화 조건 검사 함수
   const isCompleteEnabled = !!(
-    dateValue && 
-    temperature && 
-    humidity && 
-    preview && 
-    review.trim().length > 0 && 
-    selectedTime !== null && 
+    dateValue &&
+    temperature &&
+    humidity &&
+    preview &&
+    review.trim().length > 0 &&
+    selectedTime !== null &&
     selectedSido !== '' &&
     selectedGugun !== ''
   );
@@ -234,7 +234,7 @@ const LookToday = () => {
       } else {
         alert(result.message || "업로드에 실패했습니다.");
       }
-    }catch (error) {
+    } catch (error) {
       // JSON 파싱 에러 등 네트워크 외 에러 처리
       console.error("업로드 처리 중 오류 발생:", error);
       alert("서버로부터 올바른 응답을 받지 못했습니다. 잠시 후 다시 시도해주세요.");
@@ -284,121 +284,131 @@ const LookToday = () => {
           </div>
         </div>
 
-        <div className="calendar-btn-wrapper">
-          <Calendar 
-            value={dateValue}
-            onChange={setDateValue}
-          />
-        </div>
+        <div className="form-row" id="row-date-time-num">
+          <div className="calendar-btn-wrapper">
+            <Calendar
+              value={dateValue}
+              onChange={setDateValue}
+            />
+          </div>
 
-        <Time value={selectedTime} onChange={handleTimeChange} />
+          <Time value={selectedTime} onChange={handleTimeChange} />
 
-        <div className="record-number">
-          No. {currentPostNumber}
+          <div className="record-number">
+            No. {currentPostNumber}
+          </div>
         </div>
 
         <hr className="looktoday-hr" />
 
-        <div className="looktoday-location">
-          <RegionSelector
-            onRegionChange={(value, type) => {
-              handleRegionChange(value, type);
+        <div className="form-row" id="row-region-toggle">
+          <div className="looktoday-location">
+            <RegionSelector
+              onRegionChange={(value, type) => {
+                handleRegionChange(value, type);
+              }}
+              selectedSido={selectedSido}
+              selectedGugun={selectedGugun}
+            />
+            <style>{`
+              .looktoday-location .form-error-message { display: none !important; }
+            `}</style>
+          </div>
+
+          <div className="public-toggle-label">공개</div>
+          <div
+            className={`public-toggle-switch ${isPublic ? 'public' : 'private'}`}
+            onClick={togglePublic}
+            role="switch"
+            aria-checked={isPublic}
+            tabIndex={0}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                togglePublic();
+              }
             }}
-            selectedSido={selectedSido}
-            selectedGugun={selectedGugun}
-          />
-          <style>{`
-            .looktoday-location .form-error-message { display: none !important; }
-          `}</style>
-        </div>
-
-        <div className="public-toggle-label">공개</div>
-        <div
-          className={`public-toggle-switch ${isPublic ? 'public' : 'private'}`}
-          onClick={togglePublic}
-          role="switch"
-          aria-checked={isPublic}
-          tabIndex={0}
-          onKeyDown={e => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              togglePublic();
-            }
-          }}
-        >
-          <div className="public-toggle-thumb" />
-        </div>
-
-        <div className="humidity-label">체감 습도</div>
-        <img
-          className="humidity-image"
-          src={humidityImageMap[humidity]}
-          alt={humidity}
-        />
-        {humidityOptions.map(({ label, key }) => (
-          <button
-            key={key}
-            className={`humidity-btn ${key} ${humidity === key ? 'active' : ''}`}
-            onClick={() => setHumidity(key)}
           >
-            {label}
-          </button>
-        ))}
-
-        <div className="codi-image-preview-box">
-          <input
-            id="codi-upload-input"
-            type="file"
-            accept="image/*"
-            style={{ display: 'none' }}
-            ref={fileInputRef}
-            onChange={onChangeImage}
-          />
-          {/* 사진 없을 때: plus 버튼 label로 연결 */}
-          {!preview && (
-            <label
-              className="codi-image-upload-btn"
-              htmlFor="codi-upload-input"
-              tabIndex={0}
-              style={{ cursor: 'pointer' }}
-            >
-              <img src={plus} alt="사진 추가" />
-            </label>
-          )}
-          {/* 사진 있을 때: img도 label로 감싸 input 연결 */}
-          {preview && (
-            <label
-              htmlFor="codi-upload-input"
-              className="codi-image-preview-img-label"
-              style={{ width: '100%', height: '100%', cursor: 'pointer', display: 'block' }}
-            >
-              <img
-                src={preview}
-                alt="코디 미리보기"
-                className="codi-image-preview-img"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '15px' }}
-              />
-            </label>
-          )}
-          {/* 설명문구 ― 사진 없을 때만 */}
-          {!preview && (
-            <div className="codi-image-upload-desc">코디를 추가하세요</div>
-          )}
+            <div className="public-toggle-thumb" />
+          </div>
         </div>
 
-        <div className="codi-review-input-wrapper">
-          <textarea
-            className="codi-review-input"
-            value={review}
-            onChange={handleReviewChange}
-            onFocus={() => setIsReviewFocused(true)}
-            onBlur={() => setIsReviewFocused(false)}
-            rows={2}
+        <div className="humidity-wrapper">
+          <div className="humidity-label">체감 습도</div>
+          <img
+            className="humidity-image"
+            src={humidityImageMap[humidity]}
+            alt={humidity}
           />
-          {!review && !isReviewFocused && (
-            <span className="codi-review-placeholder">오늘의 코디 한 줄 평가</span>
-          )}
-          <span className="codi-review-counter">{review.length} / 40</span>
+          <div className="humidity-options">
+            {humidityOptions.map(({ label, key }) => (
+              <button
+                key={key}
+                className={`humidity-btn ${key} ${humidity === key ? 'active' : ''}`}
+                onClick={() => setHumidity(key)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="form-row" id="row-image-review">
+          <div className="codi-image-preview-box">
+            <input
+              id="codi-upload-input"
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              ref={fileInputRef}
+              onChange={onChangeImage}
+            />
+            {/* 사진 없을 때: plus 버튼 label로 연결 */}
+            {!preview && (
+              <label
+                className="codi-image-upload-btn"
+                htmlFor="codi-upload-input"
+                tabIndex={0}
+                style={{ cursor: 'pointer' }}
+              >
+                <img src={plus} alt="사진 추가" />
+              </label>
+            )}
+            {/* 사진 있을 때: img도 label로 감싸 input 연결 */}
+            {preview && (
+              <label
+                htmlFor="codi-upload-input"
+                className="codi-image-preview-img-label"
+                style={{ width: '100%', height: '100%', cursor: 'pointer', display: 'block' }}
+              >
+                <img
+                  src={preview}
+                  alt="코디 미리보기"
+                  className="codi-image-preview-img"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '15px' }}
+                />
+              </label>
+            )}
+            {/* 설명문구 ― 사진 없을 때만 */}
+            {!preview && (
+              <div className="codi-image-upload-desc">코디를 추가하세요</div>
+            )}
+          </div>
+
+          <div className="codi-review-input-wrapper">
+            <textarea
+              className="codi-review-input"
+              value={review}
+              onChange={handleReviewChange}
+              onFocus={() => setIsReviewFocused(true)}
+              onBlur={() => setIsReviewFocused(false)}
+              rows={2}
+            />
+            {!review && !isReviewFocused && (
+              <span className="codi-review-placeholder">오늘의 코디 한 줄 평가</span>
+            )}
+            <span className="codi-review-counter">{review.length} / 40</span>
+          </div>
         </div>
 
         <button
@@ -438,7 +448,7 @@ const LookToday = () => {
       <div className="looktoday-footer">
         <Footer />
       </div>
-      
+
     </>
   );
 };
