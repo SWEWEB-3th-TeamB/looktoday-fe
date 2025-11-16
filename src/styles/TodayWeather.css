@@ -1,6 +1,7 @@
 .today-weather-page {
   position: relative;
   min-height: 1391px;
+  min-width: 1280px;
   display: flex;
   flex-direction: column;
   background: linear-gradient(128deg, rgba(235, 249, 255, 0.00) 0%, #EBF9FF 100%);
@@ -386,11 +387,12 @@
   .today-weather-page {
     position: relative;
     min-height: 1391px;
-    max-width: 600px;
+    min-width: 320px;
     display: flex;
     flex-direction: column;
     background: linear-gradient(128deg, rgba(235, 249, 255, 0.00) 0%, #EBF9FF 100%);
     z-index: 0;
+    overflow: hidden;
   }
 
   .weather-content {

@@ -19,7 +19,6 @@ body {
 .menu {
   position: relative;
   width: 100%;
-  min-width: 1280px;
   height: 80px;
   background: transparent;
   z-index: 10;
