@@ -99,7 +99,7 @@ body {
 @media (max-width: 600px) {
   .menu {
     height: 64px;
-      min-width: 320px;
+    min-width: 320px;
   }
 
   .menu-gnb {
