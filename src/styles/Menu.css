@@ -6,7 +6,6 @@
 
 html,
 body {
-  min-width: 1280px;
   color: #2C2C2C;
 }
 
@@ -20,6 +19,7 @@ body {
 .menu {
   position: relative;
   width: 100%;
+  min-width: 1280px;
   height: 80px;
   background: transparent;
   z-index: 10;
@@ -33,9 +33,10 @@ body {
   position: relative;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
-.menu img {
+.logo-img {
   width: 108.98px;
   height: 56.75px;
   margin-top: 18.75px;
@@ -68,12 +69,112 @@ body {
   color: #2C2C2C;
 }
 
+.menu-icon-wrap {
+  display: none;
+}
+
+.menu-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
 @keyframes shimmer {
-  0%   { opacity: 1; }
-  50%  { opacity: 0.8; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .logo-img.hovered {
   animation: shimmer 1.2s ease-in-out infinite;
+}
+
+@media (max-width: 600px) {
+  .menu {
+    height: 64px;
+      min-width: 320px;
+  }
+
+  .menu-gnb {
+    padding: 0 16px;
+  }
+
+  .logo-img {
+    width: 63.984px;
+    height: 33.663px;
+    margin-top: 14px;
+    margin-left: 0;
+  }
+
+  .menu-group {
+    display: none;
+  }
+
+  .menu-icon-wrap {
+    display: block;
+  }
+
+  .menu-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 0;
+  }
+}
+
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.29);
+  z-index: 100;
+  display: flex;
+  justify-content: end;
+}
+
+.mobile-menu-drawer {
+  width: 72vw;
+  max-width: 280px;
+  background: #ffffff;
+  height: 100%;
+  padding: 117px 0 32px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-menu-header {
+  margin-bottom: 22.42px;
+}
+
+.mobile-menu-logo {
+  width: 86.34px;
+  height: 45.575px;
+}
+
+.mobile-menu-list {
+  display: flex;
+  flex-direction: column;
+  font-family: 'InriaSerif';
+  font-size: 16px;
+  gap: 5px;
+}
+
+.mobile-menu-item {
+  padding: 14px 0 14px 19px;
+  border-radius: 9px 0 0 9px;
+  cursor: pointer;
+}
+
+.mobile-menu-item:hover {
+  background: #E2F4FF;
+}
+
+.mobile-menu-item.active {
+  background: #E2F4FF;
 }

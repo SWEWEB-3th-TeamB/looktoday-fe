@@ -1,10 +1,11 @@
 .lookbook-wrap {
-    min-width: 1202.5px;
+    min-width: 1250px;
 }
 
 .lookbook {
     flex: 1;
     width: 1202.5px;
+    max-width: none;
     transform: translateX(0);
     margin: 59.25px auto 142px;
 }
@@ -56,7 +57,7 @@
     width: 37.5px;
     height: 75px;
     margin-bottom: 80px;
-        cursor: pointer;
+    cursor: pointer;
 }
 
 .lookbook-left-arrow.disabled,
@@ -90,7 +91,6 @@
     transition: all 0.2s ease;
 }
 
-
 .sort-option.active {
     color: #2C2C2C;
     font-weight: 600;
@@ -109,4 +109,164 @@
 
 .lookbook-pagination {
     margin-top: 136px;
+}
+
+@media (max-width: 600px) {
+
+    .lookbook-wrap {
+        min-width: 306px;
+        width: 100%;
+    }
+
+    .lookbook {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 12px;
+        margin: 20px auto 60px;
+        position: relative;
+    }
+
+    /* 제목 */
+    .lookbook-title {
+        font-size: 20px;
+        margin-bottom: 25px;
+    }
+
+    /* BEST 10 */
+    .lookbook-name {
+        font-size: 18px;
+        margin-left: 0;
+        margin-bottom: 12px;
+    }
+
+    .lookbook-best-looks {
+        gap: 8px;
+    }
+
+    .best-look-cards {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 8px;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+    }
+
+    .best-look-heart {
+        top: 107px;
+        right: 6px;
+        width: 25px;
+        height: 25px;
+    }
+
+    .best-look {
+        width: 110px;
+        max-width: none;
+        height: 200px;
+    }
+
+    .best-look-img {
+        width: 100%;
+        height: 137.5px;
+    }
+
+    /* 화살표 제거 */
+    .lookbook-left-arrow,
+    .lookbook-right-arrow {
+        display: none;
+    }
+
+    .look-num {
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 15px;
+    }
+
+    .lookbook-best {
+        margin-bottom: 19.76px;
+    }
+
+    /* 필터 위치 조정 */
+    .lookbook-filter {
+        margin: 19.76px 0 7.94px;
+    }
+
+    .lookbook-filtered {
+        margin-bottom: 10px;
+    }
+
+    /* 정렬 옵션 */
+    .lookbook-sort {
+        display: flex;
+        justify-content: end;
+        margin-top: 11.84px;
+        margin-bottom: 15.16px;
+    }
+
+    .sort-options {
+        font-size: 10.339px;
+        gap: 14.94px;
+    }
+
+    .look-cards {
+        display: grid;
+        grid-template-columns: repeat(4, 96.84px);
+        justify-content: center;
+        gap: 20px 7.75px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .look-cards>div {
+        width: 96.84px;
+    }
+
+    .look {
+        width: 100%;
+        position: relative;
+    }
+
+    .look-img {
+        width: 100%;
+        height: 121.044px;
+    }
+
+    .look-heart {
+        width: 25px;
+        height: 25px;
+        top: 92px;
+        right: 3.84px;
+    }
+
+    .look-loc-temp {
+        font-size: 9.5px;
+    }
+
+    .look-nick {
+        font-size: 9px;
+    }
+
+    .look-heart-count {
+        font-size: 7.017px;
+        line-height: 9.308px;
+        margin-top: 4px;
+    }
+
+    .look-heart-count img {
+        width: 9.308px;
+        height: 9.308px;
+        margin-right: 2.19px;
+    }
+}
+
+@media (max-width: 420px) {
+    .look-cards {
+        grid-template-columns: repeat(3, 96.84px);
+    }
+
+    .look-cards>div {
+        width: 96.84px;
+    }
 }

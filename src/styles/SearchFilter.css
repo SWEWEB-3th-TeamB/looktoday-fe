@@ -30,6 +30,7 @@
 .search-filtered {
     display: flex;
     gap: 14px;
+    flex-wrap: wrap;
 }
 
 .search-filtered-item {
@@ -45,4 +46,35 @@
 
 .search-filtered-closed {
     cursor: pointer;
+}
+
+
+@media (max-width: 600px) {
+    .search-filter {
+        width: 174.199px;
+        height: 29.339px;
+        gap: 8px;
+    }
+
+    .search-filter-item {
+        font-size: 8.557px;
+        gap: 5px;
+    }
+
+    .search-filter-item img {
+        width: 7px;
+        height: 14px;
+    }
+
+    .search-filtered {
+        gap: 8px;
+    }
+
+    .search-filtered-item {
+        height: 23.227px;
+        line-height: 23.227px;;
+        padding: 0 11.34px;
+        font-size: 9.78px;
+        gap: 8.4px;
+    }
 }

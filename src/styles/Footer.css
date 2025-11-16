@@ -72,3 +72,60 @@
     width: 12px;
     height: 12px;
 }
+
+@media (max-width: 600px) {
+    .footer {
+        height: auto;          
+        padding: 24px 16px 16px; 
+    }
+
+    .footer-content {
+        position: static;     
+        width: 100%;
+        padding-top: 0;
+        display: flex;
+        flex-direction: column; 
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .footer-logo {
+        position: static;  
+        width: 45%;         
+        max-width: 181.25px;
+        height: auto;      
+        margin-right: 0;
+        margin-bottom: 8px;
+    }
+
+    .footer-table {
+        position: static;
+        left: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-top: 4px;
+    }
+
+    .footer-row {
+        font-size: 12px;
+    }
+
+    .footer-url {
+        font-size: 12px;
+        line-height: 20px;
+    }
+
+    .footer-row img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .footer-rights {
+        position: static;             /* absolute 해제 */
+        margin-top: 12px;
+        display: flex;
+        justify-content: center;
+        font-size: 10px;
+    }
+}

@@ -14,6 +14,7 @@
 .look-popup-content {
     background: #fff;
     width: 666px;
+    min-width: 666px;
     height: 508px;
     position: relative;
 }

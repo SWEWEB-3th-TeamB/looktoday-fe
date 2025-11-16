@@ -3,6 +3,8 @@
     width: 260px;
     position: relative;
     cursor: pointer;
+    scroll-snap-align: start;
+    flex: 0 0 calc((100% - 16px) / 3);
 }
 
 .best-look-img {
@@ -46,6 +48,9 @@
     color: #2C2C2C;
     font-size: 20px;
     margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .look-nick {
@@ -75,6 +80,7 @@
 }
 
 .look-img {
-    width: 224.5px;
-    height: 280.63px;
+    width: 220.8px;
+    height: 276px;
+    object-fit: cover;
 }
