@@ -21,7 +21,7 @@ const Login = () => {
   const [weather, setWeather] = useState('');
   const [token, setToken] = useState(null);
   const [hasWeather, setHasWeather] = useState(false);
-  const [weatherError, setWeatherError] = useState('해당 지역의 최신 관측값이 없습니다.');
+  const [weatherError, setWeatherError] = useState('');
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -53,7 +53,7 @@ const Login = () => {
       const data = await res.json();
       console.log('data', data);
 
-      setLocation(`${data.result.region.시} ${data.result.region.군구}`);
+      setLocation(`${data.result.region.시}시 ${data.result.region.군구}구`);
       setWeather(data.result.data.summary.온도);
       setHasWeather(true)
 

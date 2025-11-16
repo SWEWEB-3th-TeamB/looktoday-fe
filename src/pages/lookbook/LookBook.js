@@ -43,6 +43,7 @@ const LookBook = () => {
         minTemp: null,
         maxTemp: null,
     });
+    const [isMobile, setIsMobile] = useState(false);
 
     const fetchLookList = useCallback(async (page = 1) => {
         const token = localStorage.getItem('token');
@@ -302,6 +303,20 @@ const LookBook = () => {
         setCurrentPage(page);
     };
 
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth <= 600) {
+                setIsMobile(true);
+            } else {
+                setIsMobile(false);
+            }
+        };
+
+        handleResize(); // 최초 한 번 실행
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     return (
         <div className="lookbook-wrap">
             <Menu />
@@ -310,25 +325,65 @@ const LookBook = () => {
 
                 <div className="lookbook-best">
                     <div className="lookbook-name">Best 10</div>
-                    <div className="lookbook-best-looks">
-                        <img src={arrow} alt="왼쪽 화살표" className={`lookbook-left-arrow ${currentIndex === 0 ? 'disabled' : ''}`} onClick={handlePrev} />
-                        <div className="best-look-cards">
-                            {visibleItems.map((item, index) => (
-                                <div key={item.looktoday_id} onClick={() => handleOpenPopup(item)}>
-                                    <BestLookCard
-                                        rank={currentIndex + index + 1}
-                                        image={item.Image?.imageUrl || lookbook}
-                                        temperature={item.temperature ?? '-'}
-                                        location={`${item.si} ${item.gungu}`}
-                                        nickname={item.User.nickname}
-                                        likeCount={item.like_count}
-                                    />
-                                </div>
-                            ))}
+
+                    {/* PC: 화살표 + 4개씩 */}
+                    {!isMobile && (
+                        <div className="lookbook-best-looks">
+                            <img
+                                src={arrow}
+                                alt="왼쪽 화살표"
+                                className={`lookbook-left-arrow ${currentIndex === 0 ? 'disabled' : ''}`}
+                                onClick={handlePrev}
+                            />
+                            <div className="best-look-cards">
+                                {visibleItems.map((item, index) => (
+                                    <div key={item.looktoday_id} onClick={() => handleOpenPopup(item)}>
+                                        <BestLookCard
+                                            rank={currentIndex + index + 1}
+                                            image={item.Image?.imageUrl || lookbook}
+                                            temperature={item.temperature ?? '-'}
+                                            location={`${item.si} ${item.gungu}`}
+                                            nickname={item.User.nickname}
+                                            likeCount={item.like_count}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                            <img
+                                src={arrow}
+                                alt="오른쪽 화살표"
+                                className={`lookbook-right-arrow ${currentIndex + 4 >= bestLookList.length ? 'disabled' : ''
+                                    }`}
+                                onClick={handleNext}
+                            />
                         </div>
-                        <img src={arrow} alt="오른쪽 화살표" className={`lookbook-right-arrow ${currentIndex + 4 >= bestLookList.length ? 'disabled' : ''}`} onClick={handleNext} />
-                    </div>
+                    )}
+
+                    {/* 모바일: 드래그해서 넘기는 슬라이드 */}
+                    {isMobile && (
+                        <div className="lookbook-best-looks">
+                            <div className="best-look-cards best-look-scroll">
+                                {bestLookList.slice(0, 10).map((item, index) => (
+                                    <div
+                                        className="best-look-item"
+                                        key={item.looktoday_id}
+                                        onClick={() => handleOpenPopup(item)}
+                                    >
+                                        <BestLookCard
+                                            rank={index + 1} // 1~10 고정
+                                            image={item.Image?.imageUrl || lookbook}
+                                            temperature={item.temperature ?? '-'}
+                                            location={`${item.si} ${item.gungu}`}
+                                            nickname={item.User.nickname}
+                                            likeCount={item.like_count}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
+
 
                 <div className='lookbook-filter'>
                     <SearchFilter onApply={handleFilterApply} />

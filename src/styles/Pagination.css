@@ -47,3 +47,34 @@
     color: #FFF;
     background: #2C2C2C;
 }
+
+@media (max-width: 600px) {
+
+    .pagination {
+        width: 100%;
+        max-width: 220px;  /* 중앙에서 작아지도록 */
+        gap: 8px;
+        margin: 20px auto 0;
+    }
+
+    .pagination img {
+        width: 12px;     /* 줄이기 */
+        height: 24px;    /* 줄이기 */
+    }
+
+    .pagination-left-arrow {
+        margin-right: 10px;
+    }
+
+    .pagination-right-arrow {
+        margin-left: 10px;
+    }
+
+    .pagination-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+        line-height: 30px;
+        border-radius: 4px;
+    }
+}
