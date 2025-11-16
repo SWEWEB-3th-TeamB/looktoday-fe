@@ -10,9 +10,20 @@ path {
 
 svg {
   position: relative;
-  top:-300px;
-  left: -200px;;
+  top: -300px;
+  left: -200px;
   width: 903px;
   height: 1088px;
   z-index: -1000;
+}
+
+@media (max-width: 600px) {
+  svg {
+    position: relative;
+    top: 95.79px;
+    left: 104px;
+    width: 321px;
+    height: 387px;
+    z-index: -1000;
+  }
 }
