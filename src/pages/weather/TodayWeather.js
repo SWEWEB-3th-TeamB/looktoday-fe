@@ -22,6 +22,50 @@ import IconFlurries from '../../assets/images/WeatherIcon/IconFlurries.png';
 
 import '../../styles/TodayWeather.css';
 
+/* ========================
+   ✅ 지역명 정규화 유틸
+   ======================== */
+const SIDO_MAP = {
+  '서울': '서울특별시',
+  '부산': '부산광역시',
+  '대구': '대구광역시',
+  '인천': '인천광역시',
+  '광주': '광주광역시',
+  '대전': '대전광역시',
+  '울산': '울산광역시',
+  '세종': '세종특별자치시',
+  '경기': '경기도',
+  '강원': '강원도',
+  '충북': '충청북도',
+  '충남': '충청남도',
+  '전북': '전라북도',
+  '전남': '전라남도',
+  '경북': '경상북도',
+  '경남': '경상남도',
+  '제주': '제주특별자치도',
+};
+
+function normalizeSi(si) {
+  if (!si) return si;
+  // 이미 정식 접미사가 있으면 그대로
+  if (/(특별시|광역시|특별자치시|도)$/.test(si)) return si;
+  return SIDO_MAP[si] || si;
+}
+
+function normalizeGungu(gungu) {
+  if (!gungu) return gungu;
+  // 이미 접미사가 있으면 그대로
+  if (/(구|군|시)$/.test(gungu)) return gungu;
+  // 가장 흔한 축약형(강남, 노원 등) -> 구
+  return `${gungu}구`;
+}
+
+function normalizeRegion(si, gungu) {
+  return { si: normalizeSi(si), gungu: normalizeGungu(gungu) };
+}
+
+/* ======================== */
+
 const WEATHER_ICON_MAP = {
   '강수 없음': { src: IconNone, alt: '강수 없음' },
   '비': { src: IconRain, alt: '비' },
@@ -80,31 +124,29 @@ async function getMyWeather() {
   try {
     const json = JSON.parse(text);
 
-    // 🛠️ 스크린샷 구조( code: "WEATHER200", result: {...} )에 맞춰 정규화
-    //     - 정상 응답: 항상 { result: {...} } 형태를 보장
-    //     - region 키는 시/군구 OR sido/gungu 어느 쪽이 와도 호환되도록 보강
-    if (json && typeof json === 'object') {                                              // 🛠️
-      const resultNode = json.result ?? json.data ?? json;                                // 🛠️
-      const region = resultNode.region || {};                                             // 🛠️
-      const normalizedRegion = {                                                          // 🛠️
-        시: region.시 ?? region.sido ?? region.si ?? null,                                // 🛠️
-        군구: region.군구 ?? region.gungu ?? region.gu ?? null,                           // 🛠️
-        sido: region.sido ?? region.시 ?? region.si ?? null,                               // 🛠️
-        gungu: region.gungu ?? region.군구 ?? region.gu ?? null,                           // 🛠️
-      };                                                                                  // 🛠️
+    // 응답 정규화
+    if (json && typeof json === 'object') {
+      const resultNode = json.result ?? json.data ?? json;
+      const region = resultNode.region || {};
+      const normalizedRegion = {
+        시: region.시 ?? region.sido ?? region.si ?? null,
+        군구: region.군구 ?? region.gungu ?? region.gu ?? null,
+        sido: region.sido ?? region.시 ?? region.si ?? null,
+        gungu: region.gungu ?? region.군구 ?? region.gu ?? null,
+      };
 
-      const normalized = {                                                                // 🛠️
-        code: json.code ?? 'OK',                                                          // 🛠️
-        message: json.message ?? '',                                                      // 🛠️
-        result: {                                                                         // 🛠️
-          ...(resultNode || {}),                                                          // 🛠️
-          region: normalizedRegion,                                                       // 🛠️
-        },                                                                                // 🛠️
-      };                                                                                  // 🛠️
+      const normalized = {
+        code: json.code ?? 'OK',
+        message: json.message ?? '',
+        result: {
+          ...(resultNode || {}),
+          region: normalizedRegion,
+        },
+      };
 
-      console.log('[getMyWeather] parsed(normalized):', normalized);                      // 🛠️
-      return normalized;                                                                  // 🛠️
-    }                                                                                     // 🛠️
+      console.log('[getMyWeather] parsed(normalized):', normalized);
+      return normalized;
+    }
 
     console.log('[getMyWeather] parsed:', json);
     return json;
@@ -118,6 +160,8 @@ async function getMyWeather() {
 // getWeather
 async function getWeather(si, gungu) {
   if (!si || !gungu) throw new Error('getWeather: si/gungu는 필수입니다.');
+  // ✅ 호출 직전에 정규화
+  ({ si, gungu } = normalizeRegion(si, gungu));
 
   const qs = new URLSearchParams({ si, gungu });
   const url = `/api/weather?${qs.toString()}`;
@@ -125,33 +169,31 @@ async function getWeather(si, gungu) {
   const res = await fetch(url, { method: 'GET', headers: { Accept: 'application/json' } });
   const text = await res.text();
 
-  // 디버깅: 서버 원문 응답을 콘솔에서 바로 확인
+  // 디버깅: 서버 원문 응답
   console.log('[weather raw]', res.status, text);
 
-  // 실패(status 4xx/5xx)
   if (!res.ok) {
     logHttpLine(url, res);
     throw new Error(`weather ${res.status}: ${text || res.statusText}`);
   }
 
-  // 204/빈 응답을 명확히 기록
   if (res.status === 204 || text.trim() === '') {
-    logHttpLine(url, res); // 예: GET ... 204 (No Content)
+    logHttpLine(url, res);
     throw new Error(`weather ${res.status}: empty response`);
   }
 
-  // JSON 파싱 실패 기록
   try {
     return JSON.parse(text);
   } catch {
-    logHttpLine(url, res); // 보통 200 (OK)
+    logHttpLine(url, res);
     throw new Error(`weather ${res.status}: invalid JSON`);
   }
 }
 
-// getSun
+
 async function getSun(si, gungu) {
   if (!si || !gungu) throw new Error('getSun: si/gungu는 필수입니다.');
+  ({ si, gungu } = normalizeRegion(si, gungu));
 
   const qs = new URLSearchParams({ si, gungu });
   const url = `/api/sun?${qs.toString()}`;
@@ -161,7 +203,6 @@ async function getSun(si, gungu) {
   console.debug('[sun raw]', res.status, text);
 
   if (!res.ok) {
-    // 네트워크 스타일 한 줄 로그만 찍고, statusText는 그대로 사용
     logHttpLine(url, res);
     throw new Error(`sun ${res.status}: ${text || res.statusText}`);
   }
@@ -176,7 +217,6 @@ function isWeatherSuccess(json) {
   if (json.success === true) return true;
   if (json.code === 'OK' || String(json.code).includes('200')) return true;
 
-  // data가 없고 평평한(flat) 응답일 수도 있으니 핵심 필드가 있으면 성공으로 간주
   const base = json?.data ?? json;
   const hasCore =
     base?.날씨 != null ||
@@ -200,7 +240,6 @@ function isSunSuccess(json) {
 }
 
 const parseWeather = (json) => {
-  // data.summary가 실제 값이면 summary를 우선 사용
   const dataNode = json?.data ?? json ?? {};
   const base = dataNode?.summary ?? dataNode;
 
@@ -236,7 +275,6 @@ const parseWeather = (json) => {
   };
 };
 
-
 const parseSun = (json) => {
   const base = json?.data ?? json ?? {};
   const sr = base?.일출 ?? base?.sunrise ?? '-';
@@ -252,13 +290,13 @@ const TodayWeather = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('typeof getWeather:', typeof getWeather); // "function"이어야 정상
+    console.log('typeof getWeather:', typeof getWeather);
   }, []);
 
   const [sido, setSido] = useState('서울특별시');
   const [gugun, setGugun] = useState('노원구');
 
-  const [pending, setPending] = useState({ sido: '서울특별시', gugun: '노원구' }); // 버튼 누르기 전 임시 선택
+  const [pending, setPending] = useState({ sido: '서울특별시', gugun: '노원구' });
   const [loading, setLoading] = useState(false);
 
   const [region, setRegion] = useState('서울특별시 노원구');
@@ -279,14 +317,11 @@ const TodayWeather = () => {
     '세종특별자치시': 28
   };
 
-  // RegionSelector에서 객체로 전달 받음
   const handleRegionChange = ({ sido, gugun }) => {
     setPending(prev => {
-      // 시/도가 바뀌면 구/군을 초기화
       if (sido && sido !== prev.sido) {
         return { sido, gugun: "" };
       }
-      // 구/군만 바뀌면 기존 시/도를 유지
       if (gugun) {
         return { ...prev, gugun };
       }
@@ -294,7 +329,6 @@ const TodayWeather = () => {
     });
   };
 
-  // === 추가: 로그인 유저용 로더 (성공 시 SUN도 함께 조회)
   const loadMyWeather = async () => {
     console.log('[loadMyWeather] start');
     setLoading(true);
@@ -314,26 +348,27 @@ const TodayWeather = () => {
       const dataNode = wPayload?.data ?? wPayload ?? {};
       const core = dataNode?.summary ?? dataNode;
 
-      const si = wPayload?.region?.시 ?? wPayload?.region?.sido ?? sido;
-      const gungu = wPayload?.region?.군구 ?? wPayload?.region?.gungu ?? gugun;
+      const rawSi = wPayload?.region?.시 ?? wPayload?.region?.sido ?? sido;
+      const rawGungu = wPayload?.region?.군구 ?? wPayload?.region?.gungu ?? gugun;
+      const { si, gungu } = normalizeRegion(rawSi, rawGungu);
       console.log('[loadMyWeather] region from profile:', { si, gungu });
 
       const timeRaw = wPayload?.기준시각?.시간 ?? dataNode?.기준시각?.시간 ?? '';
-      const day     = wPayload?.기준시각?.날짜 ?? dataNode?.기준시각?.날짜 ?? '';
-      const tempVal  = core?.온도 ?? core?.temp ?? core?.temperature;
+      const day = wPayload?.기준시각?.날짜 ?? dataNode?.기준시각?.날짜 ?? '';
+      const tempVal = core?.온도 ?? core?.temp ?? core?.temperature;
       const humidVal = core?.습도 ?? core?.humidity;
       const speedVal = core?.풍속 ?? core?.wind ?? core?.windSpeed;
       const feelsVal = core?.체감온도 ?? core?.feels_like ?? core?.apparentTemperature;
-      const condVal  = core?.날씨 ?? core?.weather ?? core?.condition ?? core?.sky;
+      const condVal = core?.날씨 ?? core?.weather ?? core?.condition ?? core?.sky;
 
-      const hhmm = typeof timeRaw === 'string' ? timeRaw.slice(0,5) : '-';
+      const hhmm = typeof timeRaw === 'string' ? timeRaw.slice(0, 5) : '-';
       const dateLabel = (hhmm !== '-' || day) ? `${hhmm} • ${day}` : '-';
 
       const sJson = await getSun(si, gungu);
       console.log('[loadMyWeather] sun raw:', sJson);
       const sun = parseSun(sJson);
 
-      setSido(si); setGugun(gungu); setRegion(`${si} ${gungu}`);
+      setSido(si);setGugun(gungu);setRegion(`${si} ${gungu}`);
       setDate(dateLabel || '-');
       setTemperature(typeof tempVal === 'number' ? Math.round(tempVal) : (typeof tempVal === 'string' ? tempVal : '-'));
       setHumidity((typeof humidVal === 'number' || typeof humidVal === 'string') ? humidVal : '-');
@@ -352,7 +387,6 @@ const TodayWeather = () => {
     }
   };
 
-  // 공용 로더 (weather만 수동 파싱: result → data)
   const loadWeather = async (si, gungu) => {
     setLoading(true);
     try {
@@ -361,7 +395,6 @@ const TodayWeather = () => {
         getSun(si, gungu),
       ]);
 
-      // --- WEATHER: result 래핑 수동 파싱 ---
       const wJson = wRes.status === 'fulfilled' ? wRes.value : null;
       if (wRes.status === 'rejected') console.error('[weather fail]', wRes.reason);
 
@@ -394,13 +427,11 @@ const TodayWeather = () => {
       const hhmm = typeof timeRaw === 'string' ? timeRaw.slice(0, 5) : '-';
       const dateLabel = (hhmm !== '-' || day) ? `${hhmm} • ${day}` : '-';
 
-      // --- SUN: 기존 parseSun 사용 ---
       const sJson = sRes.status === 'fulfilled' ? sRes.value : null;
       if (sRes.status === 'rejected') console.error('[sun fail]', sRes.reason);
 
       const sun = parseSun(sJson);
 
-      // --- setState ---
       setDate(dateLabel || '-');
       setTemperature(
         typeof tempVal === 'number' ? Math.round(tempVal) :
@@ -424,14 +455,11 @@ const TodayWeather = () => {
     }
   };
 
-  // 초기 1회: 로그인 유저면 회원 지역으로, 아니면 기본 지역으로
   useEffect(() => {
-    // loadMyWeather 내부에서 실패 시 자동으로 loadWeather로 폴백합니다.
     loadMyWeather();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 버튼 눌렀을 때만 지역 반영 & 재호출
   const applyRegion = async () => {
     if (!pending.sido || !pending.gugun) {
       alert('시/군구를 모두 선택하세요');
@@ -443,7 +471,6 @@ const TodayWeather = () => {
     await loadWeather(pending.sido, pending.gugun);
   };
 
-  //시간 변환 함수
   function to12Hour(timeStr) {
     if (!timeStr || typeof timeStr !== 'string') return '-';
     const [h, m] = timeStr.split(':').map(Number);
@@ -460,8 +487,7 @@ const TodayWeather = () => {
       temperature: Number(temperature),
       humidity: Number(humidity),
       perceivedTemp: Number(perceivedTemp || temperature),
-      condition,       // 필요 시 전달
-      // pop, pcp도 원하면 함께
+      condition,
       sido, gugun, date,
     };
     try { localStorage.setItem('lookPayload', JSON.stringify(payload)); } catch { }

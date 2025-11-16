@@ -1,7 +1,7 @@
 .look-recommend-page {
-  min-height: 1086px;
-  display: flex;
-  flex-direction: column;
+    min-height: 1086px;
+    display: flex;
+    flex-direction: column;
 }
 
 .look-recommend-title {
@@ -34,7 +34,8 @@
 
 .look-recommend-contents {
     display: flex;
-    flex: 1 0 auto; /*푸터붙이기용*/
+    flex: 1 0 auto;
+    /*푸터붙이기용*/
     flex-direction: column;
     justify-content: center;
     position: static;
@@ -65,7 +66,7 @@
     width: 700px;
     height: 213px;
     flex-shrink: 0;
-    border-radius: 51px;   
+    border-radius: 51px;
     border: 1px solid #2C2C2C;
     left: -89px;
 }
@@ -257,39 +258,287 @@
     gap: 40px;
 }
 
-@media (max-width:1400px) {
-    
-.look-recommend-outfit-wrapper {
-    position: absolute;
-    top: 258px;
-    left: 692px;
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
+@media (min-width: 600px) and (max-width: 1400px) {
+
+    .look-recommend-outfit-wrapper {
+        position: absolute;
+        top: 258px;
+        left: 692px;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+    }
+
+
+    .look-recommend-acc-wrapper {
+        position: absolute;
+        top: 531px;
+        left: 101px;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+    }
+
+    .look-recommend-acc-wrapper {
+        position: absolute;
+        top: 531px;
+        left: 618px;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+    }
+
 }
 
-
-.look-recommend-acc-wrapper {
-    position: absolute;
-    top: 531px;
-    left: 101px;
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
+.look-recommend-page>.footer {
+    margin-top: auto;
+    width: 100%;
 }
 
-.look-recommend-acc-wrapper {
-    position: absolute;
-    top: 531px;
-    left: 618px;
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-}
+@media (max-width: 600px) {
 
-}
+    .look-recommend-title {
+        position: absolute;
+        top: 80px;
+        left: 50%;
+        transform: translate(-50%);
+        color: #2C2C2C;
+        font-family: "Inria Serif", serif;
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+    }
 
-.look-recommend-page > .footer {
-  margin-top: auto;
-  width: 100%;
+    .look-recommend-contents {
+        display: flex;
+        flex: 1 0 auto;
+        /*푸터붙이기용*/
+        flex-direction: column;
+        justify-content: center;
+        position: static;
+        transform: none;
+    }
+
+    .look-recommend-weather-wrapper {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        top: 139px;
+        left: 19px;
+    }
+
+
+    .look-recommend-weather-title {
+        color: #2C2C2C;
+        font-family: Inter;
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+        margin-bottom: 7px;
+    }
+
+    .look-recommend-weather-card {
+        position: relative;
+        flex-shrink: 0;
+        border-radius: 30px;
+        border: 0.5px solid #2C2C2C;
+        left: -89px;
+        width: 312px;
+        height: 89.208px;
+    }
+
+    .look-recommend-comment {
+        position: absolute;
+        top: 48.21px;
+        left: 95px;
+        color: #2C2C2C;
+        font-family: Inter;
+        font-size: 10px;
+        font-weight: 300;
+        line-height: 13px;
+    }
+
+    .look-recommend-icon {
+        position: absolute;
+        top: 8.21px;
+        left: 95px;
+        width: 30.929px;
+        height: 28.417px;
+        padding: 0 7px 7px 0;
+        flex-shrink: 0;
+    }
+
+    .look-recommend-temparature {
+        position: absolute;
+        top: 11.21px;
+        left: 130px;
+        color: #2C2C2C;
+        font-family: Inter;
+        font-size: 20px;
+        font-weight: 400;
+        letter-spacing: -2px;
+    }
+
+    .look-recommend-humidityperceivedtemperature {
+        position: absolute;
+        top: 29.21px;
+        left: 202px;
+        color: #2C2C2C;
+        font-family: Inter;
+        font-size: 7px;
+        font-weight: 400;
+        letter-spacing: -0.65px;
+    }
+
+    .look-recommend-region {
+        position: absolute;
+        top: 11.21px;
+        left: 202px;
+        color: #2C2C2C;
+        font-family: Inter;
+        font-size: 10px;
+        font-weight: 700;
+        line-height: 20px;
+    }
+
+    .look-recommend-region-select {
+        z-index: 4;
+        position: absolute;
+        top: 59.42px;
+        left: 208.95px;
+        width: 69.086px;
+        height: 19.266px;
+        border-radius: 5px;
+        border: 1px solid #FFF;
+        background: #2C2C2C;
+        color: #FFF;
+        font-family: Inter;
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: -0.8px;
+    }
+
+    .look-recommend-outfit-wrapper {
+        position: absolute;
+        top: 546px;
+        left: 10%;
+        display: flex;
+        flex-direction: column;
+        gap: 6.79px;
+    }
+
+    .look-recommend-outfit {
+        display: flex;
+        gap: 4.78px;
+    }
+
+    .look-recommend-outfit-title {
+        color: #2C2C2C;
+        font-family: Inter;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .look-recommend-outfit1 {
+        width: 147px;
+        height: 113px;
+        flex-shrink: 0;
+        aspect-ratio: 302.77/232.00;
+    }
+
+    .look-recommend-outfit2 {
+        width: 71px;
+        height: 112px;
+        flex-shrink: 0;
+        aspect-ratio: 147.18/232.00;
+    }
+
+    .look-recommend-weatheritem-wrapper {
+        position: absolute;
+        top: 413px;
+        left: 37.2%;
+        display: flex;
+        flex-direction: column;
+        gap: 5.99px;
+    }
+
+    .look-recommend-weatheritem {
+        display: flex;
+        gap: 5px;
+    }
+
+    .look-recommend-weatheritem-title {
+        color: #2C2C2C;
+        font-family: Inter;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .look-recommend-weatheritem1 {
+        width: 108px;
+        height: 105px;
+        flex-shrink: 0;
+        aspect-ratio: 220.81/215.00;
+    }
+
+    .look-recommend-weatheritem2 {
+        width: 66px;
+        height: 105px;
+        flex-shrink: 0;
+        aspect-ratio: 137.06/15.00;
+    }
+
+    .look-recommend-acc-wrapper {
+        position: absolute;
+        top: 275px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 5.99px;
+    }
+
+    .look-recommend-acc {
+        display: flex;
+        gap: 5px;
+    }
+
+    .look-recommend-acc-title {
+        color: #2C2C2C;
+        font-family: Inter;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .look-recommend-acc1 {
+        width: 79.725px;
+        height: 97.89px;
+        flex-shrink: 0;
+        aspect-ratio: 169.40/208.00;
+    }
+
+    .look-recommend-acc2 {
+        width: 73.518px;
+        height: 97.99px;
+        flex-shrink: 0;
+        aspect-ratio: 156.05/208.00;
+    }
+
+    .look-recommend-acc3 {
+        width: 119.988px;
+        height: 98.589px;
+        flex-shrink: 0;
+        aspect-ratio: 254.36/209.00;
+    }
+
+    .weather-outfit {
+        gap: 40px;
+    }
+
+    .look-recommend-page>.footer {
+        margin-top: 737px;
+        width: 100%;
+    }
 }
