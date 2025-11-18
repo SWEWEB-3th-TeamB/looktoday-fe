@@ -295,7 +295,7 @@
     margin: 0 !important;
     width: auto !important;
     white-space: nowrap !important;
-    color: #2C2C2C !important;
+    color: #4E4E4E !important;
     font-family: 'Inter', sans-serif !important;
     font-size: 11px !important;
     line-height: normal !important;
@@ -622,8 +622,20 @@
     cursor: pointer !important;
   }
 
-  .complete-popup { width: 320px; height: auto; padding: 20px; }
+  .complete-popup { width: 340px !important; height: auto !important; padding: 20px !important; }
   .complete-popup-title { position: static; transform: none; margin-bottom: 15px; font-size: 16px; }
   .complete-popup-desc { position: static; transform: none; font-size: 14px; margin-bottom: 20px; }
-  .complete-popup-close-btn { position: static; transform: none; width: 100%; height: 35px; font-size: 15px; }
+  .complete-popup-close-btn { 
+    position: static !important; 
+    transform: none !important; 
+    
+    width: 100px !important; 
+    
+    height: 40px !important; 
+
+    display: block !important;
+    margin: 0 auto !important;
+    
+    font-size: 15px !important; 
+  }
 }
