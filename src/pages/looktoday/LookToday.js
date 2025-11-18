@@ -251,37 +251,16 @@ const LookToday = () => {
   };
 
   return (
-    <>
+    <div className="looktoday">
+
+      <div style={{ position: 'relative', zIndex: 20000 }}>
+        <Menu />
+      </div>
+
       <div className="looktoday-wrapper">
 
         <div className="looktoday-container">
           <h1 className="looktoday-title">Record My Look</h1>
-        </div>
-
-        <div className="temp-wrapper">
-          <img
-            src={imageMap[temperature]}
-            alt="thermometer"
-            className="thermometer"
-          />
-          <div className="temp-options">
-            <div className="temp-label">체감 온도</div>
-            {temperatureOptions.map((option) => (
-              <button
-                key={option.key}
-                className={`temp-button ${temperature === option.key ? 'active' : ''}`}
-                style={{
-                  backgroundColor: temperature === option.key ? option.color : '#FFF',
-                  border: temperature === option.key ? 'none' : '1px solid #E2E2E2',
-                  color: temperature === option.key ? '#FFF' : '#2C2C2C',
-                  textShadow: temperature === option.key ? '1px 1px 5px rgba(0, 0, 0, 0.3)' : 'none'
-                }}
-                onClick={() => setTemperature(option.key)}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
         </div>
 
         <div className="form-row" id="row-date-time-num">
@@ -292,7 +271,9 @@ const LookToday = () => {
             />
           </div>
 
-          <Time value={selectedTime} onChange={handleTimeChange} />
+          <div className="time-wrapper">
+            <Time value={selectedTime} onChange={handleTimeChange} />
+          </div>
 
           <div className="record-number">
             No. {currentPostNumber}
@@ -330,26 +311,6 @@ const LookToday = () => {
             }}
           >
             <div className="public-toggle-thumb" />
-          </div>
-        </div>
-
-        <div className="humidity-wrapper">
-          <div className="humidity-label">체감 습도</div>
-          <img
-            className="humidity-image"
-            src={humidityImageMap[humidity]}
-            alt={humidity}
-          />
-          <div className="humidity-options">
-            {humidityOptions.map(({ label, key }) => (
-              <button
-                key={key}
-                className={`humidity-btn ${key} ${humidity === key ? 'active' : ''}`}
-                onClick={() => setHumidity(key)}
-              >
-                {label}
-              </button>
-            ))}
           </div>
         </div>
 
@@ -411,9 +372,54 @@ const LookToday = () => {
           </div>
         </div>
 
+        <div className="temp-wrapper">
+          <img
+            src={imageMap[temperature]}
+            alt="thermometer"
+            className="thermometer"
+          />
+          <div className="temp-options">
+            <div className="temp-label">체감 온도</div>
+            {temperatureOptions.map((option) => (
+              <button
+                key={option.key}
+                className={`temp-button ${temperature === option.key ? 'active' : ''}`}
+                style={{
+                  backgroundColor: temperature === option.key ? option.color : '#FFF',
+                  border: temperature === option.key ? 'none' : '1px solid #E2E2E2',
+                  color: temperature === option.key ? '#FFF' : '#2C2C2C',
+                  textShadow: temperature === option.key ? '1px 1px 5px rgba(0, 0, 0, 0.3)' : 'none'
+                }}
+                onClick={() => setTemperature(option.key)}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="humidity-wrapper">
+          <div className="humidity-label">체감 습도</div>
+          <img
+            className="humidity-image"
+            src={humidityImageMap[humidity]}
+            alt={humidity}
+          />
+          <div className="humidity-options">
+            {humidityOptions.map(({ label, key }) => (
+              <button
+                key={key}
+                className={`humidity-btn ${key} ${humidity === key ? 'active' : ''}`}
+                onClick={() => setHumidity(key)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <button
           className={`complete-btn ${isCompleteEnabled ? 'active' : 'disabled'}`}
-          style={{ top: 765, left: 971, position: 'absolute' }}
           onClick={handleCompleteClick}
           disabled={!isCompleteEnabled}
         >
@@ -443,13 +449,9 @@ const LookToday = () => {
 
       </div>
 
-      <Menu />
+      <Footer />
 
-      <div className="looktoday-footer">
-        <Footer />
-      </div>
-
-    </>
+    </div>
   );
 };
 
