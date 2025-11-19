@@ -226,6 +226,8 @@ const LookTodayEdit = () => {
 
   return (
     <>
+      <Menu />
+      
       <div className="looktoday-wrapper">
         <div className="looktoday-container">
           <h1 className="looktoday-title">Edit My Look</h1>
@@ -316,7 +318,6 @@ const LookTodayEdit = () => {
           수정 완료
         </button>
       </div>
-      <Menu />
       <div className="looktoday-footer">
         <Footer />
       </div>
