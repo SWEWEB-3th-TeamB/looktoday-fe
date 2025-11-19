@@ -10,7 +10,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  width: 100%;
+  min-width: 1280px;
   overflow-x: hidden;
 }
 
@@ -192,7 +192,11 @@
 .complete-popup-desc { position: absolute; top: 68.5px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 400; color: #2C2C2C; line-height: 25px; margin: 0; white-space: pre-line; }
 .complete-popup-close-btn { position: absolute; left: 50%; top: 135px; transform: translateX(-50%); width: 100px; height: 40px; border-radius: 5px; background: #0C82C6; color: #FFF; font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 400; border: none; cursor: pointer; text-align: center; outline: none; user-select: none; display: flex; align-items: center; justify-content: center; }
 
-@media (max-width: 767px) {
+@media (max-width: 600px) {
+
+  .looktoday {
+      min-width: 330px;
+  }
   
   .looktoday-wrapper {
     width: 100%; margin: 0; min-height: 0; padding: 0;
