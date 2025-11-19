@@ -5,19 +5,19 @@
 <i>'날씨 정보 + 코디' 웹사이트</i>
 
 <h2>룩투데이 페이지 살펴보기</h2>
-MAIN
+☂️ MAIN
 
-WEATHER
+🌤️ WEATHER
 - 위치 기반 날씨 검색
 - 날씨에 따른 룩 추천
 
-LOOK TODAY
+📝 LOOK TODAY
 - 나만의 룩 기록하기
 
-LOOK BOOK
+👀 LOOK BOOK
 - 다른 사용자들의 코디 확인
 
-MY PAGE
+❤️ MY PAGE
 - 내 피드
 - 내 좋아요
 - 프로필 설정
