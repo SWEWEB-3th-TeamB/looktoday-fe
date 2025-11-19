@@ -34,56 +34,6 @@ const MyFeed = () => {
     const [loading, setLoading] = useState(true);
     const [loadingPopup, setLoadingPopup] = useState(false);
 
-    const handleLikeToggle = async (lookId, newLikedState) => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert("로그인 후 이용 가능합니다.");
-            return;
-        }
-
-        const originalPosts = [...posts];
-
-        setPosts(prevPosts =>
-            prevPosts.map(post => {
-                if (post.looktoday_id === lookId) {
-                    return {
-                        ...post,
-                        isLiked: newLikedState,
-                        likeCount: newLikedState
-                            ? post.likeCount + 1
-                            : Math.max(0, post.likeCount - 1),
-                    };
-                }
-                return post;
-            })
-        );
-
-        if (selectedLook && selectedLook.looktoday_id === lookId) {
-            setSelectedLook(prevLook => ({
-                ...prevLook,
-                isLiked: newLikedState,
-                like_count: newLikedState
-                    ? (prevLook.like_count || 0) + 1
-                    : Math.max(0, (prevLook.like_count || 0) - 1),
-                likeCount: newLikedState
-                    ? (prevLook.likeCount || 0) + 1
-                    : Math.max(0, (prevLook.likeCount || 0) - 1),
-            }));
-        }
-
-        // 서버에 API 요청
-        const result = await toggleLikeApi(lookId, token, newLikedState);
-        if (!result.success && result.code !== 'LIKE200') {
-            alert(result.message || "요청에 실패했습니다.");
-            setPosts(originalPosts); // 서버 실패 시 원래 상태로 복구
-            // 팝업 상태도 롤백
-            if (selectedLook && selectedLook.looktoday_id === lookId) {
-                const originalPost = originalPosts.find(p => p.looktoday_id === lookId);
-                handleOpenPopup(originalPost); // 팝업 데이터를 원본으로 복구
-            }
-        }
-    };
-
     const fetchMyFeeds = useCallback(async (params = {}) => {
         setLoading(true);
         const token = localStorage.getItem("token");
@@ -123,6 +73,76 @@ const MyFeed = () => {
             setLoading(false);
         }
     }, []);
+
+    const handleLikeToggle = async (lookId, newLikedState) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert("로그인 후 이용 가능합니다.");
+            return;
+        }
+
+        const result = await toggleLikeApi(lookId, token, newLikedState);
+
+        if (result.code === "LIKE201" || result.code === "LIKE200") {
+            const serverIsLiked = result.result.isLiked;
+
+            // UI 업데이트 함수
+            const updateStateWithServerData = (list) =>
+                list.map(post => {
+                    // ID 비교 (안전하게 문자열로 변환하여 비교)
+                    if (String(post.looktoday_id) === String(lookId)) {
+
+                        // 숫자로 안전하게 변환
+                        const currentCount = typeof post.likeCount === 'number'
+                            ? post.likeCount
+                            : parseInt(post.likeCount || 0, 10);
+
+                        return {
+                            ...post,
+                            isLiked: serverIsLiked,
+                            // LookBook의 카운트 계산 로직 적용
+                            likeCount: newLikedState
+                                ? currentCount + 1
+                                : Math.max(0, currentCount - 1),
+                            // 원본 데이터(snake_case)도 함께 갱신
+                            like_count: newLikedState
+                                ? currentCount + 1
+                                : Math.max(0, currentCount - 1),
+                        };
+                    }
+                    return post;
+                });
+
+            // 리스트 상태 업데이트
+            setPosts(prevPosts => updateStateWithServerData(prevPosts));
+
+            // 팝업이 열려있고 해당 게시물이라면 팝업 상태도 업데이트
+            if (selectedLook && String(selectedLook.looktoday_id) === String(lookId)) {
+                setSelectedLook(prevLook => {
+                    const currentCount = typeof prevLook.likeCount === 'number'
+                        ? prevLook.likeCount
+                        : parseInt(prevLook.likeCount || 0, 10);
+
+                    return {
+                        ...prevLook,
+                        isLiked: serverIsLiked,
+                        likeCount: newLikedState
+                            ? currentCount + 1
+                            : Math.max(0, currentCount - 1),
+                        like_count: newLikedState
+                            ? currentCount + 1
+                            : Math.max(0, currentCount - 1),
+                    };
+                });
+            }
+
+        } else if (result.code === "LIKE409" || result.code === "LIKE404") {
+            alert("데이터 상태가 일치하지 않아 목록을 새로고침합니다.");
+            fetchMyFeeds({ page: currentPage });
+        } else {
+            alert(result.message || "요청에 실패했습니다.");
+        }
+    };
 
     useEffect(() => {
         fetchMyFeeds({ page: 1 });
@@ -172,14 +192,12 @@ const MyFeed = () => {
     };
 
     const handleOpenPopup = async (post) => {
-        // 팝업을 즉시 열고 로딩 상태로 설정
         setSelectedLook(post);
         setIsPopupOpen(true);
         setLoadingPopup(true);
 
         const token = localStorage.getItem("token");
         try {
-            // 상세 정보 API 호출
             const response = await fetch(`/api/looks/${post.looktoday_id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -189,19 +207,14 @@ const MyFeed = () => {
 
             if (data.result) {
                 const detailedData = data.result;
-
-                // (기존 list의 isLiked, likeCount와 상세 API의 닉네임/날짜를 조합)
                 setSelectedLook(prevState => ({
-                    ...prevState, // 'posts' 배열의 post 객체 (isLiked, likeCount 포함)
-                    ...detailedData, // 상세 API에서 받은 데이터 (date, comment 등)
-
-                    // LookPopup이 기대하는 최종 구조로 덮어쓰기
+                    ...prevState,
+                    ...detailedData,
                     User: { nickname: detailedData.nickname },
                     Image: { imageUrl: detailedData.imageUrl },
                     apparent_temp: detailedData.feelsLikeTemp,
                     gungu: detailedData.location,
-                    si: '', // 팝업은 gungu만 사용
-
+                    si: '',
                     like_count: prevState.likeCount
                 }));
             } else {
@@ -212,7 +225,7 @@ const MyFeed = () => {
             alert("상세 정보를 불러오는 데 실패했습니다.");
             setIsPopupOpen(false);
         } finally {
-            setLoadingPopup(false); // 로딩 종료
+            setLoadingPopup(false);
         }
     };
 
