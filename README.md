@@ -1,5 +1,5 @@
 <img width="1895" height="863" alt="image" src="https://github.com/user-attachments/assets/efdc1371-5d24-4225-b662-46552c880202" />
-룩투데이 바로가기: https://looktoday.vercel.app/
+<a href="https://looktoday.vercel.app/">룩투데이 바로가기
 <br><br>
 <h2>룩투데이란?</h2>
 <i>'날씨 정보 + 코디' 웹사이트</i>
