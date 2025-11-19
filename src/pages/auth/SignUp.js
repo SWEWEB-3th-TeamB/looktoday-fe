@@ -119,7 +119,7 @@ const SignUp = () => {
             );
             const data = await res.json().catch(() => ({}));
 
-            console.log("✅ check-email response:", res.status, data);
+            console.log("check-email response:", res.status, data);
 
             if (!res.ok) {
                 const msg = data?.message || '이메일 중복확인에 실패했습니다.';
@@ -243,7 +243,9 @@ const SignUp = () => {
                 return;
             }
 
-            navigate("/sign-up-complete");
+            navigate("/sign-up-complete", {
+                state: { nickname },
+            });
         } catch (error) {
             console.error(error);
             alert("네트워크 오류 발생");
