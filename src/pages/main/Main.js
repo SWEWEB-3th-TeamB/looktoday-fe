@@ -63,9 +63,9 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className='main'>
       <Menu />
-      <div className='main'>
+      <div>
         <section className='main-weather'>
           <div className='main-weather-background'></div>
           <div className='main-weather-content'>

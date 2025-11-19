@@ -110,16 +110,30 @@ const LookBook = () => {
 
 
     const handleBestLook = useCallback(async () => {
+        console.log('[Best] handleBestLook 호출됨');
+
         const token = localStorage.getItem('token');
-        if (!token) return;
+        console.log('[Best] token:', token);
+
+        if (!token) {
+            console.log('[Best] 토큰 없음, handleBestLook 종료');
+            return;
+        }
+
         try {
             const res = await fetch('/api/looks/best', {
                 headers: { Authorization: `Bearer ${token}` }
             });
+
+            console.log('[Best] /api/looks/best status:', res.status);
+
             const data = await res.json();
+            console.log('[Best] BEST10 API RESULT:', data);
+
             if (data.code === 'COMMON200') {
                 setBestLookList(data.result);
             } else {
+                console.log('[Best] BEST10 code !== COMMON200:', data.code);
                 setBestLookList([]);
             }
         } catch (error) {
@@ -184,31 +198,48 @@ const LookBook = () => {
 
         setFilters(updatedFilters);
 
-        // filterState 해제 로직
+        if (updatedFilters.length === 0) {
+            setFilterState({
+                region: null,
+                startDate: null,
+                endDate: null,
+                weather: null,
+                minTemp: null,
+                maxTemp: null,
+            });
+            setCurrentPage(1);
+            return;
+        }
+
         const newFilterState = { ...filterState };
 
-        // 지역 제거(문자열 매칭은 취약하므로 임시로 유지, 추후 type별로 개선 권장)
-        if (removedFilterLabel.includes('시') || removedFilterLabel.includes('구')) {
+        if (
+            (filterState.region?.si && filterState.region?.gungu &&
+                removedFilterLabel === `${filterState.region.si} ${filterState.region.gungu}`) ||
+            removedFilterLabel.includes('시') ||
+            removedFilterLabel.includes('구')
+        ) {
             newFilterState.region = null;
         }
 
-        // 날짜 제거
-        if (removedFilterLabel.includes('~')) {
+        if (removedFilterLabel.includes('~') && !removedFilterLabel.includes('℃')) {
             newFilterState.startDate = null;
             newFilterState.endDate = null;
         }
 
-        if (
-            removedFilterLabel === filterState.weather?.label ||
-            removedFilterLabel.startsWith('커스텀 ')
-        ) {
-            newFilterState.weather = null;
+        if (filterState.weather) {
+            const isPresetMatch = removedFilterLabel === filterState.weather.label;
+            const isCustomMatch =
+                filterState.weather.type === 'custom' && removedFilterLabel.includes('℃');
+
+            if (isPresetMatch || isCustomMatch) {
+                newFilterState.weather = null;
+            }
         }
 
         setFilterState(newFilterState);
         setCurrentPage(1);
     };
-
 
     const handleSortChange = (value) => {
         setSelectedSort(value);
@@ -326,7 +357,6 @@ const LookBook = () => {
                 <div className="lookbook-best">
                     <div className="lookbook-name">Best 10</div>
 
-                    {/* PC: 화살표 + 4개씩 */}
                     {!isMobile && (
                         <div className="lookbook-best-looks">
                             <img
@@ -337,7 +367,10 @@ const LookBook = () => {
                             />
                             <div className="best-look-cards">
                                 {visibleItems.map((item, index) => (
-                                    <div key={item.looktoday_id} onClick={() => handleOpenPopup(item)}>
+                                    <div
+                                        key={item.looktoday_id}
+                                        onClick={() => handleOpenPopup(item)}
+                                    >
                                         <BestLookCard
                                             rank={currentIndex + index + 1}
                                             image={item.Image?.imageUrl || lookbook}
@@ -345,6 +378,10 @@ const LookBook = () => {
                                             location={`${item.si} ${item.gungu}`}
                                             nickname={item.User.nickname}
                                             likeCount={item.like_count}
+                                            isLiked={item.isLiked}
+                                            onLikeToggle={(newLikedState) =>
+                                                handleLikeToggle(item.looktoday_id, newLikedState)
+                                            }
                                         />
                                     </div>
                                 ))}
@@ -359,7 +396,7 @@ const LookBook = () => {
                         </div>
                     )}
 
-                    {/* 모바일: 드래그해서 넘기는 슬라이드 */}
+                    {/* 모바일 */}
                     {isMobile && (
                         <div className="lookbook-best-looks">
                             <div className="best-look-cards best-look-scroll">
@@ -370,12 +407,16 @@ const LookBook = () => {
                                         onClick={() => handleOpenPopup(item)}
                                     >
                                         <BestLookCard
-                                            rank={index + 1} // 1~10 고정
+                                            rank={index + 1}
                                             image={item.Image?.imageUrl || lookbook}
                                             temperature={item.temperature ?? '-'}
                                             location={`${item.si} ${item.gungu}`}
                                             nickname={item.User.nickname}
                                             likeCount={item.like_count}
+                                            isLiked={item.isLiked}
+                                            onLikeToggle={(newLikedState) =>
+                                                handleLikeToggle(item.looktoday_id, newLikedState)
+                                            }
                                         />
                                     </div>
                                 ))}

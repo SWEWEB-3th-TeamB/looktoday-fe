@@ -236,7 +236,7 @@ const MyFeed = () => {
     };
 
     return (
-        <>
+        <div className='mypage'>
             <Menu />
             <Sidebar />
             <div className="myfeed-wrapper">
@@ -286,7 +286,7 @@ const MyFeed = () => {
                 isLiked={selectedLook?.isLiked}
                 onLikeToggle={handleLikeToggle}
             />
-        </>
+        </div>
     );
 };
 

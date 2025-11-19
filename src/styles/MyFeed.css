@@ -12,6 +12,10 @@
   font-style: normal;
 }
 
+.mypage {
+  min-width: 1280px;
+}
+
 /* 전체 wrapper는 사이드바 너비 고려 */
 .myfeed-wrapper {
   max-width: 1280px;
@@ -249,6 +253,7 @@
   top: 1548px;
   left: 0;
   width: 100%;
+  min-width: 1280px;
 }
 
 /* MyFeed 페이지에서만 닉네임/하트 숨기기 */

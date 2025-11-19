@@ -273,7 +273,7 @@ const MyHeart = () => {
   };
 
   return (
-    <>
+    <div className='mypage'>
       <Menu />
       <Sidebar />
       <div className="myheart-wrapper">
@@ -349,7 +349,7 @@ const MyHeart = () => {
         isLiked={selectedLook?.isLiked} // 항상 true여야 함
         onLikeToggle={handleLikeToggle}
       />
-    </>
+    </div>
   );
 };
 
