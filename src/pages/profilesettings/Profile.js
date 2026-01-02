@@ -16,7 +16,7 @@ const getToken = () => {
   try { return raw.startsWith('"') ? JSON.parse(raw) : raw; } catch { return raw; }
 };
 
-/** JWT payload 디버깅 */
+
 const debugJwt = (t) => {
   if (!t) return;
   try {

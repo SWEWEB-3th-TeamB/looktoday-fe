@@ -8,7 +8,6 @@ import Footer from '../../components/Footer';
 
 import '../../styles/ChangePassword.css';
 
-// 민감 필드 마스킹(로그 확인용)
 const redact = (obj) =>
   JSON.parse(JSON.stringify(obj, (k, v) =>
     ['newPassword', 'confirmPassword'].includes(k) ? '********' : v
@@ -70,7 +69,10 @@ const ChangePassword = () => {
       }
 
       alert(data?.message || '비밀번호 변경이 완료되었습니다.');
-      navigate('/change-password-complete', { replace: true });
+      navigate('/change-password-complete', {
+        replace: true,
+        state: { email: emailFromPrev }
+      });
     } catch (err) {
       console.error(err);
       alert('네트워크 오류가 발생했습니다.');
@@ -81,7 +83,7 @@ const ChangePassword = () => {
 
   // 폼 없이 Enter 제출 처리
   const handleEnterKey = (e) => {
-    if (e.isComposing) return; // 한글 IME 조합 중 Enter 무시(선택)
+    if (e.isComposing) return; 
     if (e.key === 'Enter') {
       e.preventDefault();
       submit();
