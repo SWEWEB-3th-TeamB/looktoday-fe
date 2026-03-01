@@ -36,28 +36,28 @@ const SignUp = () => {
 
     const isValidEmail = (v) => /^\S+@\S+\.\S+$/.test(v);
 
-    // 🔁 Profile과 동일한 "변경 여부" 플래그 추가 (사인업은 초기값이 빈 문자열)
+    // 변경 여부 플래그 추가
     const [initialEmail] = useState('');
     const [initialNickname] = useState('');
     const emailChanged = email.trim() !== initialEmail;
     const nicknameChanged = nickname.trim() !== initialNickname;
 
-    // --- 활성/비활성 로직
+    // 활성/비활성 로직
     const emailValid = isValidEmail(email);
     const passwordsOk = password.trim().length >= 8 && password === confirmPassword;
     const hasAllRequired =
         emailValid &&
         passwordsOk &&
         nickname.trim() &&
-        birthDigits.trim() &&   // 이제 안전하게 참조
+        birthDigits.trim() &&
         si.trim() &&
         gungu.trim();
 
-    // ✅ Profile과 동일: "변경되었을 때만" 체크 버튼 활성
+    // 변경되었을 때만 체크 버튼 활성
     const canCheckEmail = emailChanged && emailValid && !emailLoading && emailCheckOk !== true;
     const canCheckNickname = nicknameChanged && !!nickname.trim() && !nickLoading && nicknameCheckOk !== true;
 
-    // ✅ Profile과 동일: 최종 제출 버튼은 "변경된 필드만" 중복확인 통과 요구
+    // 최종 제출 버튼은 변경된 필드만 중복확인 통과 요구
     const isCompleteEnabled =
         hasAllRequired &&
         (!emailChanged || emailCheckOk === true) &&
@@ -71,7 +71,7 @@ const SignUp = () => {
         let out = y;
         if (m) out += "/" + m;
         if (day) out += "/" + day;
-        return out;             // 화면 표시용: 1999/01/01
+        return out;
     };
 
     const formatBirthForServer = (digits = "") => {
@@ -216,7 +216,7 @@ const SignUp = () => {
             password,
             confirmPassword,
             nickname,
-            birth: birthForServer, // 항상 YYYY/MM/DD 형식으로 서버 전송
+            birth: birthForServer,
             si,
             gungu
         };
