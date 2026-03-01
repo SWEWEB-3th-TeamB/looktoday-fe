@@ -81,10 +81,8 @@ export default function Sidebar() {
 
   return (
     <div className="sidebar-wrapper">
-      {/*제목*/}
       <div className="sidebar-title">My Page</div>
 
-      {/* 활성(선택) 메뉴 박스 - 항상 표시 */}
       {menus.map(menu =>
         activeKey === menu.key ? (
           <div
@@ -95,7 +93,6 @@ export default function Sidebar() {
         ) : null
       )}
 
-      {/* 호버 메뉴 박스 - hoverKey가 있고, active와 다르면 추가 표시 */}
       {hoverKey && hoverKey !== activeKey && (() => {
         const hovered = menus.find(m => m.key === hoverKey);
         if (!hovered) return null;
@@ -108,10 +105,8 @@ export default function Sidebar() {
         );
       })()}
 
-      {/* 메뉴 아이템 + 히트에어리어 */}
       {menus.map(menu => (
         <React.Fragment key={menu.key}>
-          {/* 히트에어리어: 박스 크기와 동일, hover/click 캡처 */}
           <div
             className="sidebar-menu-hit"
             style={{ top: `${menu.boxTop}px`, left: '12px' }}

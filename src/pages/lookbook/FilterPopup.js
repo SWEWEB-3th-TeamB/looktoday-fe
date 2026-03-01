@@ -75,17 +75,14 @@ const FilterPopup = ({ onClose, defaultItem, onApply }) => {
         }
 
         if (selectItem === '날짜') {
-            // 둘 다 있을 때만 적용
             if (startDateValue && endDateValue) {
                 payload.startDate = startDateValue;
                 payload.endDate = endDateValue;
             }
-            // 둘 다 비었으면 명시적 초기화
             else if (startDateValue === null && endDateValue === null) {
                 payload.startDate = null;
                 payload.endDate = null;
             }
-            // 하나만 있으면 아무 것도 안 보냄(부분 입력으로 기존 값 훼손 방지)
         }
 
         onApply?.(payload);
